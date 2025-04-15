@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="d3_styles.css" />
+    <title>Example D3</title>
+  </head>
+
+  <body>
+    <!-- 그래프를 담을 div 태그 -->
+    <div id="barChart"></div>
+
+    <div id="lineChart"></div>
+
+    <div id="pieChart"></div>
+
+    <!-- D3 CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <script>
+      // mockData
+      const data = [
+        { key: 'a', value: 3, time: new Date('2019-03-22T03:00:00') },
+        { key: 'b', value: 1, time: new Date('2019-03-22T03:05:00') },
+        { key: 'c', value: 9, time: new Date('2019-03-22T03:10:00') },
+        { key: 'd', value: 6, time: new Date('2019-03-22T03:15:00') },
+        { key: 'e', value: 2, time: new Date('2019-03-22T03:20:00') },
+        { key: 'f', value: 6, time: new Date('2019-03-22T03:25:00') },
+      ];
+    </script>
+
+    <!-- D3 스크립트 -->
+    <script src="./d3_graph.js"></script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example Leaflet</title>
+
+    <link rel="stylesheet" href="leaflet_styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+  </head>
+
+  <body>
+    <div id="map" class="container"></div>
+    <div class="info">
+      <p>클릭한 위치의 위도: <span id="latitude"></span></p>
+      <p>클릭한 위치의 경도: <span id="longitude"></span></p>
+      <!-- <p>클릭한 위치의 주소: <span id="address"></span></p> -->
+    </div>
+
+    <!-- leaflet 라이브러리 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- 지도 초기화 스크립트 -->
+    <script src="leaflet_map.js"></script>
+
+    <!-- 지도 클릭시 발생 이벤트 -->
+    <script>
+      map.on('click', function (e) {
+        updateInfoPanel(e.latlng);
+      });
+    </script>
+  </body>
+</html>

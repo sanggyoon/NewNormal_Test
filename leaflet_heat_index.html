@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example Leaflet Heatmap</title>
+
+    <link rel="stylesheet" href="leaflet_heat_styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <div id="map" class="container"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+    <script>
+      //mockData (위도, 경도, 가중치)
+      var mockData = [
+        { lat: 37.5665, lng: 126.978, value: 10 },
+        { lat: 37.5651, lng: 126.9895, value: 7 },
+        { lat: 37.5645, lng: 126.975, value: 4 },
+        { lat: 37.567, lng: 126.982, value: 1 },
+      ];
+    </script>
+    <!-- 지도 초기화 스크립트 -->
+    <script src="leaflet_heat.js"></script>
+  </body>
+</html>
