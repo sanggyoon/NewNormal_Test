@@ -1,13 +1,17 @@
+import os
 from flask import Flask, request, jsonify
 import pymysql
+from dotenv import load_dotenv
+
+load_dotenv()  # .env 파일 로드
 
 app = Flask(__name__)
 
 db = pymysql.connect(
-    host="localhost",
-    user="your_user",
-    password="your_password",
-    database="your_db"
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME")
 )
 
 @app.route('/api/data', methods=['GET'])
