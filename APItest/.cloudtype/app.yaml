@@ -1,0 +1,19 @@
+name: my-flask-app
+app: python@3.10
+options:
+  env:
+    - name: DB_HOST
+      value: 'svc.sel5.cloudtype.app'
+    - name: DB_USER
+      value: ${DB_USER}
+    - name: DB_PASSWORD
+      value: ${DB_PASSWORD}
+    - name: DB_PORT
+      value: '32714'
+  ports: 5000
+  start: gunicorn -b 0.0.0.0:5000 app:app
+context:
+  git:
+    url: https://github.com/yourusername/my-flask-app.git
+    branch: main
+  preset: python-flask
