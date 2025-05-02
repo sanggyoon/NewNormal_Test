@@ -10,8 +10,8 @@ options:
       value: ${DB_PASSWORD}
     - name: DB_PORT
       value: '32714'
-  ports: 5000
-  start: gunicorn -b 0.0.0.0:5000 app:app
+  ports: $PORT
+  start: gunicorn -b 0.0.0.0:$PORT app:app
 context:
   git:
     url: https://github.com/yourusername/my-flask-app.git
