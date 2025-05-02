@@ -1,19 +1,24 @@
-name: my-flask-app
-app: python@3.10
+name: newnormal-test
+app: python@3.9
 options:
   env:
+    - name: FLASK_ENV
+      value: production
     - name: DB_HOST
-      value: 'svc.sel5.cloudtype.app'
-    - name: DB_USER
-      value: ${DB_USER}
-    - name: DB_PASSWORD
-      value: ${DB_PASSWORD}
+      value: svc.sel5.cloudtype.app
     - name: DB_PORT
       value: '32714'
-ports: $PORT
-start: gunicorn -b 0.0.0.0:$PORT app:app
+    - name: DB_USER
+      value: root
+    - name: DB_PASSWORD
+      value: newnormal!
+    - name: DB_NAME
+      value: newnormal_schema
+  ports: 5000
+  start: gunicorn -b 0.0.0.0:5000 app:app
 context:
   git:
-    url: https://github.com/yourusername/my-flask-app.git
-    branch: main
+    url: https://github.com/sanggyoon/NewNormal_Test.git
+    branch: master
+    path: APItest
   preset: python-flask
