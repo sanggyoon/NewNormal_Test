@@ -2,10 +2,12 @@ import os
 from flask import Flask, request, jsonify
 import pymysql
 from dotenv import load_dotenv
-
-load_dotenv()  # .env 파일 로드
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
+load_dotenv()  # .env 파일 로드
 
 def get_db_connection():
     return pymysql.connect(
