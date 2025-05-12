@@ -7,7 +7,7 @@ from flask_cors import CORS
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def get_db_connection():
     return pymysql.connect(
@@ -18,11 +18,11 @@ def get_db_connection():
         port=int(os.getenv("DB_PORT", 3306))
     )
 
-@app.route('/')
+@app.route('/newnormal-test/')
 def index():
     return 'Flask 서버가 정상적으로 실행 중입니다. /api/data 로 이동해보세요.'
 
-@app.route('/api/data', methods=['GET'])
+@app.route('/newnormal-test/api/data', methods=['GET'])
 def get_data():
     db = get_db_connection()
     cursor = db.cursor()
@@ -32,7 +32,7 @@ def get_data():
     db.close()
     return jsonify(result)
 
-@app.route('/api/data', methods=['POST'])
+@app.route('/newnormal-test/api/data', methods=['POST'])
 def add_data():
     content = request.json
     try:
