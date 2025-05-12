@@ -20,7 +20,7 @@ def get_db_connection():
 
 @app.route('/')
 def index():
-    return '✅ Flask 서버가 정상적으로 실행 중입니다. /api/data 로 이동해보세요.'
+    return 'Flask 서버가 정상적으로 실행 중입니다. /api/data 로 이동해보세요.'
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
