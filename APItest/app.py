@@ -3,12 +3,15 @@ from flask import Flask, request, jsonify
 import pymysql
 from dotenv import load_dotenv
 from flask_cors import CORS
+import logging
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['APPLICATION_ROOT'] = '/newnormal-test'
+
+logging.basicConfig(level=logging.ERROR)
 
 def get_db_connection():
     try:
@@ -20,7 +23,8 @@ def get_db_connection():
             port=int(os.getenv("DB_PORT", 3306))
         )
     except pymysql.MySQLError as e:
-            return jsonify({"error": f"Database connection failed: {str(e)}"}), 500
+        logging.error(f"Database connection failed: {str(e)}")
+        return jsonify({"error": f"Database connection failed: {str(e)}"}), 500
 
 
 @app.route('/')
@@ -59,8 +63,10 @@ def add_data():
 def delete_data(id):
     db = get_db_connection()
     cursor = db.cursor()
-    sql = "DELETE FROM newnormal_table WHERE id = %s"
+    sql = "DELETE FROM newnormal_table WHERE location_ID = %s"
     cursor.execute(sql, (id,))
+    if cursor.rowcount == 0:
+        return jsonify({"error": f"No data found with ID {id}"}), 404
     db.commit()
     cursor.close()
     db.close()
