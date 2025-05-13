@@ -8,21 +8,26 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['APPLICATION_ROOT'] = '/newnormal-test'
 
 def get_db_connection():
-    return pymysql.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT", 3306))
-    )
+    try:
+        return pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT", 3306))
+        )
+    except pymysql.MySQLError as e:
+            return jsonify({"error": f"Database connection failed: {str(e)}"}), 500
 
-@app.route('/newnormal-test/')
+
+@app.route('/')
 def index():
     return 'Flask 서버가 정상적으로 실행 중입니다. /api/data 로 이동해보세요.'
 
-@app.route('/newnormal-test/api/data', methods=['GET'])
+@app.route('/api/data', methods=['GET'])
 def get_data():
     db = get_db_connection()
     cursor = db.cursor()
@@ -32,7 +37,7 @@ def get_data():
     db.close()
     return jsonify(result)
 
-@app.route('/newnormal-test/api/data', methods=['POST'])
+@app.route('/api/data', methods=['POST'])
 def add_data():
     content = request.json
     try:
