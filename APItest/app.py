@@ -34,9 +34,10 @@ def index():
 @app.route('/api/data', methods=['GET'])
 def get_data():
     db = get_db_connection()
-    cursor = db.cursor()
+    cursor = db.cursor(pymysql.cursors.DictCursor) 
     cursor.execute("SELECT * FROM newnormal_table")
     result = cursor.fetchall()
+    print(result)
     cursor.close()
     db.close()
     return jsonify(result)

@@ -18,15 +18,16 @@
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           const data = await response.json();
+          console.log(data);
 
           const tableBody = document.querySelector('#locationTable tbody');
-          tableBody.innerHTML = '';
+          tableBody.innerHTML = ''; // 기존 데이터를 초기화
 
           data.forEach((item) => {
             const row = document.createElement('tr');
 
             const idCell = document.createElement('td');
-            idCell.textContent = item.id;
+            idCell.textContent = item.location_ID; // location_ID 사용
 
             const latitudeCell = document.createElement('td');
             latitudeCell.textContent = item.latitude;
@@ -51,9 +52,7 @@
         event.preventDefault();
         const latitude = document.getElementById('latitude').value;
         const longitude = document.getElementById('longitude').value;
-        if (!confirm(`ID ${id} 데이터를 삭제하시겠습니까?`)) {
-          return;
-        }
+
         if (!latitude || !longitude) {
           alert('위도와 경도를 입력해주세요.');
           return;
@@ -74,10 +73,9 @@
 
           if (response.ok) {
             alert('데이터가 성공적으로 추가되었습니다!');
-            fetchData();
+            fetchData(); // 데이터 갱신
             document.getElementById('latitude').value = '';
             document.getElementById('longitude').value = '';
-            document.getElementById('deleteId').value = '';
           } else {
             const errorData = await response.json();
             alert(`Error: ${errorData.error}`);
@@ -159,7 +157,9 @@
             <th>Longitude</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <!-- 데이터가 여기에 추가됩니다 -->
+        </tbody>
       </table>
     </div>
   </body>
