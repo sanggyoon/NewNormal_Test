@@ -20,5 +20,9 @@ h1 {
 .addData,
 .deleteData,
 .readData {
-  margin: 3rem auto;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
