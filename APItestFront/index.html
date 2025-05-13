@@ -21,13 +21,13 @@
           console.log(data);
 
           const tableBody = document.querySelector('#locationTable tbody');
-          tableBody.innerHTML = ''; // 기존 데이터를 초기화
+          tableBody.innerHTML = '';
 
           data.forEach((item) => {
             const row = document.createElement('tr');
 
             const idCell = document.createElement('td');
-            idCell.textContent = item.location_ID; // location_ID 사용
+            idCell.textContent = item.location_ID;
 
             const latitudeCell = document.createElement('td');
             latitudeCell.textContent = item.latitude;
@@ -100,7 +100,7 @@
 
           if (response.ok) {
             alert(`ID ${id} 데이터가 성공적으로 삭제되었습니다!`);
-            fetchData(); // 데이터 갱신
+            fetchData();
             document.getElementById('deleteId').value = '';
           } else {
             const errorData = await response.json();
