@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+h1 {
+  text-align: center;
+}
+
+.editData {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.readData {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.addData,
+.deleteData,
+.readData {
+  margin: 0 auto;
+}

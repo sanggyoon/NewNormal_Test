@@ -55,6 +55,17 @@ def add_data():
     db.close()
     return jsonify({"message": "Data added successfully!"})
 
+@app.route('/api/data/<int:id>', methods=['DELETE'])
+def delete_data(id):
+    db = get_db_connection()
+    cursor = db.cursor()
+    sql = "DELETE FROM newnormal_table WHERE id = %s"
+    cursor.execute(sql, (id,))
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({"message": f"Data with ID {id} deleted successfully!"})
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
