@@ -10,15 +10,6 @@ h1 {
   text-align: center;
 }
 
-.editData {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding: 5rem 0;
-  border-bottom: 1px solid black;
-}
-
 .readData {
   display: flex;
   flex-direction: column;
@@ -29,5 +20,5 @@ h1 {
 .addData,
 .deleteData,
 .readData {
-  margin: 0 auto;
+  margin: 3rem auto;
 }
