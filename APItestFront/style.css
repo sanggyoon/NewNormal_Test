@@ -19,7 +19,8 @@ h1 {
 
 .addData,
 .deleteData,
-.readData {
+.readData,
+.updateData {
   width: auto;
   display: flex;
   flex-direction: column;

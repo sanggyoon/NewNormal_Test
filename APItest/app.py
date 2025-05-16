@@ -73,6 +73,26 @@ def delete_data(id):
     db.close()
     return jsonify({"message": f"Data with ID {id} deleted successfully!"})
 
+@app.route('/api/data/<int:id>', methods=['PUT'])
+def update_data(id):
+    content = request.json
+    try:
+        latitude = int(content['latitude'])
+        longitude = int(content['longitude'])
+    except (KeyError, ValueError):
+        return jsonify({"error": "Invalid input. 'latitude' and 'longitude' must be integers."}), 400
+
+    db = get_db_connection()
+    cursor = db.cursor()
+    sql = "UPDATE newnormal_table SET latitude = %s, longitude = %s WHERE location_ID = %s"
+    cursor.execute(sql, (latitude, longitude, id))
+    if cursor.rowcount == 0:
+        return jsonify({"error": f"No data found with ID {id}"}), 404
+    db.commit()
+    cursor.close()
+    db.close()
+    return jsonify({"message": f"Data with ID {id} updated successfully!"})
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
