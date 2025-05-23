@@ -1,0 +1,10 @@
+.addData,
+.deleteData,
+.readData,
+.updateData {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
