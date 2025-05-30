@@ -1,3 +1,4 @@
+// 백엔드 서버 API URL
 const API_BASE_URL =
   'https://port-0-newnormal-test2-am952nltb8106p.sel5.cloudtype.app/api/data';
 
@@ -64,7 +65,7 @@ async function addData(event) {
 
     if (response.ok) {
       alert('데이터가 성공적으로 추가되었습니다!');
-      fetchData(); // 데이터 갱신
+      fetchData();
       document.getElementById('latitude').value = '';
       document.getElementById('longitude').value = '';
     } else {
@@ -125,7 +126,7 @@ async function updateData(event) {
 
     if (response.ok) {
       alert(`ID ${id} 데이터가 성공적으로 수정되었습니다!`);
-      fetchData(); // 데이터 갱신
+      fetchData();
     } else {
       const errorData = await response.json();
       alert(`Error: ${errorData.error}`);

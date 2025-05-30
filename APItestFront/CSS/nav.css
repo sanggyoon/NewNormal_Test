@@ -1,0 +1,106 @@
+/* 가로 방향 (landscape) */
+@media screen and (orientation: landscape) {
+  :root {
+    --logo-height: 50px;
+    --nav-background-color: #2e2e2e;
+  }
+  .navContainer {
+    background-color: var(--nav-background-color);
+    color: white;
+    width: 15%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  /* temp */
+  .backgroundText {
+    color: rgba(255, 255, 255, 0.1);
+    font-size: 10rem;
+    font-weight: 900;
+    vertical-align: bottom;
+    position: absolute;
+    bottom: 0;
+    left: -900px;
+    transform: rotate(90deg);
+    transform-origin: right bottom;
+    white-space: nowrap;
+    z-index: -1;
+  }
+
+  .houseInfoBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 30px 10%;
+  }
+  .houseInfoBox_Logo {
+    width: var(--logo-height) !important;
+    height: var(--logo-height) !important;
+    border-radius: 50%;
+    border: 1px solid white;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 10px;
+    background-color: black; /* temp */
+  }
+  .houseInfoBox_Text {
+    position: relative;
+    height: var(--logo-height);
+    width: 100%;
+  }
+  .houseInfoBox_Title {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    font-size: 1.5rem; /* temp */
+  }
+  .houseInfoBox_Tag {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .navList ul {
+    list-style: none;
+    font-size: 1.2rem;
+  }
+  .navList ul li {
+    padding: 20px 10%;
+    display: flex;
+    align-items: center;
+  }
+  .navList ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+  }
+
+  .separateLine {
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 10px auto;
+  }
+
+  .navFooter {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 20px;
+  }
+
+  .navFooter span {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 10%;
+  }
+}
+
+/* 세로 방향 (portrait) */
+@media screen and (orientation: portrait) {
+  .navContainer {
+    display: none;
+  }
+}
