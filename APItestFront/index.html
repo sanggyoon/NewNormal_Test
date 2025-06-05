@@ -3,15 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CSS -->
     <link rel="stylesheet" href="globalStyle.css" />
-    <link rel="stylesheet" href="CSS/locationDataAPI.css" />
     <link rel="stylesheet" href="CSS/nav.css" />
-    <title>뉴노멀 API 테스트</title>
+    <link rel="stylesheet" href="CSS/statusBar.css" />
+    <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/atmosphereInfo.css" />
+
+    <title>뉴노멀 프로젝트</title>
   </head>
   <body>
     <div id="navContainer"></div>
-    <div id="locationDataAPI"></div>
-    <header>test</header>
+    <div class="dashboardContainer landscape">
+      <div id="statusBar"></div>
+      <div id="noticeBar"></div>
+      <div id="atmosphereInfoContainer"></div>
+    </div>
 
     <!-- 화면 비율 비교 후 ladnscape, portrait 출력 -->
     <script src="./JS/ScreenRatio.js"></script>
@@ -24,11 +32,13 @@
         document.getElementById(targetId).innerHTML = html;
       }
 
-      loadComponent('Components/locationDataAPI.html', 'locationDataAPI');
       loadComponent('Components/nav.html', 'navContainer');
+      loadComponent('Components/statusBar.html', 'statusBar');
+      loadComponent('Components/noticeBar.html', 'noticeBar');
+      loadComponent(
+        'Components/atmosphereInfo.html',
+        'atmosphereInfoContainer'
+      );
     </script>
-
-    <!-- 로딩 컴포넌트 -->
-    <script src="JS/LocationDataAPI.js"></script>
   </body>
 </html>

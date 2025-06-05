@@ -1,0 +1,18 @@
+.atmosphereInfo_dataBox {
+  border: 1px solid black;
+}
+
+.dataBox_windData,
+.dataBox_detailButton {
+  display: inline-block;
+}
+
+.dataBox_separateLine {
+  width: 95%;
+  margin: 0 auto;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.dataBox_measurmentData div {
+  display: inline-block;
+}

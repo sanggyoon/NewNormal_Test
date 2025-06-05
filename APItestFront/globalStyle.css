@@ -5,13 +5,16 @@
 }
 
 body {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
 }
 
-h1 {
-  text-align: center;
+.dashboardContainer {
+  padding: 50px;
+}
+@media screen and (orientation: landscape) {
+  .dashboardContainer {
+    margin-left: 15%;
+  }
 }

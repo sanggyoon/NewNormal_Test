@@ -1,3 +1,4 @@
+//가로 세로 비율에 따른 렌더링 요소 변경
 function updateLayout() {
   const isPortrait = window.innerHeight > window.innerWidth;
   document.querySelector('.portrait').style.display = isPortrait
