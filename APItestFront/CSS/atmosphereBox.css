@@ -1,0 +1,87 @@
+@media screen and (orientation: landscape) {
+  .atmosphereInfoBox {
+    width: 48.5%;
+  }
+}
+@media screen and (orientation: portrait) {
+  .atmosphereInfoBox {
+    width: 100%;
+  }
+}
+
+.atmosphereInfo_list {
+  margin-bottom: 20px;
+}
+
+.atmosphereInfo_locationName {
+  font-weight: 700;
+  padding: 10px 0;
+}
+
+.atmosphereInfo_dataBox {
+  border: 1px solid #e5e5e6;
+  border-radius: 8px;
+  padding: 10px 20px 20px 20px;
+}
+
+.dataBox_topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dataBox_atmosphere {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dataBox_detailButton {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: white;
+  background-color: #3c3c3e;
+  padding: 8px 18px;
+  border-radius: 6px;
+}
+
+.dataBox_separateLine {
+  width: 100%;
+  margin: 10px auto;
+  border: 1px solid #e5e5e6;
+}
+
+.dataBox_measurmentData {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.measurementData {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 23%;
+  background-color: #f7f7f8;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.gaseousState {
+  background-color: #eaeaeb;
+  border-radius: 4px;
+  padding: 4px 16px;
+  color: #7d7f82;
+  font-size: 0.8rem;
+}
+
+.gaseousValue {
+  font-weight: 700;
+  margin: 4px;
+}
+
+.gaseousName {
+  color: #7d7f82;
+  font-size: 0.9rem;
+}

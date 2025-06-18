@@ -9,36 +9,52 @@
     <link rel="stylesheet" href="CSS/nav.css" />
     <link rel="stylesheet" href="CSS/statusBar.css" />
     <link rel="stylesheet" href="CSS/noticeBar.css" />
-    <link rel="stylesheet" href="CSS/atmosphereInfo.css" />
-
+    <link rel="stylesheet" href="CSS/atmosphereBox.css" />
+    <!-- Pretendard 웹폰트 CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
     <title>뉴노멀 프로젝트</title>
   </head>
+
   <body>
     <div id="navContainer"></div>
     <div class="dashboardContainer landscape">
       <div id="statusBar"></div>
       <div id="noticeBar"></div>
-      <div id="atmosphereInfoContainer"></div>
+      <div id="atmosphereInfoContainer">
+        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
+        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_2"></div>
+        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_3"></div>
+      </div>
     </div>
 
     <!-- 화면 비율 비교 후 ladnscape, portrait 출력 -->
     <script src="./JS/ScreenRatio.js"></script>
 
+    <!-- 공지사항 애니메이션 스크립트 -->
+    <script src="./JS/noticeBar.js"></script>
+
     <!-- 로딩 컴포넌트 로직 -->
     <script>
-      async function loadComponent(componentPath, targetId) {
+      async function loadComponent(componentPath, targetId, callback) {
         const response = await fetch(componentPath);
         const html = await response.text();
         document.getElementById(targetId).innerHTML = html;
+        if (callback) callback();
       }
 
       loadComponent('Components/nav.html', 'navContainer');
       loadComponent('Components/statusBar.html', 'statusBar');
-      loadComponent('Components/noticeBar.html', 'noticeBar');
       loadComponent(
-        'Components/atmosphereInfo.html',
-        'atmosphereInfoContainer'
+        'Components/noticeBar.html',
+        'noticeBar',
+        runNoticeBarAnimation
       );
+      loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_1');
+      loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_2');
+      loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_3');
     </script>
   </body>
 </html>
