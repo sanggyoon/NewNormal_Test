@@ -92,3 +92,34 @@
     display: none;
   }
 }
+@media screen and (orientation: portrait) {
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 70px;
+    background: #222;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #aaa;
+    font-size: 13px;
+    transition: color 0.2s;
+    cursor: pointer;
+    width: 80px;
+    justify-content: center;
+  }
+
+  .nav-item:hover {
+    color: #fff;
+  }
+}
