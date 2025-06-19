@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function runNoticeBarAnimation() {
   const noticeList = document.querySelector('.noticeBar_list ul');
-  if (!noticeList) return; // noticeBar가 아직 로드되지 않았으면 종료
+  if (!noticeList) return;
   const notices = noticeList.querySelectorAll('li');
   let currentIndex = 0;
 

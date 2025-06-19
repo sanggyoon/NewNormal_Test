@@ -30,11 +30,14 @@
       </div>
     </div>
 
-    <!-- 화면 비율 비교 후 ladnscape, portrait 출력 -->
+    <!-- 화면 비율 비교 후 landscape, portrait 출력 -->
     <script src="./JS/ScreenRatio.js"></script>
 
     <!-- 공지사항 애니메이션 스크립트 -->
     <script src="./JS/noticeBar.js"></script>
+
+    <!-- 게이지 그래프 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
 
     <!-- 로딩 컴포넌트 로직 -->
     <script>
@@ -52,9 +55,24 @@
         'noticeBar',
         runNoticeBarAnimation
       );
-      loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_1');
-      loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_2');
-      loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_3');
+      Promise.all([
+        loadComponent(
+          'Components/atmosphereBox.html',
+          'atmosphereInfoBox_id_1'
+        ),
+        loadComponent(
+          'Components/atmosphereBox.html',
+          'atmosphereInfoBox_id_2'
+        ),
+        loadComponent(
+          'Components/atmosphereBox.html',
+          'atmosphereInfoBox_id_3'
+        ),
+      ]).then(() => {
+        const script = document.createElement('script');
+        script.src = './JS/gauge.js';
+        document.body.appendChild(script);
+      });
     </script>
   </body>
 </html>
