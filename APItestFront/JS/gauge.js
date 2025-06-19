@@ -1,10 +1,10 @@
 var opts = {
   angle: 0.12,
-  lineWidth: 0.22,
-  radiusScale: 0.5,
+  lineWidth: 0.44,
+  radiusScale: 1,
   pointer: {
     length: 0.62,
-    strokeWidth: 0.044,
+    strokeWidth: 0.08,
     color: '#000000',
   },
   limitMax: false,
