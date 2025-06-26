@@ -3,9 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="globalStyle.css" />
+    <link rel="stylesheet" href="CSS/nav.css" />
+    <link rel="stylesheet" href="CSS/statusBar.css" />
+    <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/atmosphereBox.css" />
+    <!-- Pretendard 웹폰트 CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
+
     <title>Document</title>
   </head>
   <body>
-    대시보드
+    <div id="navContainer"></div>
+    <div class="dashboardContainer landscape">
+      <div id="statusBar"></div>
+      <div id="noticeBar"></div>
+    </div>
+
+    <!-- 화면 비율 비교 후 landscape, portrait 출력 -->
+    <script src="./JS/ScreenRatio.js"></script>
+
+    <!-- 공지사항 애니메이션 스크립트 -->
+    <script src="./JS/noticeBar.js"></script>
+
+    <!-- 게이지 그래프 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+
+    <!-- 로딩 컴포넌트 로직 -->
+    <script>
+      async function loadComponent(componentPath, targetId, callback) {
+        const response = await fetch(componentPath);
+        const html = await response.text();
+        document.getElementById(targetId).innerHTML = html;
+        if (callback) callback();
+      }
+
+      loadComponent('Components/nav.html', 'navContainer');
+      loadComponent('Components/statusBar.html', 'statusBar');
+      loadComponent(
+        'Components/noticeBar.html',
+        'noticeBar',
+        runNoticeBarAnimation
+      );
+    </script>
   </body>
 </html>
