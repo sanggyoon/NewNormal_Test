@@ -10,19 +10,28 @@
     <link rel="stylesheet" href="CSS/statusBar.css" />
     <link rel="stylesheet" href="CSS/noticeBar.css" />
     <link rel="stylesheet" href="CSS/atmosphereBox.css" />
+    <link rel="stylesheet" href="CSS/probabilityBox.css" />
+    <link rel="stylesheet" href="CSS/lineGraphBox.css" />
+    <link rel="stylesheet" href="CSS/rawDataBox.css" />
     <!-- Pretendard 웹폰트 CDN -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
     />
 
-    <title>Document</title>
+    <title>에이티디코리아 설치 포인트</title>
   </head>
   <body>
     <div id="navContainer"></div>
     <div class="dashboardContainer landscape">
       <div id="statusBar"></div>
       <div id="noticeBar"></div>
+      <div id="pointInfo">
+        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
+        <div class="probabilityBox" id="probabilityBox"></div>
+        <div class="lineGraphBox" id="lineGraphBox"></div>
+        <div class="rawDataBox" id="rawDataBox"></div>
+      </div>
     </div>
 
     <!-- 화면 비율 비교 후 landscape, portrait 출력 -->
@@ -50,6 +59,19 @@
         'noticeBar',
         runNoticeBarAnimation
       );
+      Promise.all([
+        loadComponent(
+          'Components/atmosphereBox.html',
+          'atmosphereInfoBox_id_1'
+        ),
+      ]).then(() => {
+        const script = document.createElement('script');
+        script.src = './JS/gauge.js';
+        document.body.appendChild(script);
+      });
+      loadComponent('Components/probabilityBox.html', 'probabilityBox');
+      loadComponent('Components/lineGraphBox.html', 'lineGraphBox');
+      loadComponent('Components/rawDataBox.html', 'rawDataBox');
     </script>
   </body>
 </html>

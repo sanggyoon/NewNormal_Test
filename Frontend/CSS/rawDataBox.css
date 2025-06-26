@@ -1,0 +1,21 @@
+/* temp */
+@media screen and (orientation: landscape) {
+  .rawDataBox {
+    width: 48.5%;
+    border: 1px solid black;
+    height: 369px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media screen and (orientation: portrait) {
+  .rawDataBox {
+    width: 100%;
+    border: 1px solid black;
+    height: 369px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
