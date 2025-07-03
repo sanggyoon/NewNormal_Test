@@ -39,6 +39,9 @@ body {
     justify-content: space-between;
     width: 100%;
   }
+  #pointInfo > * {
+    margin-bottom: 20px;
+  }
 }
 
 @media screen and (orientation: portrait) {

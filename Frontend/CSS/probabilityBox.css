@@ -2,20 +2,29 @@
 @media screen and (orientation: landscape) {
   .probabilityBox {
     width: 48.5%;
-    border: 1px solid black;
-    height: 369px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }
 @media screen and (orientation: portrait) {
   .probabilityBox {
     width: 100%;
-    border: 1px solid black;
-    height: 369px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
+}
+
+.probabilityBox {
+  margin-bottom: 20px;
+}
+.probability_title {
+  font-weight: 700;
+  padding: 10px 0;
+}
+
+.probability_mapBoxes {
+  display: flex;
+  justify-content: space-between;
+}
+
+.probability_mapBox {
+  width: 47%;
+  background-color: #f0f0f0;
+  display: inline-block;
 }
