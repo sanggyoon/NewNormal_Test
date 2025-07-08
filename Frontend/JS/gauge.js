@@ -31,6 +31,6 @@ var opts = {
       gauge.maxValue = 3000;
       gauge.setMinValue(0);
       gauge.animationSpeed = 60;
-      gauge.set(0);
+      gauge.set(1000);
     });
 });

@@ -4,9 +4,7 @@
     width: 48.5%;
     border: 1px solid black;
     height: 369px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: auto;
   }
 }
 @media screen and (orientation: portrait) {
@@ -14,8 +12,25 @@
     width: 100%;
     border: 1px solid black;
     height: 369px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: auto;
   }
+}
+
+.rawDataBox {
+  padding: 0 2%;
+}
+
+.rawDataHeader {
+  display: flex;
+}
+
+.rawDataBox table {
+  min-height: 100%;
+  min-width: 100%;
+}
+.rawDataBox table th,
+.rawDataBox table td {
+  text-align: left;
+  white-space: nowrap;
+  padding: 10px;
 }

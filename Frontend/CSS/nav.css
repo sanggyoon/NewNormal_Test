@@ -75,6 +75,59 @@
     color: white;
   }
 
+  .icon_dashboard {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DashboardInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_dashboard {
+    background-image: url('../Public/Icons/DashboardActive.png');
+  }
+  .icon_devicePoint {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/PointInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_devicePoint {
+    background-image: url('../Public/Icons/PointActive.png');
+  }
+  .icon_odorDispersion {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/OdorDispersionInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_odorDispersion {
+    background-image: url('../Public/Icons/OdorDispersionActive.png');
+  }
+  .icon_data {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DataInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_data {
+    background-image: url('../Public/Icons/DataActive.png');
+  }
+
   .nav_separateLine {
     height: 1px;
     width: 90%;
@@ -88,12 +141,35 @@
     bottom: 0;
     margin-bottom: 20px;
   }
-
-  .navFooter span {
-    display: inline-block;
+  .navFooter_Alert,
+  .navFooter_Logout {
+    margin: 20px 10%;
+    font-size: 1.1rem;
+  }
+  .navFooter_Text {
     width: 100%;
-    padding: 10px 10%;
     color: #7d7f82;
+  }
+
+  .icon_alert {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Alert.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .icon_logout {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Logout.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
   }
 }
 
@@ -102,42 +178,154 @@
   .navContainer {
     background-color: var(--nav-background-color);
     color: white;
-    width: 100%;
-    height: 8vh;
+    width: 15%;
+    min-width: 240px;
+    height: 100vh;
     position: fixed;
-    bottom: 0;
+    top: 0;
+    left: -100%;
     font-size: 22px;
   }
 
-  .houseInfoBox,
-  .nav_separateLine,
-  .navFooter {
-    display: none;
-  }
-
-  .navList ul {
+  .houseInfoBox {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
     align-items: center;
-    height: 100%;
+    width: 100%;
+    padding: 40px 10%;
+  }
+  .houseInfoBox_Logo {
+    width: var(--logo-height) !important;
+    height: var(--logo-height) !important;
+    border-radius: 50%;
+    border: 1px solid white;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 10px;
+    background-color: black; /* temp */
+  }
+  .houseInfoBox_Text {
+    position: relative;
+    height: var(--logo-height);
+    width: 100%;
+  }
+  .houseInfoBox_Title {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    font-size: 1.3rem;
+  }
+  .houseInfoBox_Tag {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
   }
 
-  .navList ul a {
-    width: 100%;
-    height: 8vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   .navList ul li {
-    width: 100%;
-    height: 100%;
-    justify-content: center;
+    padding: 20px 10%;
   }
   .navList ul li:hover {
-    color: white;
     background-color: rgba(255, 255, 255, 0.1);
     cursor: pointer;
+    color: white;
+  }
+
+  .icon_dashboard {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DashboardInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_dashboard {
+    background-image: url('../Public/Icons/DashboardActive.png');
+  }
+  .icon_devicePoint {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/PointInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_devicePoint {
+    background-image: url('../Public/Icons/PointActive.png');
+  }
+  .icon_odorDispersion {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/OdorDispersionInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_odorDispersion {
+    background-image: url('../Public/Icons/OdorDispersionActive.png');
+  }
+  .icon_data {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DataInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_data {
+    background-image: url('../Public/Icons/DataActive.png');
+  }
+
+  .nav_separateLine {
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 10px auto;
+  }
+
+  .navFooter {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 20px;
+  }
+  .navFooter_Alert,
+  .navFooter_Logout {
+    margin: 20px 10%;
+    font-size: 1.1rem;
+  }
+  .navFooter_Text {
+    width: 100%;
+    color: #7d7f82;
+  }
+
+  .icon_alert {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Alert.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .icon_logout {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Logout.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
   }
 }
