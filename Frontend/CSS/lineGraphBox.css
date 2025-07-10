@@ -1,9 +1,18 @@
+.lineGraphBox {
+  margin-bottom: 20px;
+  overflow: visible;
+}
+
+.lineGraphBox canvas {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible;
+}
+
 /* temp */
 @media screen and (orientation: landscape) {
   .lineGraphBox {
     width: 48.5%;
-    border: 1px solid black;
-    height: 369px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,8 +21,6 @@
 @media screen and (orientation: portrait) {
   .lineGraphBox {
     width: 100%;
-    border: 1px solid black;
-    height: 369px;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -37,6 +37,30 @@
   gap: 8px;
 }
 
+.icon_temperature {
+  background-image: url('../Public/Icons/Temperature.png');
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #e5e5e6;
+  border-radius: 50%;
+}
+
+.icon_humidity {
+  background-image: url('../Public/Icons/Humidity.png');
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #e5e5e6;
+  border-radius: 50%;
+}
+
 .dataBox_detailButton {
   align-self: flex-end;
   font-size: 0.8rem;
