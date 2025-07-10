@@ -40,6 +40,31 @@
     <!-- 공지사항 애니메이션 스크립트 -->
     <script src="./JS/noticeBar.js"></script>
 
+    <!-- 게이지 그래프 라이브러리 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+
+    <!-- Chart.js 라이브러리 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- jQuery, Moment.js, Daterangepicker 라이브러리 -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+    />
+
     <!-- 로딩 컴포넌트 로직 -->
     <script>
       async function loadComponent(componentPath, targetId, callback) {
@@ -50,7 +75,11 @@
       }
 
       loadComponent('Components/nav.html', 'navContainer');
-      loadComponent('Components/statusBar.html', 'statusBar');
+      loadComponent('Components/statusBar.html', 'statusBar', function () {
+        const script = document.createElement('script');
+        script.src = './JS/status.js';
+        document.body.appendChild(script);
+      });
       loadComponent(
         'Components/noticeBar.html',
         'noticeBar',
@@ -77,13 +106,7 @@
       loadComponent('Components/rawDataBox.html', 'rawDataBox');
     </script>
 
-    <!-- 게이지 그래프 라이브러리 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
-
     <!-- 높이 가져오기 -->
     <script src="./JS/probailityBox.js"></script>
-
-    <!-- Chart.js 라이브러리 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>

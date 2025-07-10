@@ -5,12 +5,43 @@
   gap: 40px;
 }
 
-.statusBar_choiceDate {
-  line-height: 5px 20px;
-  background-color: #f7f7f8;
-  font-size: 0.8rem;
-  padding: 10px;
+.statusBar_currentTime {
+  width: 300px;
+}
+
+#statusBar_choiceDate {
+  background-color: #eaeaeb;
   border-radius: 4px;
+  padding: 10px;
+  border: none;
+  outline: none;
+  width: auto;
+  font-size: 0.8rem;
+  box-sizing: content-box;
+}
+.daterangepicker .calendar-table td:nth-child(1):not(.active):not(.off) {
+  color: red !important;
+}
+.daterangepicker .calendar-table td:nth-child(7):not(.active):not(.off) {
+  color: blue !important;
+}
+.daterangepicker .calendar-table td.active {
+  color: #fff !important;
+}
+.daterangepicker th:nth-child(1) {
+  color: red !important;
+}
+.daterangepicker th:nth-child(7) {
+  color: blue !important;
+}
+.daterangepicker td.off,
+.daterangepicker td.disabled {
+  text-decoration: none !important;
+  color: #ccc !important;
+  cursor: not-allowed;
+}
+.daterangepicker td {
+  position: relative;
 }
 
 .icon_atmosphericPressure {
