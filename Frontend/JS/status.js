@@ -45,6 +45,8 @@ $('#statusBar_choiceDate').daterangepicker(
       ],
     },
     autoUpdateInput: false,
+    linkedCalendars: false,
+    opens: 'left',
     startDate: new Date(),
     endDate: new Date(),
     drops: 'auto',

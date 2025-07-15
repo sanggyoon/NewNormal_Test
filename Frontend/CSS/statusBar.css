@@ -43,6 +43,24 @@
 .daterangepicker td {
   position: relative;
 }
+body .daterangepicker .drp-calendar.right {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.daterangepicker {
+  width: auto !important;
+}
+body .daterangepicker {
+  max-width: 300px !important;
+  min-width: unset !important;
+}
+body .daterangepicker .drp-selected {
+  display: none !important;
+}
 
 .icon_atmosphericPressure {
   background-image: url('../Public/Icons/AtmosphericPressure.png');
