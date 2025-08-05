@@ -1,5 +1,5 @@
 <div class="navContainer">
-  <div class="houseInfoBox">
+  <div class="houseInfoBox" id="houseInfoBox">
     <!-- <input type="checkbox" id="houseInfoModal" /> -->
     <div class="houseInfoBox_Logo"></div>
     <div class="houseInfoBox_Text">
@@ -19,7 +19,7 @@
       <a href=""
         ><li><span class="icon_odorDispersion"></span>악취 확산도</li></a
       >
-      <a href=""
+      <a href="rawDataIndex.html"
         ><li><span class="icon_data"></span>데이터</li></a
       >
     </ul>
@@ -34,5 +34,13 @@
       <span class="icon_logout"></span
       ><span class="navFooter_Text">로그아웃</span>
     </div>
+  </div>
+</div>
+
+<div id="houseInfoModal" class="modal" style="display: none">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>농장 정보</h2>
+    <p>여기에 농장에 대한 상세 정보를 넣으세요.</p>
   </div>
 </div>

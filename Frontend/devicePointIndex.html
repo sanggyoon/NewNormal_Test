@@ -10,9 +10,8 @@
     <link rel="stylesheet" href="CSS/statusBar.css" />
     <link rel="stylesheet" href="CSS/noticeBar.css" />
     <link rel="stylesheet" href="CSS/atmosphereBox.css" />
-    <link rel="stylesheet" href="CSS/probabilityBox.css" />
+    <link rel="stylesheet" href="CSS/radarGraph.css" />
     <link rel="stylesheet" href="CSS/lineGraphBox.css" />
-    <link rel="stylesheet" href="CSS/rawDataBox.css" />
     <!-- Pretendard 웹폰트 CDN -->
     <link
       rel="stylesheet"
@@ -28,9 +27,8 @@
       <div id="noticeBar"></div>
       <div id="pointInfo">
         <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
-        <div class="probabilityBox" id="probabilityBox"></div>
+        <div class="radarGraphBox" id="radarGraphBox"></div>
         <div class="lineGraphBox" id="lineGraphBox"></div>
-        <div class="rawDataBox" id="rawDataBox"></div>
       </div>
     </div>
 
@@ -74,7 +72,12 @@
         if (callback) callback();
       }
 
-      loadComponent('Components/nav.html', 'navContainer');
+      loadComponent('Components/nav.html', 'navContainer', function () {
+        const script = document.createElement('script');
+        script.src = './JS/nav.js';
+        document.body.appendChild(script);
+      });
+
       loadComponent('Components/statusBar.html', 'statusBar', function () {
         const script = document.createElement('script');
         script.src = './JS/status.js';
@@ -95,7 +98,13 @@
         script.src = './JS/gauge.js';
         document.body.appendChild(script);
       });
-      loadComponent('Components/probabilityBox.html', 'probabilityBox');
+      loadComponent('Components/radarGraph.html', 'radarGraphBox', () => {
+        if (window.Chart) {
+          const script = document.createElement('script');
+          script.src = './JS/radarGraph.js';
+          document.body.appendChild(script);
+        }
+      });
       loadComponent('Components/lineGraphBox.html', 'lineGraphBox', () => {
         if (window.Chart) {
           const script = document.createElement('script');
@@ -103,10 +112,6 @@
           document.body.appendChild(script);
         }
       });
-      loadComponent('Components/rawDataBox.html', 'rawDataBox');
     </script>
-
-    <!-- 높이 가져오기 -->
-    <script src="./JS/probailityBox.js"></script>
   </body>
 </html>

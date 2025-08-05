@@ -1,7 +1,24 @@
-const ctx = document.getElementById('timeLineChart');
+// devicePointIndex.html 내에서 컴포넌트 로딩 후 실행
+// .atmosphereInfo_dataBox의 높이를 가져와서 .probability_mapBox의 높이로 설정
+// Promise.all([
+//   loadComponent('Components/atmosphereBox.html', 'atmosphereInfoBox_id_1'),
+//   loadComponent('Components/probabilityBox.html', 'probabilityBox'),
+// ]).then(() => {
+//   const atmosphereBox = document.querySelector('.atmosphereInfo_dataBox');
+//   const radarGraphBoxes = document.querySelectorAll('.radarGraphBox');
+//   if (atmosphereBox && radarGraphBoxes.length > 0) {
+//     const height = atmosphereBox.offsetHeight;
+//     radarGraphBoxes.forEach((box) => {
+//       box.style.height = height + 'px';
+//     });
+//   }
+// });
 
-new Chart(ctx, {
-  type: 'line',
+// radarGraph 그리기
+const ctx2 = document.getElementById('radarGraph');
+
+new Chart(ctx2, {
+  type: 'radar',
   data: {
     labels: Array.from({ length: 12 }, (_, i) => {
       const date = new Date();
@@ -75,17 +92,17 @@ new Chart(ctx, {
       afterDraw(chart) {
         const options = chart.options.plugins.customTitleLegend;
         if (!options || !options.display) return;
-        const { ctx, chartArea } = chart;
+        const { ctx2, chartArea } = chart;
         if (!chartArea || chartArea.width === 0) return;
 
-        ctx.save();
-        ctx.font = '700 20px Pretendard';
-        ctx.textBaseline = 'top';
-        ctx.fillStyle = '#333';
+        ctx2.save();
+        ctx2.font = '700 20px Pretendard';
+        ctx2.textBaseline = 'top';
+        ctx2.fillStyle = '#333';
         // Title
         const titleX = -25;
         const titleY = 0;
-        ctx.fillText(
+        ctx2.fillText(
           options.title,
           chartArea.left + titleX,
           chartArea.top - chartArea.top + titleY
@@ -93,20 +110,20 @@ new Chart(ctx, {
 
         // Legend (inline)
         let x =
-          chartArea.left + titleX + ctx.measureText(options.title).width + 20;
+          chartArea.left + titleX + ctx2.measureText(options.title).width + 20;
         const y = chartArea.top - chartArea.top + titleY;
         options.labels.forEach((label, i) => {
           // 색상 박스
-          ctx.fillStyle = options.colors[i];
-          ctx.fillRect(x, y + 5, 14, 14);
+          ctx2.fillStyle = options.colors[i];
+          ctx2.fillRect(x, y + 5, 14, 14);
           x += 18;
           // 라벨
-          ctx.fillStyle = '#333';
-          ctx.font = '14px pretendard';
-          ctx.fillText(label, x, y + 3);
-          x += ctx.measureText(label).width + 18;
+          ctx2.fillStyle = '#333';
+          ctx2.font = '14px pretendard';
+          ctx2.fillText(label, x, y + 3);
+          x += ctx2.measureText(label).width + 18;
         });
-        ctx.restore();
+        ctx2.restore();
       },
     },
   ],
