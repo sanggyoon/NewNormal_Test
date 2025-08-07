@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="globalStyle.css" />
+    <link rel="stylesheet" href="CSS/nav.css" />
+    <link rel="stylesheet" href="CSS/statusBar.css" />
+    <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/rawDataBox.css" />
+    <!-- Pretendard 웹폰트 CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
+    <title>에이티디코리아 데이터</title>
+  </head>
+
+  <body>
+    <div id="navContainer"></div>
+    <div class="dashboardContainer landscape">
+      <div id="statusBar"></div>
+      <div id="noticeBar"></div>
+      <div class="rawDataBox" id="rawDataBox"></div>
+    </div>
+
+    <!-- 화면 비율 비교 후 landscape, portrait 출력 -->
+    <!-- 렌더링 전에 자바스크립트를 불러오기에 정상 동작하지 않음, 렌더링 이후 실행하도록 수정 필요 -->
+    <script src="./JS/ScreenRatio.js"></script>
+
+    <!-- 공지사항 애니메이션 스크립트 -->
+    <script src="./JS/noticeBar.js"></script>
+
+    <!-- jQuery, Moment.js, Daterangepicker 라이브러리 -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+    />
+
+    <!-- 로딩 컴포넌트 로직 -->
+    <script>
+      async function loadComponent(componentPath, targetId, callback) {
+        const response = await fetch(componentPath);
+        const html = await response.text();
+        document.getElementById(targetId).innerHTML = html;
+        if (callback) callback();
+      }
+
+      loadComponent('Components/nav.html', 'navContainer', function () {
+        const script = document.createElement('script');
+        script.src = './JS/nav.js';
+        document.body.appendChild(script);
+      });
+
+      loadComponent('Components/statusBar.html', 'statusBar', function () {
+        const script = document.createElement('script');
+        script.src = './JS/status.js';
+        document.body.appendChild(script);
+      });
+
+      loadComponent(
+        'Components/noticeBar.html',
+        'noticeBar',
+        runNoticeBarAnimation
+      );
+
+      loadComponent('Components/rawDataBox.html', 'rawDataBox');
+    </script>
+  </body>
+</html>

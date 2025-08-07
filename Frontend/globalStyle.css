@@ -8,13 +8,14 @@
 }
 
 body {
-  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .dashboardContainer {
   padding: clamp(35px, 3%, 55px);
+  padding-top: min(40px, 3%);
+  padding-bottom: min(40px, 3%);
   font-size: 20px;
 }
 
@@ -30,10 +31,21 @@ body {
     justify-content: space-between;
     width: 100%;
   }
+
+  #pointInfo {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  #pointInfo > * {
+    margin-bottom: 20px;
+  }
 }
 
 @media screen and (orientation: portrait) {
   .dashboardContainer {
-    margin-bottom: 0;
+    margin-bottom: 8vh;
   }
 }

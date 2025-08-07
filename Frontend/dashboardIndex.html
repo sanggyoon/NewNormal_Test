@@ -15,7 +15,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
     />
-    <title>뉴노멀 프로젝트</title>
+    <title>에이티디코리아 대시보드</title>
   </head>
 
   <body>
@@ -31,6 +31,7 @@
     </div>
 
     <!-- 화면 비율 비교 후 landscape, portrait 출력 -->
+    <!-- 렌더링 전에 자바스크립트를 불러오기에 정상 동작하지 않음, 렌더링 이후 실행하도록 수정 필요 -->
     <script src="./JS/ScreenRatio.js"></script>
 
     <!-- 공지사항 애니메이션 스크립트 -->
@@ -38,6 +39,25 @@
 
     <!-- 게이지 그래프 라이브러리 -->
     <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+
+    <!-- jQuery, Moment.js, Daterangepicker 라이브러리 -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+    />
 
     <!-- 로딩 컴포넌트 로직 -->
     <script>
@@ -48,13 +68,24 @@
         if (callback) callback();
       }
 
-      loadComponent('Components/nav.html', 'navContainer');
-      loadComponent('Components/statusBar.html', 'statusBar');
+      loadComponent('Components/nav.html', 'navContainer', function () {
+        const script = document.createElement('script');
+        script.src = './JS/nav.js';
+        document.body.appendChild(script);
+      });
+
+      loadComponent('Components/statusBar.html', 'statusBar', function () {
+        const script = document.createElement('script');
+        script.src = './JS/status.js';
+        document.body.appendChild(script);
+      });
+
       loadComponent(
         'Components/noticeBar.html',
         'noticeBar',
         runNoticeBarAnimation
       );
+
       Promise.all([
         loadComponent(
           'Components/atmosphereBox.html',
@@ -72,6 +103,17 @@
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
         document.body.appendChild(script);
+
+        fetch('./JS/atmosphereInfoBox.js')
+          .then((res) => res.text())
+          .then((jsText) => {
+            eval(jsText);
+            if (window.attachAtmosphereModalEvents) {
+              setTimeout(() => {
+                window.attachAtmosphereModalEvents();
+              }, 100);
+            }
+          });
       });
     </script>
   </body>

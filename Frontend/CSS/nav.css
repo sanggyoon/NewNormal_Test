@@ -1,0 +1,401 @@
+/* 가로 방향 (landscape) */
+:root {
+  --logo-height: 50px;
+  --nav-background-color: #2e2e2e;
+}
+
+.navList ul {
+  list-style: none;
+  font-size: 1.2rem;
+}
+.navList ul li {
+  display: flex;
+  align-items: center;
+  color: #7d7f82;
+}
+.navList ul a {
+  text-decoration: none;
+  color: inherit;
+}
+
+@media screen and (orientation: landscape) {
+  .navContainer {
+    background-color: var(--nav-background-color);
+    color: white;
+    width: 15%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 22px;
+  }
+
+  .houseInfoBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 40px 10%;
+  }
+  .houseInfoBox:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .houseInfoBox_Logo {
+    width: var(--logo-height) !important;
+    height: var(--logo-height) !important;
+    border-radius: 50%;
+    border: 1px solid white;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 10px;
+    background-color: black; /* temp */
+  }
+  .houseInfoBox_Text {
+    position: relative;
+    height: var(--logo-height);
+    width: 100%;
+  }
+  .houseInfoBox_Title {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    font-size: 1.3rem;
+  }
+  .houseInfoBox_Tag {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+  }
+
+  .navList ul li {
+    padding: 20px 10%;
+  }
+  .navList ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    color: white;
+  }
+
+  .icon_dashboard {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DashboardInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_dashboard {
+    background-image: url('../Public/Icons/DashboardActive.png');
+  }
+  .icon_devicePoint {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/PointInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_devicePoint {
+    background-image: url('../Public/Icons/PointActive.png');
+  }
+  .icon_odorDispersion {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/OdorDispersionInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_odorDispersion {
+    background-image: url('../Public/Icons/OdorDispersionActive.png');
+  }
+  .icon_data {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DataInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_data {
+    background-image: url('../Public/Icons/DataActive.png');
+  }
+
+  .nav_separateLine {
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 10px auto;
+  }
+
+  .navFooter {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 20px;
+  }
+  .navFooter_Alert,
+  .navFooter_Logout {
+    margin: 20px 10%;
+    font-size: 1.1rem;
+  }
+  .navFooter_Text {
+    width: 100%;
+    color: #7d7f82;
+  }
+
+  .icon_alert {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Alert.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .icon_logout {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Logout.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    border-radius: 8px;
+    position: relative;
+  }
+  .close {
+    color: #aaa;
+    position: absolute;
+    right: 16px;
+    top: 8px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #000;
+  }
+}
+
+/* 세로 방향 (portrait) */
+@media screen and (orientation: portrait) {
+  .navContainer {
+    background-color: var(--nav-background-color);
+    color: white;
+    width: 15%;
+    min-width: 240px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    font-size: 22px;
+  }
+
+  .houseInfoBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 40px 10%;
+  }
+  .houseInfoBox_Logo {
+    width: var(--logo-height) !important;
+    height: var(--logo-height) !important;
+    border-radius: 50%;
+    border: 1px solid white;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 10px;
+    background-color: black; /* temp */
+  }
+  .houseInfoBox_Text {
+    position: relative;
+    height: var(--logo-height);
+    width: 100%;
+  }
+  .houseInfoBox_Title {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    font-size: 1.3rem;
+  }
+  .houseInfoBox_Tag {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+  }
+
+  .navList ul li {
+    padding: 20px 10%;
+  }
+  .navList ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    color: white;
+  }
+
+  .icon_dashboard {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DashboardInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_dashboard {
+    background-image: url('../Public/Icons/DashboardActive.png');
+  }
+  .icon_devicePoint {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/PointInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_devicePoint {
+    background-image: url('../Public/Icons/PointActive.png');
+  }
+  .icon_odorDispersion {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/OdorDispersionInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_odorDispersion {
+    background-image: url('../Public/Icons/OdorDispersionActive.png');
+  }
+  .icon_data {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/DataInactive.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .navList ul li:hover .icon_data {
+    background-image: url('../Public/Icons/DataActive.png');
+  }
+
+  .nav_separateLine {
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 10px auto;
+  }
+
+  .navFooter {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 20px;
+  }
+  .navFooter_Alert,
+  .navFooter_Logout {
+    margin: 20px 10%;
+    font-size: 1.1rem;
+  }
+  .navFooter_Text {
+    width: 100%;
+    color: #7d7f82;
+  }
+
+  .icon_alert {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Alert.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .icon_logout {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url('../Public/Icons/Logout.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    border-radius: 8px;
+    position: relative;
+  }
+  .close {
+    color: #aaa;
+    position: absolute;
+    right: 16px;
+    top: 8px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #000;
+  }
+}

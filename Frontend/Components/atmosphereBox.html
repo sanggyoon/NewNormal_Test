@@ -1,26 +1,29 @@
 <!-- 반복 요소 -->
-<div class="atmosphereInfo_list">
+<div class="atmosphereInfo_container">
   <div class="atmosphereInfo_locationName"><span>퇴비사(외부)</span></div>
 
   <div class="atmosphereInfo_dataBox">
     <div class="dataBox_topRow">
       <div class="dataBox_atmosphere">
         <div class="atmosphere_wind">
-          <span>◉</span>
+          <span class="icon_windDirection">◉</span>
           <span>남서풍</span>
-          <span>123m/s</span>
+          <span>123</span>
+          <span>m/s</span>
         </div>
         <div class="atmosphere_temperature">
-          <span>◉</span>
-          <span>25º</span>
+          <span class="icon_temperature"></span>
+          <span>25</span>
+          <span>℃</span>
         </div>
         <div class="atmosphere_humidity">
-          <span>◉</span>
-          <span>55%</span>
+          <span class="icon_humidity"></span>
+          <span>55</span>
+          <span>%</span>
         </div>
       </div>
 
-      <a class="dataBox_detailButton">자세히 보기</a>
+      <div class="dataBox_detailButton">자세히 보기</div>
     </div>
 
     <div class="dataBox_separateLine"></div>
@@ -63,12 +66,21 @@
         <div class="gaseousState">단절</div>
         <div class="voidBox"></div>
         <div class="gaugeGraph">
-          <canvas id="carbonDioxideGauge_{{index}}" \></canvas>
+          <canvas id="carbonDioxideGauge_{{index}}"></canvas>
         </div>
         <div class="voidBox"></div>
         <div class="gaseousValue">0.0</div>
         <div class="gaseousName">이산화탄소</div>
       </div>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal atmosphereDetailModal" style="display: none">
+    <div class="modal-content">
+      <span class="close" id="closeAtmosphereModal">&times;</span>
+      <h2>상세 정보</h2>
+      <p>여기에 대기 정보의 상세 내용을 넣으세요.</p>
     </div>
   </div>
 </div>
