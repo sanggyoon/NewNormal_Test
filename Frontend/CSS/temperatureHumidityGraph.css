@@ -1,0 +1,8 @@
+.temperatureHumidityGraph {
+  display: flex;
+}
+
+.temperatureGraph,
+.humidityGraph {
+  width: 50%;
+}

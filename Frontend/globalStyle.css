@@ -42,10 +42,20 @@ body {
   #pointInfo > * {
     margin-bottom: 20px;
   }
+
+  .left_section,
+  .right_section {
+    width: 48.5%;
+  }
 }
 
 @media screen and (orientation: portrait) {
   .dashboardContainer {
     margin-bottom: 8vh;
+  }
+
+  .left_section,
+  .right_section {
+    width: 100%;
   }
 }

@@ -1,12 +1,5 @@
-@media screen and (orientation: landscape) {
-  .atmosphereInfoBox {
-    width: 48.5%;
-  }
-}
-@media screen and (orientation: portrait) {
-  .atmosphereInfoBox {
-    width: 100%;
-  }
+.atmosphereInfoBox {
+  width: 100%;
 }
 
 .atmosphereInfo_container {
