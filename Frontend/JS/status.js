@@ -62,3 +62,36 @@ $('#statusBar_choiceDate').daterangepicker(
 $('#statusBar_choiceDate').on('cancel.daterangepicker', function (ev, picker) {
   $(this).val('날짜 선택 ⏷');
 });
+
+// 빠른 기간 선택 버튼 이벤트
+$('.quick-range-btn').on('click', function () {
+  const range = $(this).data('range');
+  const today = moment();
+  let start = today.clone();
+  let end = today.clone();
+
+  switch (range) {
+    case 'day':
+      start = today.clone().subtract(1, 'days');
+      end = today.clone();
+      break;
+    case 'week':
+      start = today.clone().subtract(7, 'days');
+      end = today.clone();
+      break;
+    case 'month':
+      start = today.clone().subtract(1, 'months');
+      end = today.clone();
+      break;
+    case 'year':
+      start = today.clone().subtract(1, 'years');
+      end = today.clone();
+      break;
+  }
+
+  $('#statusBar_choiceDate').data('daterangepicker').setStartDate(start);
+  $('#statusBar_choiceDate').data('daterangepicker').setEndDate(end);
+  $('#statusBar_choiceDate').val(
+    start.format('YYYY-MM-DD') + ' ~ ' + end.format('YYYY-MM-DD')
+  );
+});
