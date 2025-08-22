@@ -1,6 +1,7 @@
 .lineGraphBox {
   margin-bottom: 20px;
   overflow: visible;
+  width: 100%;
 }
 
 .lineGraphBox canvas {
@@ -12,7 +13,6 @@
 /* temp */
 @media screen and (orientation: landscape) {
   .lineGraphBox {
-    width: 48.5%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -20,7 +20,6 @@
 }
 @media screen and (orientation: portrait) {
   .lineGraphBox {
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="CSS/atmosphereBox.css" />
     <link rel="stylesheet" href="CSS/radarGraph.css" />
     <link rel="stylesheet" href="CSS/lineGraphBox.css" />
+    <link rel="stylesheet" href="CSS/temperatureHumidityGraph.css" />
     <!-- Pretendard 웹폰트 CDN -->
     <link
       rel="stylesheet"
@@ -22,13 +23,21 @@
   </head>
   <body>
     <div id="navContainer"></div>
-    <div class="dashboardContainer landscape">
+    <div class="dashboardContainer">
       <div id="statusBar"></div>
       <div id="noticeBar"></div>
       <div id="pointInfo">
-        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
-        <div class="radarGraphBox" id="radarGraphBox"></div>
-        <div class="lineGraphBox" id="lineGraphBox"></div>
+        <div class="left_section">
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
+          <div class="lineGraphBox" id="lineGraphBox"></div>
+        </div>
+        <div class="right_section">
+          <div class="radarGraphBox" id="radarGraphBox"></div>
+          <div
+            class="temperatureHumidityGraph"
+            id="temperatureHumidityGraph"
+          ></div>
+        </div>
       </div>
     </div>
 
@@ -112,6 +121,17 @@
           document.body.appendChild(script);
         }
       });
+      loadComponent(
+        'Components/temperatureHumidityGraph.html',
+        'temperatureHumidityGraph',
+        () => {
+          if (window.Chart) {
+            const script = document.createElement('script');
+            script.src = './JS/temperatureHumidityGraph.js';
+            document.body.appendChild(script);
+          }
+        }
+      );
     </script>
   </body>
 </html>

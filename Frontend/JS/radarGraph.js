@@ -72,14 +72,14 @@ new Chart(ctx2, {
         top: 40,
       },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: false,
-        },
-      },
-    },
+    // scales: {
+    //   y: {
+    //     beginAtZero: true,
+    //     grid: {
+    //       display: false,
+    //     },
+    //   },
+    // },
     elements: {
       point: {
         radius: 0,
@@ -108,7 +108,7 @@ new Chart(ctx2, {
           chartArea.top - chartArea.top + titleY
         );
 
-        // Legend (inline)
+        Legend(inline);
         let x =
           chartArea.left + titleX + ctx2.measureText(options.title).width + 20;
         const y = chartArea.top - chartArea.top + titleY;

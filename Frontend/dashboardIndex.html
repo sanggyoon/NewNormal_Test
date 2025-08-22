@@ -20,13 +20,18 @@
 
   <body>
     <div id="navContainer"></div>
-    <div class="dashboardContainer landscape">
+    <div class="dashboardContainer">
       <div id="statusBar"></div>
       <div id="noticeBar"></div>
       <div id="atmosphereInfoContainer">
-        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
-        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_2"></div>
-        <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_3"></div>
+        <div class="left_section">
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_2"></div>
+        </div>
+        <div class="right_section">
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_3"></div>
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_4"></div>
+        </div>
       </div>
     </div>
 
@@ -98,6 +103,10 @@
         loadComponent(
           'Components/atmosphereBox.html',
           'atmosphereInfoBox_id_3'
+        ),
+        loadComponent(
+          'Components/atmosphereBox.html',
+          'atmosphereInfoBox_id_4'
         ),
       ]).then(() => {
         const script = document.createElement('script');

@@ -1,6 +1,7 @@
 .radarGraphBox {
   margin-bottom: 20px;
   overflow: visible;
+  width: 100%;
 }
 
 .radarGraphBox canvas {
@@ -11,17 +12,15 @@
 
 @media screen and (orientation: landscape) {
   .radarGraphBox {
-    width: 48.5%;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-center;
     justify-content: center;
   }
 }
 @media screen and (orientation: portrait) {
   .radarGraphBox {
-    width: 100%;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-center;
     justify-content: center;
   }
 }
