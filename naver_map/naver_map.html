@@ -22,11 +22,14 @@
         <div class="device-type-select">
           <label for="deviceType"><b>장치 타입 선택:</b></label>
           <select id="deviceType">
-            <option value="악취측정기">악취측정기(원)</option>
-            <option value="풍향계">풍향계(삼각형)</option>
-            <option value="악취저감장치">악취저감장치(사각형)</option>
+            <option value="악취측정기+온습도계">악취측정기+온습도계(원)</option>
+            <option value="음수투약기">음수투약기(사각형)</option>
+            <option value="풍향풍속계">풍향풍속계(삼각형)</option>
             <option value="게이트웨이">게이트웨이(마름모)</option>
           </select>
+          <div id="markerCountInfo" style="margin-top: 8px; font-size: 12px; color: #666;">
+            전체: 0/40 | 악취측정기+온습도계: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
+          </div>
         </div>
         <div id="map"></div>
       </section>
@@ -48,9 +51,43 @@
           this.markerIdSeq = 1;
           this.connectionLines = [];
           this.odorOverlay = null; // 악취 확산 오버레이 (로드 후 주입)
+          
+          // 마커 개수 제한 설정
+          this.maxMarkers = 40; // 전체 최대 마커 개수
+          this.maxMarkersPerType = {
+            '악취측정기+온습도계': 15,
+            '음수투약기': 8,
+            '풍향풍속계': 10,
+            '게이트웨이': 7
+          };
+        }
+
+        // 마커 추가 가능 여부 확인
+        canAddMarker(type) {
+          // 전체 마커 개수 확인
+          if (this.markers.length >= this.maxMarkers) {
+            alert(`최대 ${this.maxMarkers}개의 마커만 추가할 수 있습니다.`);
+            return false;
+          }
+          
+          // 타입별 마커 개수 확인
+          const currentTypeCount = this.markers.filter(m => m.type === type).length;
+          const maxTypeCount = this.maxMarkersPerType[type];
+          
+          if (currentTypeCount >= maxTypeCount) {
+            alert(`${type}은(는) 최대 ${maxTypeCount}개만 추가할 수 있습니다.`);
+            return false;
+          }
+          
+          return true;
         }
 
         addDeviceMarker(device) {
+          // 마커 추가 가능 여부 확인
+          if (!this.canAddMarker(device.type)) {
+            return;
+          }
+          
           const icon = this.createDeviceIcon(device.type);
           const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(device.lat, device.lng),
@@ -75,24 +112,122 @@
           });
           deleteLabel.open(this.map, marker);
 
-          // 마커 아래 라벨 (장치 종류) - 항상 표시
-          const typeLabel = new naver.maps.InfoWindow({
-            content: `<div class="marker-type-label">${device.type}</div>`,
-            borderWidth: 0,
-            backgroundColor: 'transparent',
-            anchorSize: new naver.maps.Size(0, 0),
-            anchorColor: 'transparent',
-            pixelOffset: new naver.maps.Point(0, 45),
-            zIndex: 15
-          });
-          typeLabel.open(this.map, marker);
+          // 마커 아래 라벨 (장치 종류) - 항상 표시 (OverlayView 사용)
+          class TypeLabelOverlay extends naver.maps.OverlayView {
+            constructor(position, content) {
+              super();
+              this.position = position;
+              this.content = content;
+              this.setMap(map);
+            }
+            
+            onAdd() {
+              const div = document.createElement('div');
+              div.className = 'marker-type-label';
+              div.innerHTML = this.content;
+              div.style.position = 'absolute';
+              div.style.zIndex = '15';
+              div.style.pointerEvents = 'none';
+              this.div = div;
+              this.getPanes().overlayLayer.appendChild(div);
+              this.draw();
+            }
+            
+            onRemove() {
+              if (this.div && this.div.parentNode) {
+                this.div.parentNode.removeChild(this.div);
+              }
+              this.div = null;
+            }
+            
+            draw() {
+              if (!this.div) return;
+              
+              const projection = this.getProjection();
+              const point = projection.fromCoordToOffset(this.position);
+              
+              // 현재 지도 상태 정보
+              const currentMapState = {
+                lat: this.position.lat(),
+                lng: this.position.lng(),
+                zoom: this.getMap().getZoom(),
+                size: this.getMap().getSize().toString() // 지도 크기 변화 감지
+              };
+              
+              // 지도 상태가 변경되었는지 확인 (위도/경도 + 줌 + 크기)
+              if (this.cachedMapState && 
+                  this.cachedMapState.lat === currentMapState.lat &&
+                  this.cachedMapState.lng === currentMapState.lng &&
+                  this.cachedMapState.zoom === currentMapState.zoom &&
+                  this.cachedMapState.size === currentMapState.size) {
+                return; // 모든 상태가 같으면 업데이트 생략
+              }
+              
+              // 캐시 업데이트
+              this.cachedMapState = currentMapState;
+              
+              // transform을 사용하여 더 빠른 위치 업데이트
+              this.div.style.transform = `translate(${point.x - this.div.offsetWidth / 2}px, ${point.y + 20}px)`;
+            }
+            
+            setPosition(position) {
+              // 위치가 실제로 변경되었는지 확인
+              if (this.position && 
+                  this.position.lat() === position.lat() && 
+                  this.position.lng() === position.lng()) {
+                return; // 위치가 같으면 업데이트 안함
+              }
+              
+              this.position = position;
+              this.draw();
+            }
+          }
+          
+          const typeLabel = new TypeLabelOverlay(
+            new naver.maps.LatLng(device.lat, device.lng),
+            device.type
+          );
+
+          // 센서별 측정 데이터 정보 생성
+          const getSensorDataInfo = (type) => {
+            switch(type) {
+              case '악취측정기+온습도계':
+                return `
+                  <b>측정 데이터:</b><br>
+                  • Gas 1~4 [ppm]: 암모니아, 황화수소, 이산화탄소, 메탄<br>
+                  • 온도<br>
+                  • 습도
+                `;
+              case '음수투약기':
+                return `
+                  <b>측정 데이터:</b><br>
+                  • 순시투입량<br>
+                  • 누적투입량
+                `;
+              case '풍향풍속계':
+                return `
+                  <b>측정 데이터:</b><br>
+                  • 풍향<br>
+                  • 풍속
+                `;
+              case '게이트웨이':
+                return `
+                  <b>기능:</b><br>
+                  • 데이터 수집 및 전송
+                `;
+              default:
+                return '';
+            }
+          };
 
           // 상세 정보 InfoWindow
           const detailInfo = new naver.maps.InfoWindow({
             content: `
               <div class="device-detail-info">
+                <b>${device.type}</b><br>
                 위도: <span style="color:#1976d2;">${device.lat.toFixed(6)}</span><br>
                 경도: <span style="color:#1976d2;">${device.lng.toFixed(6)}</span><br>
+                ${getSensorDataInfo(device.type)}
                 <button class="detail-delete-btn" onclick="window.deleteMarker(${device.id})">삭제</button>
               </div>
             `,
@@ -115,37 +250,45 @@
             }
           });
 
-          // 마커 드래그 시 라벨/연결선 동기화
+          // 마커 드래그 시 라벨/연결선 동기화 (최적화 + 캐싱)
+          let lastDragPosition = null;
           marker.addListener('drag', (e) => {
-            const newPosition = marker.getPosition();
-            device.lat = newPosition.lat();
-            device.lng = newPosition.lng();
-            
-            // 라벨 위치 업데이트
-            deleteLabel.setPosition(newPosition);
-            typeLabel.setPosition(newPosition);
-            
-            // 라벨이 계속 표시되도록 보장
-            if (!typeLabel.getMap()) {
-              typeLabel.open(this.map, marker);
-            }
-            
+            requestAnimationFrame(() => {
+              const newPosition = marker.getPosition();
+              
+              // 위치가 실제로 변경되었는지 확인
+              if (lastDragPosition && 
+                  lastDragPosition.lat() === newPosition.lat() && 
+                  lastDragPosition.lng() === newPosition.lng()) {
+                return; // 위치가 같으면 업데이트 안함
+              }
+              
+              lastDragPosition = newPosition;
+              device.lat = newPosition.lat();
+              device.lng = newPosition.lng();
+              
+              // 라벨 위치 업데이트 (즉시)
+              deleteLabel.setPosition(newPosition);
+              typeLabel.setPosition(new naver.maps.LatLng(device.lat, device.lng));
+            });
+          });
+
+          // 마커 드래그가 끝난 후 무거운 작업들 처리
+          marker.addListener('dragend', () => {
             // InfoWindow 내용 업데이트
             detailInfo.setContent(`
               <div class="device-detail-info">
+                <b>${device.type}</b><br>
                 위도: <span style="color:#1976d2;">${device.lat.toFixed(6)}</span><br>
                 경도: <span style="color:#1976d2;">${device.lng.toFixed(6)}</span><br>
+                ${getSensorDataInfo(device.type)}
                 <button class="detail-delete-btn" onclick="window.deleteMarker(${device.id})">삭제</button>
               </div>
             `);
             
+            // 연결선과 악취 확산 업데이트
             this.updateConnections();
             this.updateOdorOverlay();
-          });
-
-          // 마커 드래그가 끝난 후 연결선 업데이트
-          marker.addListener('dragend', () => {
-            this.updateConnections();
           });
 
           // 전역 삭제 함수 등록
@@ -154,11 +297,12 @@
             if (targetMarker) {
               targetMarker.marker.setMap(null);
               targetMarker.deleteLabel.close();
-              targetMarker.typeLabel.close();
+              targetMarker.typeLabel.setMap(null);
               targetMarker.detailInfo.close();
               this.markers = this.markers.filter(m => m.id !== id);
               this.updateConnections();
               this.updateOdorOverlay();
+              this.updateMarkerCountInfo();
             }
           };
 
@@ -171,6 +315,36 @@
           });
           this.updateConnections();
           this.updateOdorOverlay();
+          this.updateMarkerCountInfo();
+        }
+
+        // 마커 개수 정보 업데이트
+        updateMarkerCountInfo() {
+          const countInfo = document.getElementById('markerCountInfo');
+          if (!countInfo) return;
+          
+          const totalCount = this.markers.length;
+          const odorCount = this.markers.filter(m => m.type === '악취측정기+온습도계').length;
+          const waterCount = this.markers.filter(m => m.type === '음수투약기').length;
+          const windCount = this.markers.filter(m => m.type === '풍향풍속계').length;
+          const gatewayCount = this.markers.filter(m => m.type === '게이트웨이').length;
+          
+          countInfo.innerHTML = `
+            전체: ${totalCount}/${this.maxMarkers} | 
+            악취측정기+온습도계: ${odorCount}/${this.maxMarkersPerType['악취측정기+온습도계']} | 
+            음수투약기: ${waterCount}/${this.maxMarkersPerType['음수투약기']} | 
+            풍향풍속계: ${windCount}/${this.maxMarkersPerType['풍향풍속계']} | 
+            게이트웨이: ${gatewayCount}/${this.maxMarkersPerType['게이트웨이']}
+          `;
+          
+          // 제한에 가까워지면 색상 변경
+          if (totalCount >= this.maxMarkers * 0.8) {
+            countInfo.style.color = '#e53935';
+          } else if (totalCount >= this.maxMarkers * 0.6) {
+            countInfo.style.color = '#f57c00';
+          } else {
+            countInfo.style.color = '#666';
+          }
         }
 
         updateConnections() {
@@ -180,6 +354,9 @@
           // 게이트웨이와 다른 노드 연결
           const gateways = this.markers.filter(m => m.type === '게이트웨이');
           const others = this.markers.filter(m => m.type !== '게이트웨이');
+          
+          console.log('연결선 업데이트:', { gateways: gateways.length, others: others.length });
+          
           gateways.forEach(gateway => {
             others.forEach(other => {
               // 마커의 현재 위치를 가져와서 연결선 생성
@@ -198,6 +375,7 @@
                 zIndex: 5
               });
               this.connectionLines.push(line);
+              console.log('연결선 생성:', gateway.type, '->', other.type);
             });
           });
         }
@@ -211,18 +389,33 @@
           ctx.lineWidth = 2;
           let fill = '#1976d2';
           let stroke = '#1565c0';
+          
+          // 타입별 색상 설정
           if (type === '게이트웨이') {
             fill = '#43a047';
             stroke = '#2e7d32';
+          } else if (type === '음수투약기') {
+            fill = '#ff9800';
+            stroke = '#f57c00';
+          } else if (type === '풍향풍속계') {
+            fill = '#9c27b0';
+            stroke = '#7b1fa2';
+          } else if (type === '악취측정기+온습도계') {
+            fill = '#2196f3';
+            stroke = '#1976d2';
           }
+          
           ctx.strokeStyle = stroke;
           ctx.fillStyle = fill;
-          if (type === '악취측정기') {
+          
+          if (type === '악취측정기+온습도계') {
+            // 원형 아이콘 (기존 악취측정기와 동일)
             ctx.beginPath();
             ctx.arc(size / 2, size / 2, size / 2 - 3, 0, 2 * Math.PI);
             ctx.fill();
             ctx.stroke();
-          } else if (type === '풍향계') {
+          } else if (type === '풍향풍속계') {
+            // 삼각형 아이콘 (기존 풍향계와 동일)
             ctx.beginPath();
             ctx.moveTo(size / 2, 4);
             ctx.lineTo(size - 4, size - 4);
@@ -230,10 +423,12 @@
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
-          } else if (type === '악취저감장치') {
+          } else if (type === '음수투약기') {
+            // 사각형 아이콘 (기존 악취저감장치와 동일)
             ctx.fillRect(4, 4, size - 8, size - 8);
             ctx.strokeRect(4, 4, size - 8, size - 8);
           } else if (type === '게이트웨이') {
+            // 마름모 아이콘 (기존과 동일)
             ctx.beginPath();
             ctx.moveTo(size / 2, 4);
             ctx.lineTo(size - 4, size / 2);
@@ -259,13 +454,16 @@
         updateOdorOverlay() {
           if (!this.odorOverlay) return;
           const sensors = this.markers
-            .filter(m => m.type === '악취측정기')
+            .filter(m => m.type === '악취측정기+온습도계')
             .map(m => {
               const pos = m.marker.getPosition();
               return { lat: pos.lat(), lng: pos.lng() };
             });
+          console.log('악취 확산 업데이트:', sensors.length, '개 센서');
           this.odorOverlay.setSensors(sensors);
         }
+
+
       }
 
       // 지도 클릭 이벤트 등록 함수 (onload 바깥)
@@ -289,9 +487,9 @@
         const legendList = document.getElementById('legendList');
         if (!legendList || !mapDeviceManager) return;
         const items = [
-          { type: '악취측정기', label: '악취측정기' },
-          { type: '풍향계', label: '풍향계' },
-          { type: '악취저감장치', label: '악취저감장치' },
+          { type: '악취측정기+온습도계', label: '악취측정기+온습도계' },
+          { type: '음수투약기', label: '음수투약기' },
+          { type: '풍향풍속계', label: '풍향풍속계' },
           { type: '게이트웨이', label: '게이트웨이' }
         ];
         legendList.innerHTML = '';
@@ -443,6 +641,17 @@
         window.mapDeviceManager = mapDeviceManager;
         setupMapEvents();
         renderLegend();
+        mapDeviceManager.updateMarkerCountInfo();
+
+        // 지도 크기 변경 감지
+        map.addListener('resize', () => {
+          // 모든 라벨 강제 업데이트
+          mapDeviceManager.markers.forEach(marker => {
+            if (marker.typeLabel) {
+              marker.typeLabel.draw();
+            }
+          });
+        });
       };
     </script>
   </body>
