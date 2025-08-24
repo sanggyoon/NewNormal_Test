@@ -13,7 +13,7 @@ for (let i = 0; i < 4; i++) {
   const data = DummyData.items[i];
   // 암모니아
   document.querySelectorAll(`#ammoniaGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.gas1, 3.0);
+    const [startColor, stopColor] = getGradientByValue(data.avg1, 3.0);
     const opts = {
       angle: 0.12,
       lineWidth: 0.44,
@@ -34,13 +34,13 @@ for (let i = 0; i < 4; i++) {
     const gauge = new Gauge(canvas).setOptions(opts);
     gauge.maxValue = 3.0;
     gauge.setMinValue(0);
-    gauge.animationSpeed = 100;
-    gauge.set(data.gas1);
+    gauge.animationSpeed = 128;
+    gauge.set(data.avg1);
   });
 
   // 황화수소
   document.querySelectorAll(`#hydrogenSulfideGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.gas2, 3.0);
+    const [startColor, stopColor] = getGradientByValue(data.avg2, 3.0);
     const opts = {
       angle: 0.12,
       lineWidth: 0.44,
@@ -61,13 +61,13 @@ for (let i = 0; i < 4; i++) {
     const gauge = new Gauge(canvas).setOptions(opts);
     gauge.maxValue = 3.0;
     gauge.setMinValue(0);
-    gauge.animationSpeed = 100;
-    gauge.set(data.gas2);
+    gauge.animationSpeed = 128;
+    gauge.set(data.avg2);
   });
 
   // 메탄
   document.querySelectorAll(`#methaneGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.gas3, 3.0);
+    const [startColor, stopColor] = getGradientByValue(data.avg3, 3.0);
     const opts = {
       angle: 0.12,
       lineWidth: 0.44,
@@ -88,13 +88,13 @@ for (let i = 0; i < 4; i++) {
     const gauge = new Gauge(canvas).setOptions(opts);
     gauge.maxValue = 3.0;
     gauge.setMinValue(0);
-    gauge.animationSpeed = 100;
-    gauge.set(data.gas3);
+    gauge.animationSpeed = 128;
+    gauge.set(data.avg3);
   });
 
   // 이산화탄소
   document.querySelectorAll(`#carbonDioxideGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.gas4, 3.0);
+    const [startColor, stopColor] = getGradientByValue(data.avg4, 3.0);
     const opts = {
       angle: 0.12,
       lineWidth: 0.44,
@@ -115,7 +115,7 @@ for (let i = 0; i < 4; i++) {
     const gauge = new Gauge(canvas).setOptions(opts);
     gauge.maxValue = 3.0;
     gauge.setMinValue(0);
-    gauge.animationSpeed = 100;
-    gauge.set(data.gas4);
+    gauge.animationSpeed = 128;
+    gauge.set(data.avg4);
   });
 }

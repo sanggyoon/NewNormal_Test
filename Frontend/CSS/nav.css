@@ -73,7 +73,8 @@
   .navList ul li {
     padding: 20px 10%;
   }
-  .navList ul li:hover {
+  .navList ul li:hover,
+  .navList ul li.active {
     background-color: rgba(255, 255, 255, 0.1);
     cursor: pointer;
     color: white;
@@ -89,7 +90,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_dashboard {
+  .navList ul li:hover .icon_dashboard,
+  .navList ul li.active .icon_dashboard {
     background-image: url('../Public/Icons/DashboardActive.png');
   }
   .icon_devicePoint {
@@ -102,7 +104,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_devicePoint {
+  .navList ul li:hover .icon_devicePoint,
+  .navList ul li.active .icon_devicePoint {
     background-image: url('../Public/Icons/PointActive.png');
   }
   .icon_odorDispersion {
@@ -115,7 +118,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_odorDispersion {
+  .navList ul li:hover .icon_odorDispersion,
+  .navList ul li.active .icon_odorDispersion {
     background-image: url('../Public/Icons/OdorDispersionActive.png');
   }
   .icon_data {
@@ -128,7 +132,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_data {
+  .navList ul li:hover .icon_data,
+  .navList ul li.active .icon_data {
     background-image: url('../Public/Icons/DataActive.png');
   }
 
@@ -162,6 +167,9 @@
   .navFooter_Text {
     width: 100%;
     color: #7d7f82;
+  }
+  .navFooter_Text:hover {
+    color: white;
   }
 
   .icon_alert {
