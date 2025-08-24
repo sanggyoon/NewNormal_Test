@@ -29,8 +29,8 @@
   display: inline-block;
 }
 .quick-range-btn {
-  background: #f5f5f7;
-  border: 1px solid #ccc;
+  background: white;
+  border: 1px solid #eaeaeb;
   border-radius: 4px;
   padding: 6px 12px;
   font-size: 0.8rem;

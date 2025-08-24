@@ -11,3 +11,10 @@ window.onclick = function (event) {
     document.getElementById('houseInfoModal').style.display = 'none';
   }
 };
+
+// 로그아웃 버튼
+document
+  .querySelector('.navFooter_Logout')
+  .addEventListener('click', function () {
+    window.location.href = 'loginIndex.html';
+  });
