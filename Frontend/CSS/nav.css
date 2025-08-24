@@ -147,8 +147,17 @@
   }
   .navFooter_Alert,
   .navFooter_Logout {
-    margin: 20px 10%;
+    padding: 15px 10%;
     font-size: 1.1rem;
+  }
+  .navFooter ul {
+    list-style: none;
+  }
+  .navFooter ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .navFooter ul li:hover span {
+    color: white;
   }
   .navFooter_Text {
     width: 100%;
@@ -335,10 +344,21 @@
     bottom: 0;
     margin-bottom: 20px;
   }
-  .navFooter_Alert,
-  .navFooter_Logout {
+  .navFooter ul {
+    list-style: none;
+  }
+  .navFooter ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  .navFooter_Alert {
     margin: 20px 10%;
     font-size: 1.1rem;
+  }
+
+  .navFooter_Logout {
+    display: block;
+    margin: 20px auto;
   }
   .navFooter_Text {
     width: 100%;

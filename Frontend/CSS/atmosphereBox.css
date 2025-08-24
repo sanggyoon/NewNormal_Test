@@ -57,13 +57,17 @@
 .dataBox_detailButton {
   align-self: flex-end;
   font-size: 0.8rem;
-  color: white;
-  background-color: #3c3c3e;
+  color: black;
+  background-color: #eaeaeb;
+  border: 1px solid #e5e5e6;
   padding: 8px 18px;
   border-radius: 6px;
+  text-decoration: none;
 }
 .dataBox_detailButton:hover {
   cursor: pointer;
+  background-color: #3c3c3e;
+  color: white;
 }
 
 .dataBox_separateLine {
