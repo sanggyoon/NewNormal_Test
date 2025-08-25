@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>네이버 지도 테스트 맵</title>
+    <style>
+      #testMap {
+        width: 100vw;
+        height: 100vh;
+        min-height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="testMap"></div>
+    <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=jz78vv4dg0"></script>
+    <script>
+      // 네이버 지도 API가 로드된 후 지도 생성
+      function initTestMap() {
+        const map = new naver.maps.Map('testMap', {
+          center: new naver.maps.LatLng(37.5665, 126.9780), // 서울 시청 좌표
+          zoom: 15
+        });
+
+        // 테스트용 마커 추가
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(37.5665, 126.9780),
+          map: map,
+          title: '테스트 마커'
+        });
+      }
+
+      if (window.naver && window.naver.maps) {
+        initTestMap();
+      } else {
+        // API가 비동기로 로드될 수 있으므로 onload 이벤트 사용
+        window.onload = function() {
+          if (window.naver && window.naver.maps) {
+            initTestMap();
+          } else {
+            // 혹시라도 늦게 로드될 경우를 대비한 polling
+            let tries = 0;
+            const timer = setInterval(function() {
+              if (window.naver && window.naver.maps) {
+                clearInterval(timer);
+                initTestMap();
+              }
+              tries++;
+              if (tries > 20) clearInterval(timer);
+            }, 300);
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
