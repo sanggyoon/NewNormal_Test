@@ -1,0 +1,147 @@
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max(800px, 50%);
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+.close {
+  color: #aaa;
+  position: absolute;
+  right: 20px;
+  top: 16px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #000;
+}
+
+.farmTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.farmTitle h2 {
+  margin-right: 10px;
+  font-size: 28px;
+}
+.type_group span {
+  display: inline-block;
+  background-color: #f3f3f3;
+  color: #333;
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin-left: 4px;
+}
+
+.livestockCount {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #444;
+}
+
+.farmAddress_box {
+  display: flex;
+  align-items: flex-start;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 24px;
+}
+.icon_location {
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+.managerInfoSection {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 40px;
+}
+.managerInfoSection > div {
+  flex: 1;
+}
+.name {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.position {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 6px;
+}
+.contactNumber,
+.contacNumber {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.farmOwner_box,
+.farmManagers_box {
+  border-right: 1px solid #eee;
+}
+
+.farmPhotos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.farmPhoto {
+  background-color: #d9d9d9;
+  width: 100%;
+  padding-top: 75%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+}
+
+/* 이미지 백업용 배경 이미지 설정 */
+.farmPhoto_1 {
+  background-image: url('../Public/Photos/farmPhoto_temp_1.jpg');
+}
+.farmPhoto_2 {
+  background-image: url('../Public/Photos/farmPhoto_temp_2.jpg');
+}
+.farmPhoto_3 {
+  background-image: url('../Public/Photos/farmPhoto_temp_3.jpg');
+}
+.farmPhoto_4 {
+  background-image: url('../Public/Photos/farmPhoto_temp_4.jpg');
+}
+
+@media screen and (orientation: portrait) {
+  .managerInfoSection {
+    flex-direction: column;
+  }
+
+  .verticalSeparateLine {
+    display: none;
+  }
+
+  .modal-content {
+    width: 90%;
+    height: auto;
+  }
+}
