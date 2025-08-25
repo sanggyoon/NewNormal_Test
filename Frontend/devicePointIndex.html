@@ -93,6 +93,30 @@
 
     <!-- 로딩 컴포넌트 로직 -->
     <script>
+      // 풍향 아이콘 회전 계산 함수
+      function getWindDirectionAngle(direction) {
+        const map = {
+          동풍: 180,
+          남동풍: 225,
+          남풍: 270,
+          남서풍: 315,
+          서풍: 0,
+          북서풍: 45,
+          북풍: 90,
+          북동풍: 135,
+        };
+        return map[direction.trim()] ?? 0;
+      }
+
+      (function () {
+        try {
+          const sp = sessionStorage.getItem('selectedPoint');
+          window.SelectedPoint = sp ? JSON.parse(sp) : null;
+        } catch (e) {
+          window.SelectedPoint = null;
+        }
+      })();
+
       async function loadComponent(componentPath, targetId, callback) {
         const response = await fetch(componentPath);
         const html = await response.text();
@@ -147,6 +171,18 @@
           container.querySelector(
             '.atmosphere_humidity span:nth-child(2)'
           ).textContent = data.humid.avg;
+          container.querySelector(
+            '.atmosphere_wind span:nth-child(2)'
+          ).textContent = data.wind.dir;
+
+          container.querySelector(
+            '.atmosphere_wind span:nth-child(3)'
+          ).textContent = data.wind.speed;
+
+          // 풍향 아이콘 회전 추가
+          const windIcon = container.querySelector('.icon_windDirection');
+          const angle = getWindDirectionAngle(data.wind.dir);
+          windIcon.style.transform = `rotate(${angle}deg)`;
 
           // 각 가스 상태 적용 함수 (dashboard 로직 재사용)
           function applyGas(boxSelector, gasValue) {

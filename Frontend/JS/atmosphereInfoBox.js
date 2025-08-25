@@ -71,6 +71,33 @@ function applyDummyDataToAtmosphereBox(index, targetId) {
 
   if (!container) return;
 
+  // 풍향 아이콘 회전
+  function getWindDirectionAngle(direction) {
+    const map = {
+      동풍: 180,
+      남동풍: 225,
+      남풍: 270,
+      남서풍: 315,
+      서풍: 0,
+      북서풍: 45,
+      북풍: 90,
+      북동풍: 135,
+    };
+    return map[direction] ?? 0;
+  }
+
+  const windDir = data.windDirection;
+  const windSpeed = data.windSpeed;
+
+  container.querySelector('.atmosphere_wind span:nth-child(2)').textContent =
+    windDir;
+  container.querySelector('.atmosphere_wind span:nth-child(3)').textContent =
+    windSpeed;
+
+  const windIcon = container.querySelector('.icon_windDirection');
+  const angle = getWindDirectionAngle(windDir);
+  windIcon.style.transform = `rotate(${angle}deg)`;
+
   // 위치명
   container.querySelector('.atmosphereInfo_locationName span').textContent =
     data.farmsub;
