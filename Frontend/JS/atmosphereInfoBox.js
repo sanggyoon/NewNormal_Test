@@ -175,12 +175,56 @@ function applyDummyDataToAtmosphereBox(index, targetId) {
   co2Box.style.borderColor = co2State.border_color;
 }
 
-// 적용
+// 선택된 기간 인덱스를 기준으로 해당 가스값을 업데이트하는 함수 -> 버튼 클릭시 정해진 값이 나오는 하드 코딩
+function updateGasValues(index, gasIdx) {
+  const data = DummyData.items[index];
+  const container = document.getElementById(`atmosphereInfoBox_id_${index}`);
+  if (!container) return;
+
+  const gases = [
+    { key: 'gas1', box: 'ammoniaBox' },
+    { key: 'gas2', box: 'hydrogenSulfideBox' },
+    { key: 'gas3', box: 'methaneBox' },
+    { key: 'gas4', box: 'carbonDioxideBox' },
+  ];
+
+  gases.forEach((gas, i) => {
+    const value = data[gas.key][gasIdx] ?? 0;
+    const state = getGasState(value);
+    const box = container.querySelector(`.${gas.box}`);
+    box.querySelector('.gaseousState').textContent = state.text;
+    box.querySelector('.gaseousState').style.backgroundColor = state.btn_color;
+    box.querySelector('.gaseousState').style.color = state.text_color;
+    box.querySelector('.gaseousValue').textContent = value;
+    box.querySelector('.gaseousValue').style.color = state.text_color;
+    box.style.backgroundColor = state.background_color;
+    box.style.borderColor = state.border_color;
+  });
+}
+
+// 버튼 클릭시 가스 값 업데이트
+function attachGasRangeButtonEvents() {
+  document.querySelectorAll('.quick-range-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const range = btn.getAttribute('data-range');
+      const idxMap = { day: 0, week: 1, month: 2, year: 3 };
+      const gasIndex = idxMap[range] ?? 0;
+
+      DummyData.items.forEach((_, i) => {
+        updateGasValues(i, gasIndex);
+      });
+    });
+  });
+}
+window.attachGasRangeButtonEvents = attachGasRangeButtonEvents;
+
 window.applyAllAtmosphereDummyData = function () {
   DummyData.items.forEach((_, i) => {
     const targetId = `atmosphereInfoBox_id_${i}`;
     applyDummyDataToAtmosphereBox(i, targetId);
+    updateGasValues(i, 0);
   });
+  attachGasRangeButtonEvents();
 };
 
 // 포인트별 상세보기 버튼 이벤트, 해당 데이터를 세션에 저장
