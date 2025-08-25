@@ -155,3 +155,49 @@ window.applyAllAtmosphereDummyData = function () {
   applyDummyDataToAtmosphereBox(2, 'atmosphereInfoBox_id_2');
   applyDummyDataToAtmosphereBox(3, 'atmosphereInfoBox_id_3');
 };
+
+// 포인트별 상세보기 버튼 이벤트, 해당 데이터를 세션에 저장
+function attachDetailButtonHandlers() {
+  document.querySelectorAll('.dataBox_detailButton').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.getAttribute('data-index'));
+      const raw = DummyData.items[idx];
+      const payload = {
+        id: raw.id,
+        farmname: raw.farmname,
+        farmsub: raw.farmsub,
+        wind: { dir: raw.windDirection, speed: raw.windSpeed },
+        temp: { avg: raw.avgTemp, series: raw.temp },
+        humid: { avg: raw.avgHumid, series: raw.humid },
+        gases: {
+          NH3: {
+            avg: raw.avg1,
+            max: raw.max1,
+            series: raw.gas1,
+            last: raw.gas1.at(-1),
+          },
+          H2S: {
+            avg: raw.avg2,
+            max: raw.max2,
+            series: raw.gas2,
+            last: raw.gas2.at(-1),
+          },
+          CH4: {
+            avg: raw.avg3,
+            max: raw.max3,
+            series: raw.gas3,
+            last: raw.gas3.at(-1),
+          },
+          CO2: {
+            avg: raw.avg4,
+            max: raw.max4,
+            series: raw.gas4,
+            last: raw.gas4.at(-1),
+          },
+        },
+      };
+      sessionStorage.setItem('selectedPoint', JSON.stringify(payload));
+    });
+  });
+}
+window.attachDetailButtonHandlers = attachDetailButtonHandlers;

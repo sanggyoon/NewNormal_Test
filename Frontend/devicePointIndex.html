@@ -72,6 +72,18 @@
       href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
     />
 
+    <!-- 세션에 저장된 데이터 불러오기 -->
+    <script>
+      (function () {
+        try {
+          const sp = sessionStorage.getItem('selectedPoint');
+          window.SelectedPoint = sp ? JSON.parse(sp) : null;
+        } catch (e) {
+          window.SelectedPoint = null;
+        }
+      })();
+    </script>
+
     <!-- 로딩 컴포넌트 로직 -->
     <script>
       async function loadComponent(componentPath, targetId, callback) {
@@ -92,21 +104,24 @@
         script.src = './JS/status.js';
         document.body.appendChild(script);
       });
+
       loadComponent(
         'Components/noticeBar.html',
         'noticeBar',
         runNoticeBarAnimation
       );
+
       Promise.all([
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_id_1'
+          'atmosphereInfoBox_id_0'
         ),
       ]).then(() => {
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
         document.body.appendChild(script);
       });
+
       loadComponent('Components/radarGraph.html', 'radarGraphBox', () => {
         if (window.Chart) {
           const script = document.createElement('script');
@@ -114,6 +129,7 @@
           document.body.appendChild(script);
         }
       });
+
       loadComponent('Components/lineGraphBox.html', 'lineGraphBox', () => {
         if (window.Chart) {
           const script = document.createElement('script');
@@ -121,6 +137,7 @@
           document.body.appendChild(script);
         }
       });
+
       loadComponent(
         'Components/temperatureHumidityGraph.html',
         'temperatureHumidityGraph',

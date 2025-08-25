@@ -135,6 +135,9 @@
         window.applyAllAtmosphereDummyData();
         window.attachAtmosphereModalEvents();
 
+        if (window.attachDetailButtonHandlers)
+          window.attachDetailButtonHandlers();
+
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
         document.body.appendChild(script);
