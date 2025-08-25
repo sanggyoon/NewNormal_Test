@@ -42,7 +42,7 @@
       let map = null;
       let mapDeviceManager = null;
       const DEFAULT_ODOR_RADIUS_M = 120; // 악취 확산 반경(미터)
-      let odorOverlay = null; // 지도 로드 후 생성
+      
 
       // 클래스 정의 (onload 바깥)
       class MapDeviceManager {
@@ -518,7 +518,9 @@
       document.head.appendChild(script);
 
       script.onload = () => {
+        
         // OdorHeatmapOverlay 정의 (SDK 로드 이후 안전하게 정의)
+        /*
         class OdorHeatmapOverlay extends naver.maps.OverlayView {
           constructor(map, radiusMeters = DEFAULT_ODOR_RADIUS_M) {
             super();
@@ -629,6 +631,65 @@
             }
             ctx.putImageData(img, 0, 0);
           }
+        }*/
+        // 확대/축소에 따라 크기가 변하는 이미지 지상 오버레이
+        class GroundImageOverlay extends naver.maps.OverlayView {
+          constructor(map, imageUrl, bounds, opacity = 0.5) {
+            super();
+            this.map = map;
+            this.imageUrl = imageUrl;
+            this.bounds = bounds;
+            this.opacity = opacity;
+            this.img = null;
+            this.setMap(map);
+          }
+          onAdd() {
+            const img = document.createElement('img');
+            img.src = this.imageUrl;
+            img.style.position = 'absolute';
+            img.style.pointerEvents = 'none';
+            img.style.opacity = String(this.opacity);
+            img.style.transformOrigin = 'top left';
+            this.img = img;
+            this.getPanes().overlayLayer.appendChild(img);
+          }
+          onRemove() {
+            if (this.img && this.img.parentNode) {
+              this.img.parentNode.removeChild(this.img);
+            }
+            this.img = null;
+          }
+          setOpacity(opacity) {
+            this.opacity = opacity;
+            if (this.img) this.img.style.opacity = String(opacity);
+          }
+          setUrl(url) {
+            this.imageUrl = url;
+            if (this.img) this.img.src = url;
+          }
+          setBounds(bounds) {
+            this.bounds = bounds;
+            this.draw();
+          }
+          draw() {
+            if (!this.img || !this.bounds) return;
+            const proj = this.getProjection();
+            const sw = proj.fromCoordToOffset(this.bounds.getSW());
+            const ne = proj.fromCoordToOffset(this.bounds.getNE());
+            const left = sw.x;
+            const top = ne.y;
+            const width = ne.x - sw.x;
+            const height = sw.y - ne.y;
+            if (width <= 0 || height <= 0) return;
+            const scale = 25;
+            const scaledWidth = width * scale;
+            const scaledHeight = height * scale;
+            const scaledLeft = left - (scaledWidth - width) / 2;
+            const scaledTop = top - (scaledHeight - height) / 2;
+            this.img.style.transform = `translate(${scaledLeft}px, ${scaledTop}px)`;
+            this.img.style.width = `${scaledWidth}px`;
+            this.img.style.height = `${scaledHeight}px`;
+          }
         }
         var mapOptions = {
           center: new naver.maps.LatLng(36.601110505, 127.296293603),
@@ -637,12 +698,46 @@
         map = new naver.maps.Map('map', mapOptions);
         mapDeviceManager = new MapDeviceManager(map);
         // 악취 확산 오버레이 생성 후 매니저에 주입
-        const overlay = new OdorHeatmapOverlay(map, DEFAULT_ODOR_RADIUS_M);
-        mapDeviceManager.setOdorOverlay(overlay);
+        // const overlay = new OdorHeatmapOverlay(map, DEFAULT_ODOR_RADIUS_M);
+        // mapDeviceManager.setOdorOverlay(overlay);
         window.mapDeviceManager = mapDeviceManager;
         setupMapEvents();
         renderLegend();
         mapDeviceManager.updateMarkerCountInfo();
+
+        // 초기 장치 마커 로드 (devices.json)
+        fetch('./devices.json')
+          .then(res => res.json())
+          .then(list => {
+            if (!Array.isArray(list)) return;
+            // id 충돌 방지를 위해 시퀀스 보정
+            let maxId = 0;
+            list.forEach(d => { if (typeof d.id === 'number') maxId = Math.max(maxId, d.id); });
+            mapDeviceManager.markerIdSeq = Math.max(mapDeviceManager.markerIdSeq, maxId + 1);
+            // 마커 추가
+            list.forEach(d => {
+              mapDeviceManager.addDeviceMarker({
+                id: d.id ?? mapDeviceManager.markerIdSeq++,
+                type: d.type,
+                name: d.name || `${d.type} ${d.id || ''}`.trim(),
+                lat: d.lat,
+                lng: d.lng
+              });
+            });
+          })
+          .catch(err => console.error('초기 장치 로드 실패:', err));
+
+        // 예시: 이미지 지상 오버레이 인스턴스 생성 (URL/영역은 상황에 맞게 변경)
+        const sw = new naver.maps.LatLng(36.600850, 127.296000);
+        const ne = new naver.maps.LatLng(36.601350, 127.296550);
+        const groundBounds = new naver.maps.LatLngBounds(sw, ne);
+        const groundImage = new GroundImageOverlay(
+          map,
+          './Photos/Odor_conversion_rate_Photo.png',
+          groundBounds,
+          0.4
+        );
+        window.groundImage = groundImage;
 
         // 지도 크기 변경 감지
         map.addListener('resize', () => {
