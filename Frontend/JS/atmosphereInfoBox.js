@@ -150,10 +150,22 @@ function applyDummyDataToAtmosphereBox(index, targetId) {
 
 // 적용
 window.applyAllAtmosphereDummyData = function () {
-  applyDummyDataToAtmosphereBox(0, 'atmosphereInfoBox_id_0');
-  applyDummyDataToAtmosphereBox(1, 'atmosphereInfoBox_id_1');
-  applyDummyDataToAtmosphereBox(2, 'atmosphereInfoBox_id_2');
-  applyDummyDataToAtmosphereBox(3, 'atmosphereInfoBox_id_3');
+  DummyData.items.forEach((dataItem, i) => {
+    const targetId = `atmosphereInfoBox_id_${i}`;
+    const box = document.getElementById(targetId);
+
+    if (!box) return;
+
+    const locationSpan = box.querySelector('.atmosphereInfo_locationName span');
+    if (!locationSpan) return;
+
+    const locationName = locationSpan.textContent.trim();
+
+    // dummyData의 farmsub와 비교
+    if (dataItem.farmsub === locationName) {
+      applyDummyDataToAtmosphereBox(i, targetId);
+    }
+  });
 };
 
 // 포인트별 상세보기 버튼 이벤트, 해당 데이터를 세션에 저장
