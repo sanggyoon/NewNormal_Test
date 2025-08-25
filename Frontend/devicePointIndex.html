@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="CSS/nav.css" />
     <link rel="stylesheet" href="CSS/statusBar.css" />
     <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/farmInfoModal.css" />
     <link rel="stylesheet" href="CSS/atmosphereBox.css" />
     <link rel="stylesheet" href="CSS/radarGraph.css" />
     <link rel="stylesheet" href="CSS/lineGraphBox.css" />
@@ -28,7 +29,10 @@
       <div id="noticeBar"></div>
       <div id="pointInfo">
         <div class="left_section">
-          <div class="atmosphereInfoBox" id="atmosphereInfoBox_session"></div>
+          <div
+            class="atmosphereInfoBox"
+            id="atmosphereInfoBox_id_{{index}}"
+          ></div>
           <div class="lineGraphBox" id="lineGraphBox"></div>
         </div>
         <div class="right_section">
@@ -46,6 +50,9 @@
 
     <!-- 공지사항 애니메이션 스크립트 -->
     <script src="./JS/noticeBar.js"></script>
+
+    <!-- 대기 정보 박스 스크립트 -->
+    <script src="./JS/atmosphereInfoBox.js"></script>
 
     <!-- 게이지 그래프 라이브러리 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
@@ -115,15 +122,16 @@
       Promise.all([
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_session'
+          'atmosphereInfoBox_id_{{index}}'
         ),
       ]).then(() => {
         if (window.SelectedPoint) {
           const data = window.SelectedPoint;
           const container = document.getElementById(
-            'atmosphereInfoBox_session'
+            'atmosphereInfoBox_id_{{index}}'
           );
 
+          // 위치 / 기본 정보
           container.querySelector(
             '.atmosphereInfo_locationName span'
           ).textContent = data.farmsub;
@@ -140,16 +148,28 @@
             '.atmosphere_humidity span:nth-child(2)'
           ).textContent = data.humid.avg;
 
-          container.querySelector('.ammoniaBox .gaseousValue').textContent =
-            data.gases.NH3.avg;
-          container.querySelector(
-            '.hydrogenSulfideBox .gaseousValue'
-          ).textContent = data.gases.H2S.avg;
-          container.querySelector('.methaneBox .gaseousValue').textContent =
-            data.gases.CH4.avg;
-          container.querySelector(
-            '.carbonDioxideBox .gaseousValue'
-          ).textContent = data.gases.CO2.avg;
+          // 각 가스 상태 적용 함수 (dashboard 로직 재사용)
+          function applyGas(boxSelector, gasValue) {
+            const state = getGasState(gasValue); // atmosphereInfoBox.js 함수 사용
+            const box = container.querySelector(boxSelector);
+
+            box.querySelector('.gaseousState').textContent = state.text;
+            box.querySelector('.gaseousState').style.backgroundColor =
+              state.btn_color;
+            box.querySelector('.gaseousState').style.color = state.text_color;
+
+            box.querySelector('.gaseousValue').textContent = gasValue;
+            box.querySelector('.gaseousValue').style.color = state.text_color;
+
+            box.style.backgroundColor = state.background_color;
+            box.style.borderColor = state.border_color;
+          }
+
+          // 가스별 반영
+          applyGas('.ammoniaBox', data.gases.NH3.avg);
+          applyGas('.hydrogenSulfideBox', data.gases.H2S.avg);
+          applyGas('.methaneBox', data.gases.CH4.avg);
+          applyGas('.carbonDioxideBox', data.gases.CO2.avg);
         }
 
         const script = document.createElement('script');

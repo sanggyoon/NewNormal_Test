@@ -22,10 +22,10 @@ function renderGaugesFromSelectedPoint() {
   };
 
   const idMap = {
-    NH3: 'ammoniaGauge_session',
-    H2S: 'hydrogenSulfideGauge_session',
-    CH4: 'methaneGauge_session',
-    CO2: 'carbonDioxideGauge_session',
+    NH3: 'ammoniaGauge_{{index}}',
+    H2S: 'hydrogenSulfideGauge_{{index}}',
+    CH4: 'methaneGauge_{{index}}',
+    CO2: 'carbonDioxideGauge_{{index}}',
   };
 
   Object.entries(gases).forEach(([key, value]) => {

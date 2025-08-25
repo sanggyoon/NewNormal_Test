@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="CSS/nav.css" />
     <link rel="stylesheet" href="CSS/statusBar.css" />
     <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/farmInfoModal.css" />
     <link rel="stylesheet" href="CSS/atmosphereBox.css" />
     <!-- Pretendard 웹폰트 CDN -->
     <link
@@ -70,7 +71,6 @@
 
     <!-- 로딩 컴포넌트 로직 -->
     <script>
-      // dashboardIndex.html 내 script 부분
       async function loadComponent(componentPath, targetId, index, callback) {
         const response = await fetch(componentPath);
         let html = await response.text();

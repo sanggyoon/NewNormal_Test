@@ -47,25 +47,25 @@
     : [
         {
           label: '암모니아',
-          data: [12, 19, 3, 5, 2, 3, 1, 4, 6, 8, 10, 12],
+          data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
           borderWidth: 2,
           borderColor: '#FF6384',
         },
         {
           label: '황화수소',
-          data: [20, 18, 4, 2, 1, 4, 5, 10, 7, 4, 9, 10],
+          data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
           borderWidth: 2,
           borderColor: '#36A2EB',
         },
         {
           label: '메탄',
-          data: [10, 15, 5, 7, 3, 6, 8, 2, 10, 11, 8, 13],
+          data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
           borderWidth: 2,
           borderColor: '#FFCE56',
         },
         {
           label: '이산화탄소',
-          data: [15, 10, 8, 6, 4, 2, 1, 5, 5, 7, 12, 11],
+          data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
           borderWidth: 2,
           borderColor: '#4BC0C0',
         },
