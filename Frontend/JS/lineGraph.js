@@ -13,23 +13,24 @@
     if (!chartDom) return;
 
     const myChart = echarts.init(chartDom);
-    
+
     // 세션데이터
     const sp = window.SelectedPoint;
     const useClean = !!(sp && sp.gases);
 
     // 라벨(오래된→최신)
-    const labels = useClean && sp?.gases?.NH3?.series?.length
-      ? Array.from({ length: sp.gases.NH3.series.length }, (_, i) => {
-          const d = new Date();
-          d.setHours(d.getHours() - (sp.gases.NH3.series.length - 1 - i));
-          return `${String(d.getHours()).padStart(2, '0')}:00`;
-        })
-      : Array.from({ length: 12 }, (_, i) => {
-          const d = new Date();
-          d.setHours(d.getHours() - (11 - i));
-          return `${String(d.getHours()).padStart(2, '0')}:00`;
-        });
+    const labels =
+      useClean && sp?.gases?.NH3?.series?.length
+        ? Array.from({ length: sp.gases.NH3.series.length }, (_, i) => {
+            const d = new Date();
+            d.setHours(d.getHours() - (sp.gases.NH3.series.length - 1 - i));
+            return `${String(d.getHours()).padStart(2, '0')}:00`;
+          })
+        : Array.from({ length: 12 }, (_, i) => {
+            const d = new Date();
+            d.setHours(d.getHours() - (11 - i));
+            return `${String(d.getHours()).padStart(2, '0')}:00`;
+          });
 
     // 데이터셋
     const datasets = useClean
@@ -41,7 +42,7 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#FF6384' }
+            itemStyle: { color: '#FF6384' },
           },
           {
             name: '황화수소',
@@ -50,7 +51,7 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#36A2EB' }
+            itemStyle: { color: '#36A2EB' },
           },
           {
             name: '메탄',
@@ -59,7 +60,7 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#FFCE56' }
+            itemStyle: { color: '#FFCE56' },
           },
           {
             name: '이산화탄소',
@@ -68,8 +69,8 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#4BC0C0' }
-          }
+            itemStyle: { color: '#4BC0C0' },
+          },
         ]
       : [
           {
@@ -79,7 +80,7 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#FF6384' }
+            itemStyle: { color: '#FF6384' },
           },
           {
             name: '황화수소',
@@ -88,7 +89,7 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#36A2EB' }
+            itemStyle: { color: '#36A2EB' },
           },
           {
             name: '메탄',
@@ -97,7 +98,7 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#FFCE56' }
+            itemStyle: { color: '#FFCE56' },
           },
           {
             name: '이산화탄소',
@@ -106,8 +107,8 @@
             smooth: true,
             symbolSize: 6,
             lineStyle: { width: 2 },
-            itemStyle: { color: '#4BC0C0' }
-          }
+            itemStyle: { color: '#4BC0C0' },
+          },
         ];
 
     const option = {
@@ -119,22 +120,27 @@
           fontSize: 18,
           fontWeight: 'bold',
           color: '#333',
-          fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
-        }
+          fontFamily:
+            'Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
+        },
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
-          type: 'cross'
+          type: 'cross',
         },
-        formatter: function(params) {
+        formatter: function (params) {
           let result = params[0].name + '<br/>';
-          params.forEach(function(item) {
-            result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + item.color + '"></span>';
-            result += item.seriesName + ': ' + (item.value * 1.0).toFixed(2) + '<br/>';
+          params.forEach(function (item) {
+            result +=
+              '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' +
+              item.color +
+              '"></span>';
+            result +=
+              item.seriesName + ': ' + (item.value * 1.0).toFixed(2) + '<br/>';
           });
           return result;
-        }
+        },
       },
       legend: {
         data: ['암모니아', '황화수소', '메탄', '이산화탄소'],
@@ -142,39 +148,39 @@
         right: 10,
         orient: 'horizontal',
         textStyle: {
-          fontSize: 12
-        }
+          fontSize: 12,
+        },
       },
       grid: {
         left: '3%',
         right: '4%',
         bottom: '15%',
         top: '20%',
-        containLabel: true
+        containLabel: true,
       },
       xAxis: {
         type: 'category',
         data: labels,
         axisLabel: {
-          fontSize: 10
-        }
+          fontSize: 10,
+        },
       },
       yAxis: {
         type: 'value',
         scale: true,
         axisLabel: {
-          fontSize: 10
-        }
+          fontSize: 10,
+        },
       },
       series: datasets,
       animation: true,
-      responsive: true
+      responsive: true,
     };
 
     myChart.setOption(option);
 
     // 창 크기 변경 시 차트 리사이즈
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
       myChart.resize();
     });
   }

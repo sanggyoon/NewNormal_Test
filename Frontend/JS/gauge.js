@@ -95,31 +95,33 @@ if (typeof DummyData !== 'undefined' && DummyData.items) {
     });
 
     // 황화수소
-    document.querySelectorAll(`#hydrogenSulfideGauge_${i}`).forEach((canvas) => {
-      const [startColor, stopColor] = getGradientByValue(data.avg2, 3.0);
-      const opts = {
-        angle: 0.12,
-        lineWidth: 0.44,
-        radiusScale: 1,
-        pointer: {
-          length: 0.62,
-          strokeWidth: 0.08,
-          color: '#000000',
-        },
-        limitMax: false,
-        limitMin: false,
-        strokeColor: '#E0E0E0',
-        generateGradient: true,
-        highDpiSupport: true,
-        colorStart: startColor,
-        colorStop: stopColor,
-      };
-      const gauge = new Gauge(canvas).setOptions(opts);
-      gauge.maxValue = 3.0;
-      gauge.setMinValue(0);
-      gauge.animationSpeed = 128;
-      gauge.set(data.avg2);
-    });
+    document
+      .querySelectorAll(`#hydrogenSulfideGauge_${i}`)
+      .forEach((canvas) => {
+        const [startColor, stopColor] = getGradientByValue(data.avg2, 3.0);
+        const opts = {
+          angle: 0.12,
+          lineWidth: 0.44,
+          radiusScale: 1,
+          pointer: {
+            length: 0.62,
+            strokeWidth: 0.08,
+            color: '#000000',
+          },
+          limitMax: false,
+          limitMin: false,
+          strokeColor: '#E0E0E0',
+          generateGradient: true,
+          highDpiSupport: true,
+          colorStart: startColor,
+          colorStop: stopColor,
+        };
+        const gauge = new Gauge(canvas).setOptions(opts);
+        gauge.maxValue = 3.0;
+        gauge.setMinValue(0);
+        gauge.animationSpeed = 128;
+        gauge.set(data.avg2);
+      });
 
     // 메탄
     document.querySelectorAll(`#methaneGauge_${i}`).forEach((canvas) => {

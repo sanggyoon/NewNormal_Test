@@ -42,10 +42,10 @@ function getGasState(value) {
   if (value > 1 && value <= 2)
     return {
       text: '경고',
-      btn_color: '#fff7d1ff',
-      text_color: '#FFD600',
-      background_color: '#fffdf4ff',
-      border_color: '#ffed92ff',
+      btn_color: '#FCF3DB',
+      text_color: '#FF9900',
+      background_color: '#FCFBF7',
+      border_color: '#F7E4BA',
     };
   if (value > 2 && value <= 3)
     return {
