@@ -7,7 +7,7 @@ window.liveGauges = {
 
 function getGradientByValue(value, maxValue) {
   if (value <= 1) return ['#007BFE', '#007BFE'];
-  else if (value <= 2) return ['#FFD600', '#FFD600'];
+  else if (value <= 2) return ['#FFA100', '#FFA100'];
   else return ['#EE5253', '#EE5253'];
 }
 

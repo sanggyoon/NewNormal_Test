@@ -126,7 +126,7 @@
           ctx.font = '700 20px Pretendard';
           ctx.textBaseline = 'top';
           ctx.fillStyle = '#333';
-          // Title
+
           const titleX = -25;
           const titleY = 0;
           ctx.fillText(
@@ -135,7 +135,6 @@
             chartArea.top - chartArea.top + titleY
           );
 
-          // Legend (inline)
           let x =
             chartArea.left + titleX + ctx.measureText(options.title).width + 20;
           const y = chartArea.top - chartArea.top + titleY;
