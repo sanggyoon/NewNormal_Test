@@ -8,6 +8,61 @@ function getGradientByValue(value, maxValue) {
   }
 }
 
+// 게이지 렌더링
+function renderGaugesFromSelectedPoint() {
+  if (!window.SelectedPoint) return;
+
+  const data = window.SelectedPoint;
+
+  const gases = {
+    NH3: data.gases.NH3.avg,
+    H2S: data.gases.H2S.avg,
+    CH4: data.gases.CH4.avg,
+    CO2: data.gases.CO2.avg,
+  };
+
+  const idMap = {
+    NH3: 'ammoniaGauge_session',
+    H2S: 'hydrogenSulfideGauge_session',
+    CH4: 'methaneGauge_session',
+    CO2: 'carbonDioxideGauge_session',
+  };
+
+  Object.entries(gases).forEach(([key, value]) => {
+    const canvas = document.getElementById(idMap[key]);
+    if (!canvas) return;
+
+    const [startColor, stopColor] = getGradientByValue(value, 3.0);
+    const opts = {
+      angle: 0.12,
+      lineWidth: 0.44,
+      radiusScale: 1,
+      pointer: {
+        length: 0.62,
+        strokeWidth: 0.08,
+        color: '#000000',
+      },
+      limitMax: false,
+      limitMin: false,
+      strokeColor: '#E0E0E0',
+      generateGradient: true,
+      highDpiSupport: true,
+      colorStart: startColor,
+      colorStop: stopColor,
+    };
+    const gauge = new Gauge(canvas).setOptions(opts);
+    gauge.maxValue = 3.0;
+    gauge.setMinValue(0);
+    gauge.animationSpeed = 128;
+    gauge.set(value);
+  });
+}
+if (window.SelectedPoint) {
+  window.addEventListener('load', () => {
+    setTimeout(renderGaugesFromSelectedPoint, 300);
+  });
+}
+
 // 각 박스별 더미값 적용
 for (let i = 0; i < 4; i++) {
   const data = DummyData.items[i];
@@ -118,4 +173,8 @@ for (let i = 0; i < 4; i++) {
     gauge.animationSpeed = 128;
     gauge.set(data.avg4);
   });
+}
+
+if (window.SelectedPoint && location.pathname.includes('devicePointIndex')) {
+  renderGaugesFromSelectedPoint();
 }

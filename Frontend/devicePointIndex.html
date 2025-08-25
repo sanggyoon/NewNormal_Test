@@ -28,7 +28,7 @@
       <div id="noticeBar"></div>
       <div id="pointInfo">
         <div class="left_section">
-          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_session"></div>
           <div class="lineGraphBox" id="lineGraphBox"></div>
         </div>
         <div class="right_section">
@@ -111,14 +111,54 @@
         runNoticeBarAnimation
       );
 
+      // Components 로드 후
       Promise.all([
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_id_0'
+          'atmosphereInfoBox_session'
         ),
       ]).then(() => {
+        if (window.SelectedPoint) {
+          const data = window.SelectedPoint;
+          const container = document.getElementById(
+            'atmosphereInfoBox_session'
+          );
+
+          container.querySelector(
+            '.atmosphereInfo_locationName span'
+          ).textContent = data.farmsub;
+          container.querySelector(
+            '.atmosphere_wind span:nth-child(2)'
+          ).textContent = data.wind.dir;
+          container.querySelector(
+            '.atmosphere_wind span:nth-child(3)'
+          ).textContent = data.wind.speed;
+          container.querySelector(
+            '.atmosphere_temperature span:nth-child(2)'
+          ).textContent = data.temp.avg;
+          container.querySelector(
+            '.atmosphere_humidity span:nth-child(2)'
+          ).textContent = data.humid.avg;
+
+          container.querySelector('.ammoniaBox .gaseousValue').textContent =
+            data.gases.NH3.avg;
+          container.querySelector(
+            '.hydrogenSulfideBox .gaseousValue'
+          ).textContent = data.gases.H2S.avg;
+          container.querySelector('.methaneBox .gaseousValue').textContent =
+            data.gases.CH4.avg;
+          container.querySelector(
+            '.carbonDioxideBox .gaseousValue'
+          ).textContent = data.gases.CO2.avg;
+        }
+
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
+        script.onload = () => {
+          if (window.renderGaugesFromSelectedPoint) {
+            window.renderGaugesFromSelectedPoint();
+          }
+        };
         document.body.appendChild(script);
       });
 

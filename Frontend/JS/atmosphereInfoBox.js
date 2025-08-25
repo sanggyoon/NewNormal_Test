@@ -150,21 +150,9 @@ function applyDummyDataToAtmosphereBox(index, targetId) {
 
 // 적용
 window.applyAllAtmosphereDummyData = function () {
-  DummyData.items.forEach((dataItem, i) => {
+  DummyData.items.forEach((_, i) => {
     const targetId = `atmosphereInfoBox_id_${i}`;
-    const box = document.getElementById(targetId);
-
-    if (!box) return;
-
-    const locationSpan = box.querySelector('.atmosphereInfo_locationName span');
-    if (!locationSpan) return;
-
-    const locationName = locationSpan.textContent.trim();
-
-    // dummyData의 farmsub와 비교
-    if (dataItem.farmsub === locationName) {
-      applyDummyDataToAtmosphereBox(i, targetId);
-    }
+    applyDummyDataToAtmosphereBox(i, targetId);
   });
 };
 

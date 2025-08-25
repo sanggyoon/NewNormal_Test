@@ -132,14 +132,18 @@
           3
         ),
       ]).then(() => {
-        window.applyAllAtmosphereDummyData();
-        window.attachAtmosphereModalEvents();
+        if (window.applyAllAtmosphereDummyData)
+          window.applyAllAtmosphereDummyData();
+
+        if (window.attachAtmosphereModalEvents)
+          window.attachAtmosphereModalEvents();
 
         if (window.attachDetailButtonHandlers)
           window.attachDetailButtonHandlers();
 
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
+        script.onload = () => {};
         document.body.appendChild(script);
       });
     </script>
