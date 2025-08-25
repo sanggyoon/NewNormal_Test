@@ -1,12 +1,13 @@
 //가로 세로 비율에 따른 렌더링 요소 변경
 function updateLayout() {
-  const isPortrait = window.innerHeight > window.innerWidth;
-  document.querySelector('.portrait').style.display = isPortrait
-    ? 'block'
-    : 'none';
-  document.querySelector('.landscape').style.display = isPortrait
-    ? 'none'
-    : 'block';
+  const portraitElement = document.querySelector('.portrait');
+  const landscapeElement = document.querySelector('.landscape');
+  
+  if (portraitElement && landscapeElement) {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    portraitElement.style.display = isPortrait ? 'block' : 'none';
+    landscapeElement.style.display = isPortrait ? 'none' : 'block';
+  }
 }
 
 // 최초 로딩 시 실행

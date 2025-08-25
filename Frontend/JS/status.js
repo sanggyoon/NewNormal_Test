@@ -55,6 +55,7 @@ $('#statusBar_choiceDate').daterangepicker(
     $('#statusBar_choiceDate').val(
       start.format('YYYY-MM-DD') + ' ~ ' + end.format('YYYY-MM-DD')
     );
+    $('.quick-range-btn').removeClass('active');
   }
 );
 
@@ -94,4 +95,10 @@ $('.quick-range-btn').on('click', function () {
   $('#statusBar_choiceDate').val(
     start.format('YYYY-MM-DD') + ' ~ ' + end.format('YYYY-MM-DD')
   );
+});
+
+// 빠른 기간 선택 버튼 이벤트
+$('.quick-range-btn').on('click', function () {
+  $('.quick-range-btn').removeClass('active');
+  $(this).addClass('active');
 });

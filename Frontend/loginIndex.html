@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="globalStyle.css" />
+    <link rel="stylesheet" href="CSS/login.css" />
+    <title>에이티디코리아 로그인</title>
+  </head>
+  <body>
+    <form class="login-container" id="loginForm">
+      <div>
+        <div class="login-label">ID</div>
+        <input
+          type="text"
+          id="loginId"
+          placeholder="아이디 입력"
+          autocomplete="username"
+        />
+      </div>
+      <div>
+        <div class="login-label">PW</div>
+        <input
+          type="password"
+          id="loginPw"
+          placeholder="비밀번호 입력"
+          autocomplete="current-password"
+        />
+      </div>
+      <button type="submit">로그인</button>
+    </form>
+  </body>
+  <script>
+    document
+      .getElementById('loginForm')
+      .addEventListener('submit', function (e) {
+        e.preventDefault();
+        window.location.href = 'dashboardIndex.html';
+      });
+  </script>
+  <script src="JS/login.js"></script>
+</html>

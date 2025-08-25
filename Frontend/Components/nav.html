@@ -1,6 +1,5 @@
 <div class="navContainer">
   <div class="houseInfoBox" id="houseInfoBox">
-    <!-- <input type="checkbox" id="houseInfoModal" /> -->
     <div class="houseInfoBox_Logo"></div>
     <div class="houseInfoBox_Text">
       <div class="houseInfoBox_Title"><span>세종농장</span></div>
@@ -10,37 +9,82 @@
 
   <div class="navList">
     <ul>
-      <a href="dashboardIndex.html"
-        ><li><span class="icon_dashboard"></span>대시보드</li></a
-      >
-      <a href="devicePointIndex.html"
-        ><li><span class="icon_devicePoint"></span>설치 포인트별</li></a
-      >
-      <a href=""
-        ><li><span class="icon_odorDispersion"></span>악취 확산도</li></a
-      >
-      <a href="rawDataIndex.html"
-        ><li><span class="icon_data"></span>데이터</li></a
-      >
+      <li data-href="dashboardIndex.html">
+        <span class="icon_dashboard"></span>대시보드
+      </li>
+      <li data-href="devicePointIndex.html">
+        <span class="icon_devicePoint"></span>설치 포인트별
+      </li>
+      <li data-href="odorDispersionIndex.html">
+        <span class="icon_odorDispersion"></span>악취 확산도
+      </li>
+      <li data-href="#"><span class="icon_data"></span>데이터</li>
     </ul>
   </div>
 
   <div class="navFooter">
     <div class="nav_separateLine"></div>
-    <div class="navFooter_Alert">
-      <span class="icon_alert"></span><span class="navFooter_Text">알람</span>
-    </div>
-    <div class="navFooter_Logout">
-      <span class="icon_logout"></span
-      ><span class="navFooter_Text">로그아웃</span>
-    </div>
+
+    <ul>
+      <li class="navFooter_Alert">
+        <span class="icon_alert"></span>
+        <span class="navFooter_Text">알람</span>
+      </li>
+      <li class="navFooter_Logout">
+        <span class="icon_logout"></span>
+        <span class="navFooter_Text">로그아웃</span>
+      </li>
+    </ul>
   </div>
 </div>
 
-<div id="houseInfoModal" class="modal" style="display: none">
+<!-- 농장 정보 모달 -->
+<div id="houseInfoModal" class="modal">
   <div class="modal-content">
     <span class="close" id="closeModal">&times;</span>
-    <h2>농장 정보</h2>
-    <p>여기에 농장에 대한 상세 정보를 넣으세요.</p>
+    <div class="farmTitle">
+      <h2>세종 농장</h2>
+      <div class="type_group">
+        <span>포유류</span>
+        <span>어류</span>
+      </div>
+    </div>
+    <div class="livestockCount">사육두수: 약 3000두</div>
+    <div class="farmAddress_box">
+      <span class="icon_location">➢</span>
+      <span
+        >(우)30015 세종특별자치시 조치원읍 세종로 2639 (신안리 300) 홍익대학교
+        세종캠퍼스</span
+      >
+    </div>
+    <div class="managerInfoSection">
+      <div class="farmOwner_box">
+        <div class="name">홍길동</div>
+        <div class="position">농장주</div>
+        <div class="contacNumber">010-1234-5678</div>
+      </div>
+
+      <div class="farmManagers_box">
+        <div class="name">홍길동, 홍길동, 홍길동</div>
+        <div class="position">농장 담당자</div>
+        <div class="contactNumber">
+          010-9876-5432 <br />
+          010-9876-5432 <br />
+          010-9876-5432
+        </div>
+      </div>
+
+      <div class="companyManger_box">
+        <div class="name">홍길동</div>
+        <div class="position">회사 담당자</div>
+        <div class="contacNumber">010-1234-5678</div>
+      </div>
+    </div>
+    <div class="farmPhotos">
+      <span class="farmPhoto farmPhoto_1"></span>
+      <span class="farmPhoto farmPhoto_2"></span>
+      <span class="farmPhoto farmPhoto_3"></span>
+      <span class="farmPhoto farmPhoto_4"></span>
+    </div>
   </div>
 </div>

@@ -1,8 +1,8 @@
 // 공지사항이 3초마다 자연스럽게 위로 슬라이드되며 다음 공지로 넘어가는 애니메이션
 
-document.addEventListener('DOMContentLoaded', function () {
-  runNoticeBarAnimation();
-});
+// document.addEventListener('DOMContentLoaded', function () {
+//   runNoticeBarAnimation();
+// });
 
 function runNoticeBarAnimation() {
   const noticeList = document.querySelector('.noticeBar_list ul');

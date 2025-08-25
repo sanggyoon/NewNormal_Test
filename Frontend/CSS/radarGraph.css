@@ -2,25 +2,67 @@
   margin-bottom: 20px;
   overflow: visible;
   width: 100%;
+  height: 320px;
+  position: relative;
 }
 
-.radarGraphBox canvas {
-  width: 75% !important;
+.radarGraphBox_inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* 외부 타이틀 스타일 */
+.radarChart_header {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e5e6;
+  margin-bottom: 10px;
+}
+
+.radarChart_title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
+    Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
+    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    sans-serif;
+}
+
+#radarGraph path {
+  background-color: none;
+  fill: transparent;
+}
+
+/* JSCharting 차트 컨테이너 스타일 */
+.radarGraphBox .jschart {
+  width: 100% !important;
   height: 100% !important;
-  overflow: visible;
+}
+
+/* 차트 컨테이너 직접 스타일링 */
+#radarGraph {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 250px;
+  flex: 1;
 }
 
 @media screen and (orientation: landscape) {
   .radarGraphBox {
+    height: 70%;
     display: flex;
-    align-items: flex-center;
+    align-items: center;
     justify-content: center;
   }
 }
+
 @media screen and (orientation: portrait) {
   .radarGraphBox {
     display: flex;
-    align-items: flex-center;
+    align-items: center;
     justify-content: center;
   }
 }

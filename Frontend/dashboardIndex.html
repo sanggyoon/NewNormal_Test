@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="CSS/nav.css" />
     <link rel="stylesheet" href="CSS/statusBar.css" />
     <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/farmInfoModal.css" />
     <link rel="stylesheet" href="CSS/atmosphereBox.css" />
     <!-- Pretendard 웹폰트 CDN -->
     <link
@@ -25,12 +26,12 @@
       <div id="noticeBar"></div>
       <div id="atmosphereInfoContainer">
         <div class="left_section">
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_0"></div>
           <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_1"></div>
-          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_2"></div>
         </div>
         <div class="right_section">
+          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_2"></div>
           <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_3"></div>
-          <div class="atmosphereInfoBox" id="atmosphereInfoBox_id_4"></div>
         </div>
       </div>
     </div>
@@ -64,65 +65,86 @@
       href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
     />
 
+    <!-- 더미데이터 -->
+    <script src="./JS/dummyData.js"></script>
+    <script src="./JS/atmosphereInfoBox.js"></script>
+
     <!-- 로딩 컴포넌트 로직 -->
     <script>
-      async function loadComponent(componentPath, targetId, callback) {
+      async function loadComponent(componentPath, targetId, index, callback) {
         const response = await fetch(componentPath);
-        const html = await response.text();
+        let html = await response.text();
+        if (typeof index !== 'undefined' && index !== null) {
+          html = html.replace(/{{index}}/g, index);
+        }
         document.getElementById(targetId).innerHTML = html;
-        if (callback) callback();
+        if (typeof callback === 'function') callback();
       }
 
-      loadComponent('Components/nav.html', 'navContainer', function () {
-        const script = document.createElement('script');
-        script.src = './JS/nav.js';
-        document.body.appendChild(script);
-      });
+      loadComponent(
+        'Components/nav.html',
+        'navContainer',
+        undefined,
+        function () {
+          const script = document.createElement('script');
+          script.src = './JS/nav.js';
+          document.body.appendChild(script);
+        }
+      );
 
-      loadComponent('Components/statusBar.html', 'statusBar', function () {
-        const script = document.createElement('script');
-        script.src = './JS/status.js';
-        document.body.appendChild(script);
-      });
+      loadComponent(
+        'Components/statusBar.html',
+        'statusBar',
+        undefined,
+        function () {
+          const script = document.createElement('script');
+          script.src = './JS/status.js';
+          document.body.appendChild(script);
+        }
+      );
 
       loadComponent(
         'Components/noticeBar.html',
         'noticeBar',
+        undefined,
         runNoticeBarAnimation
       );
 
       Promise.all([
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_id_1'
+          'atmosphereInfoBox_id_0',
+          0
         ),
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_id_2'
+          'atmosphereInfoBox_id_1',
+          1
         ),
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_id_3'
+          'atmosphereInfoBox_id_2',
+          2
         ),
         loadComponent(
           'Components/atmosphereBox.html',
-          'atmosphereInfoBox_id_4'
+          'atmosphereInfoBox_id_3',
+          3
         ),
       ]).then(() => {
+        if (window.applyAllAtmosphereDummyData)
+          window.applyAllAtmosphereDummyData();
+
+        if (window.attachAtmosphereModalEvents)
+          window.attachAtmosphereModalEvents();
+
+        if (window.attachDetailButtonHandlers)
+          window.attachDetailButtonHandlers();
+
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
+        script.onload = () => {};
         document.body.appendChild(script);
-
-        fetch('./JS/atmosphereInfoBox.js')
-          .then((res) => res.text())
-          .then((jsText) => {
-            eval(jsText);
-            if (window.attachAtmosphereModalEvents) {
-              setTimeout(() => {
-                window.attachAtmosphereModalEvents();
-              }, 100);
-            }
-          });
       });
     </script>
   </body>

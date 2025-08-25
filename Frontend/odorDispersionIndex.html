@@ -1,50 +1,284 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-    />
-    <link rel="stylesheet" href="./naver_map_style.css" />
-    <title>네이버 지도 표시하기</title>
-  </head>
-  <body>
-    <div class="map-layout">
-      <aside class="legend">
-        <div class="legend-title"><b>마커 종류</b></div>
-        <ul id="legendList" class="legend-list"></ul>
-      </aside>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <section class="map-panel">
-        <!-- 마커 타입 선택 UI -->
-        <div class="device-type-select">
-          <label for="deviceType"><b>장치 타입 선택:</b></label>
-          <select id="deviceType">
-            <option value="악취측정기+온습도계">악취측정기+온습도계(원)</option>
-            <option value="음수투약기">음수투약기(사각형)</option>
-            <option value="풍향풍속계">풍향풍속계(삼각형)</option>
-            <option value="게이트웨이">게이트웨이(마름모)</option>
-          </select>
-          <div id="markerCountInfo" style="margin-top: 8px; font-size: 12px; color: #666;">
-            전체: 0/40 | 악취측정기+온습도계: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
-          </div>
+    <!-- CSS -->
+    <link rel="stylesheet" href="globalStyle.css" />
+    <link rel="stylesheet" href="CSS/nav.css" />
+    <link rel="stylesheet" href="CSS/statusBar.css" />
+    <link rel="stylesheet" href="CSS/noticeBar.css" />
+    <link rel="stylesheet" href="CSS/farmInfoModal.css" />
+    <!-- Pretendard 웹폰트 CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
+    <title>에이티디코리아 악취확산도</title>
+    
+    <!-- 네이버 지도 스타일 -->
+    <style>
+      .map-layout {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+      }
+      
+      .legend {
+        position: absolute;
+        top: 120px;
+        left: 20px;
+        width: 200px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        overflow-y: auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+      }
+      
+      .legend-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #333;
+        text-align: center;
+      }
+      
+      .legend-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px;
+        border-radius: 6px;
+        background: rgba(248, 249, 250, 0.8);
+        transition: all 0.2s;
+        cursor: pointer;
+        border: 2px solid transparent;
+      }
+      
+      .legend-item:hover {
+        background: rgba(233, 236, 239, 0.9);
+        border-color: #1976d2;
+        transform: translateX(2px);
+      }
+      
+      .legend-item.active {
+        background: rgba(25, 118, 210, 0.1);
+        border-color: #1976d2;
+        box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+      }
+      
+      .legend-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        flex-shrink: 0;
+      }
+      
+      .legend-label {
+        font-size: 12px;
+        color: #555;
+        font-weight: 500;
+      }
+      
+      .map-panel {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      
+
+      
+      #map {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+      }
+      
+      .marker-name-label {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .delete-btn {
+        background: #e53935;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      
+      .delete-btn:hover {
+        background: #c62828;
+      }
+      
+      .marker-type-label {
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+        pointer-events: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+      
+      .device-detail-info {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        font-size: 13px;
+        line-height: 1.4;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        max-width: 250px;
+      }
+      
+      .device-detail-info b {
+        color: #1976d2;
+        font-size: 14px;
+        margin-bottom: 8px;
+        display: block;
+      }
+      
+      .detail-delete-btn {
+        background: #e53935;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 12px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s;
+      }
+      
+      .detail-delete-btn:hover {
+        background: #c62828;
+      }
+      
+      #markerCountInfo {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #666;
+        padding: 8px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="navContainer"></div>
+    <div class="dashboardContainer landscape">
+      <div id="statusBar"></div>
+      <div id="noticeBar"></div>
+      <div class="mapContainer">
+        <div class="map-layout">
+          <section class="map-panel">
+            <!-- 마커 개수 정보 및 초기화 버튼 -->
+            <div style="padding: 15px 20px; background: white; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
+              <button id="resetAllMarkers" style="padding: 8px 16px; background: #e53935; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#c62828'" onmouseout="this.style.background='#e53935'">
+                모든 마커 삭제
+              </button>
+              <div id="markerCountInfo" style="font-size: 12px; color: #666; text-align: right;">
+                전체: 0/40 | 악취측정기+온습도계: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
+              </div>
+            </div>
+            <div id="map"></div>
+          </section>
+          
+          <!-- 범례를 지도 위에 겹치게 배치 -->
+          <aside class="legend">
+            <div class="legend-title"><b>마커 종류</b></div>
+            <ul id="legendList" class="legend-list"></ul>
+          </aside>
         </div>
-        <div id="map"></div>
-      </section>
+      </div>
     </div>
 
+    <!-- 화면 비율 비교 후 landscape, portrait 출력 -->
+    <!-- 렌더링 전에 자바스크립트를 불러오기에 정상 동작하지 않음, 렌더링 이후 실행하도록 수정 필요 -->
+    <script src="./JS/ScreenRatio.js"></script>
 
+    <!-- 공지사항 애니메이션 스크립트 -->
+    <script src="./JS/noticeBar.js"></script>
+
+    <!-- jQuery, Moment.js, Daterangepicker 라이브러리 -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+    />
+
+    <!-- 로딩 컴포넌트 로직 -->
+    <script>
+      async function loadComponent(componentPath, targetId, callback) {
+        const response = await fetch(componentPath);
+        const html = await response.text();
+        document.getElementById(targetId).innerHTML = html;
+        if (callback) callback();
+      }
+
+      loadComponent('Components/nav.html', 'navContainer', function () {
+        const script = document.createElement('script');
+        script.src = './JS/nav.js';
+        document.body.appendChild(script);
+      });
+
+      loadComponent('Components/statusBar.html', 'statusBar', function () {
+        const script = document.createElement('script');
+        script.src = './JS/status.js';
+        document.body.appendChild(script);
+      });
+
+      loadComponent(
+        'Components/noticeBar.html',
+        'noticeBar',
+        runNoticeBarAnimation
+      );
+    </script>
+
+    <!-- 네이버 지도 관련 스크립트 -->
     <script type="module">
-      import CONFIG from './config.js';
-
       let map = null;
       let mapDeviceManager = null;
       const DEFAULT_ODOR_RADIUS_M = 120; // 악취 확산 반경(미터)
       let odorOverlay = null; // 지도 로드 후 생성
 
-      // 클래스 정의 (onload 바깥)
+      // 클래스 정의
       class MapDeviceManager {
         constructor(map) {
           this.map = map;
@@ -463,19 +697,45 @@
           console.log('악취 확산 업데이트:', sensors.length, '개 센서');
           this.odorOverlay.setSensors(sensors);
         }
-
-
       }
 
-      // 지도 클릭 이벤트 등록 함수 (onload 바깥)
+      // 마커 타입 범례 활성화/비활성화 관리
+      let activeMarkerType = null;
+      
+      function setupLegendClickEvents() {
+        const legendItems = document.querySelectorAll('.legend-item');
+        legendItems.forEach(item => {
+          item.addEventListener('click', function() {
+            const type = this.querySelector('.legend-label').textContent;
+            
+            if (activeMarkerType === type) {
+              // 같은 타입을 다시 클릭하면 비활성화
+              activeMarkerType = null;
+              legendItems.forEach(li => li.classList.remove('active'));
+            } else {
+              // 다른 타입을 클릭하면 기존 활성화 해제하고 새로 활성화
+              legendItems.forEach(li => li.classList.remove('active'));
+              activeMarkerType = type;
+              this.classList.add('active');
+            }
+          });
+        });
+      }
+      
+      // 지도 클릭 이벤트 등록 함수
       function setupMapEvents() {
         if (!map || !mapDeviceManager) return;
         map.addListener('click', function(e) {
-          const type = document.getElementById('deviceType').value;
-          const name = type + ' ' + mapDeviceManager.markerIdSeq;
+          if (!activeMarkerType) {
+            // 활성화된 마커 타입이 없으면 알림
+            alert('마커를 추가하려면 먼저 마커 종류를 선택해주세요.');
+            return;
+          }
+          
+          const name = activeMarkerType + ' ' + mapDeviceManager.markerIdSeq;
           mapDeviceManager.addDeviceMarker({
             id: mapDeviceManager.markerIdSeq++,
-            type,
+            type: activeMarkerType,
             name,
             lat: e.coord.lat(),
             lng: e.coord.lng()
@@ -483,7 +743,39 @@
         });
       }
 
-      // 좌측 범례 생성 (지도/매니저 생성 이후 호출)
+      // 모든 마커 삭제 함수
+      function resetAllMarkers() {
+        if (!mapDeviceManager) return;
+        
+        if (confirm('정말로 모든 마커를 삭제하시겠습니까?')) {
+          // 모든 마커 제거
+          mapDeviceManager.markers.forEach(marker => {
+            marker.marker.setMap(null);
+            marker.deleteLabel.close();
+            marker.typeLabel.setMap(null);
+            marker.detailInfo.close();
+          });
+          
+          // 마커 배열 초기화
+          mapDeviceManager.markers = [];
+          mapDeviceManager.markerIdSeq = 1;
+          
+          // 연결선과 악취 확산 업데이트
+          mapDeviceManager.updateConnections();
+          mapDeviceManager.updateOdorOverlay();
+          mapDeviceManager.updateMarkerCountInfo();
+          
+          // 활성화된 마커 타입 초기화
+          activeMarkerType = null;
+          document.querySelectorAll('.legend-item').forEach(item => {
+            item.classList.remove('active');
+          });
+          
+          alert('모든 마커가 삭제되었습니다.');
+        }
+      }
+      
+      // 좌측 범례 생성
       function renderLegend() {
         const legendList = document.getElementById('legendList');
         if (!legendList || !mapDeviceManager) return;
@@ -511,10 +803,10 @@
         });
       }
 
-      // 네이버 지도 API 로드 후 map만 생성, 나머지는 바깥에서 관리
+      // 네이버 지도 API 로드 후 map 생성
       const script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=jz78vv4dg0`;
+      script.src = 'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=jz78vv4dg0';
       document.head.appendChild(script);
 
       script.onload = () => {
@@ -630,6 +922,7 @@
             ctx.putImageData(img, 0, 0);
           }
         }
+        
         var mapOptions = {
           center: new naver.maps.LatLng(36.601110505, 127.296293603),
           zoom: 18,
@@ -642,7 +935,11 @@
         window.mapDeviceManager = mapDeviceManager;
         setupMapEvents();
         renderLegend();
+        setupLegendClickEvents();
         mapDeviceManager.updateMarkerCountInfo();
+        
+        // 초기화 버튼 이벤트 리스너 연결
+        document.getElementById('resetAllMarkers').addEventListener('click', resetAllMarkers);
 
         // 지도 크기 변경 감지
         map.addListener('resize', () => {

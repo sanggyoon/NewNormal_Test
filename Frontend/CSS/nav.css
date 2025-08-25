@@ -73,7 +73,8 @@
   .navList ul li {
     padding: 20px 10%;
   }
-  .navList ul li:hover {
+  .navList ul li:hover,
+  .navList ul li.active {
     background-color: rgba(255, 255, 255, 0.1);
     cursor: pointer;
     color: white;
@@ -89,7 +90,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_dashboard {
+  .navList ul li:hover .icon_dashboard,
+  .navList ul li.active .icon_dashboard {
     background-image: url('../Public/Icons/DashboardActive.png');
   }
   .icon_devicePoint {
@@ -102,7 +104,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_devicePoint {
+  .navList ul li:hover .icon_devicePoint,
+  .navList ul li.active .icon_devicePoint {
     background-image: url('../Public/Icons/PointActive.png');
   }
   .icon_odorDispersion {
@@ -115,7 +118,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_odorDispersion {
+  .navList ul li:hover .icon_odorDispersion,
+  .navList ul li.active .icon_odorDispersion {
     background-image: url('../Public/Icons/OdorDispersionActive.png');
   }
   .icon_data {
@@ -128,7 +132,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-  .navList ul li:hover .icon_data {
+  .navList ul li:hover .icon_data,
+  .navList ul li.active .icon_data {
     background-image: url('../Public/Icons/DataActive.png');
   }
 
@@ -147,12 +152,24 @@
   }
   .navFooter_Alert,
   .navFooter_Logout {
-    margin: 20px 10%;
+    padding: 15px 10%;
     font-size: 1.1rem;
+  }
+  .navFooter ul {
+    list-style: none;
+  }
+  .navFooter ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .navFooter ul li:hover span {
+    color: white;
   }
   .navFooter_Text {
     width: 100%;
     color: #7d7f82;
+  }
+  .navFooter_Text:hover {
+    color: white;
   }
 
   .icon_alert {
@@ -174,39 +191,6 @@
     background-repeat: no-repeat;
     vertical-align: middle;
     margin-right: 10px;
-  }
-
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-  .modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
-    border-radius: 8px;
-    position: relative;
-  }
-  .close {
-    color: #aaa;
-    position: absolute;
-    right: 16px;
-    top: 8px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .close:hover {
-    color: #000;
   }
 }
 
@@ -335,10 +319,21 @@
     bottom: 0;
     margin-bottom: 20px;
   }
-  .navFooter_Alert,
-  .navFooter_Logout {
+  .navFooter ul {
+    list-style: none;
+  }
+  .navFooter ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  .navFooter_Alert {
     margin: 20px 10%;
     font-size: 1.1rem;
+  }
+
+  .navFooter_Logout {
+    display: block;
+    margin: 20px auto;
   }
   .navFooter_Text {
     width: 100%;
@@ -364,38 +359,5 @@
     background-repeat: no-repeat;
     vertical-align: middle;
     margin-right: 10px;
-  }
-
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-  .modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
-    border-radius: 8px;
-    position: relative;
-  }
-  .close {
-    color: #aaa;
-    position: absolute;
-    right: 16px;
-    top: 8px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .close:hover {
-    color: #000;
   }
 }
