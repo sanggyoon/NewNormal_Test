@@ -175,7 +175,46 @@ function applyDummyDataToAtmosphereBox(index, targetId) {
   co2Box.style.borderColor = co2State.border_color;
 }
 
-// 선택된 기간 인덱스를 기준으로 해당 가스값을 업데이트하는 함수 -> 버튼 클릭시 정해진 값이 나오는 하드 코딩
+// daterangepicker의 '확인' 버튼을 누르면 [4]번째 데이터로 업데이트
+function attachDatePickerApplyEvent() {
+  const input = document.getElementById('statusBar_choiceDate');
+  if (!input) return;
+
+  $(input).daterangepicker(
+    {
+      opens: 'left',
+      locale: {
+        format: 'YYYY/MM/DD',
+        applyLabel: '확인',
+        cancelLabel: '취소',
+        daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+        monthNames: [
+          '1월',
+          '2월',
+          '3월',
+          '4월',
+          '5월',
+          '6월',
+          '7월',
+          '8월',
+          '9월',
+          '10월',
+          '11월',
+          '12월',
+        ],
+        firstDay: 0,
+      },
+    },
+    function (start, end, label) {
+      DummyData.items.forEach((_, i) => {
+        updateGasValues(i, 4);
+      });
+    }
+  );
+}
+window.attachDatePickerApplyEvent = attachDatePickerApplyEvent;
+
+// 선택된 기간 인덱스를 기준으로 해당 가스값을 업데이트하는 함수 -> 버튼 클릭시 [0], [1], [2], [3]번쨰 값 정해진 값이 나오는 하드 코딩
 function updateGasValues(index, gasIdx) {
   const data = DummyData.items[index];
   const container = document.getElementById(`atmosphereInfoBox_id_${index}`);
@@ -225,6 +264,7 @@ window.applyAllAtmosphereDummyData = function () {
     updateGasValues(i, 0);
   });
   attachGasRangeButtonEvents();
+  attachDatePickerApplyEvent();
 };
 
 // 포인트별 상세보기 버튼 이벤트, 해당 데이터를 세션에 저장
