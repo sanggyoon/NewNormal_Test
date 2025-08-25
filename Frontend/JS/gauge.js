@@ -1,60 +1,3 @@
-window.liveGauges = {
-  0: {},
-  1: {},
-  2: {},
-  3: {},
-};
-
-function getGradientByValue(value, maxValue) {
-  if (value <= 1) return ['#007BFE', '#007BFE'];
-  else if (value <= 2) return ['#FFA100', '#FFA100'];
-  else return ['#EE5253', '#EE5253'];
-}
-
-const gasKeys = ['avg1', 'avg2', 'avg3', 'avg4'];
-const gasNames = ['NH3', 'H2S', 'CH4', 'CO2'];
-const canvasIds = [
-  'ammoniaGauge_',
-  'hydrogenSulfideGauge_',
-  'methaneGauge_',
-  'carbonDioxideGauge_',
-];
-
-for (let i = 0; i < 4; i++) {
-  const data = DummyData.items[i];
-
-  gasKeys.forEach((key, idx) => {
-    document.querySelectorAll(`#${canvasIds[idx]}${i}`).forEach((canvas) => {
-      const value = data[key];
-      const [startColor, stopColor] = getGradientByValue(value, 3.0);
-      const opts = {
-        angle: 0.12,
-        lineWidth: 0.44,
-        radiusScale: 1,
-        pointer: {
-          length: 0.62,
-          strokeWidth: 0.08,
-          color: '#000000',
-        },
-        limitMax: false,
-        limitMin: false,
-        strokeColor: '#E0E0E0',
-        generateGradient: true,
-        highDpiSupport: true,
-        colorStart: startColor,
-        colorStop: stopColor,
-      };
-      const gauge = new Gauge(canvas).setOptions(opts);
-      gauge.maxValue = 3.0;
-      gauge.setMinValue(0);
-      gauge.animationSpeed = 64;
-      gauge.set(value);
-      window.liveGauges[i][gasNames[idx]] = gauge; // 저장
-    });
-  });
-}
-
-// 값에 따른 게이지 스타일
 function getGradientByValue(value, maxValue) {
   if (value <= 1) {
     return ['#007BFE', '#007BFE']; // 파란색
@@ -121,115 +64,119 @@ if (window.SelectedPoint) {
 }
 
 // 각 박스별 더미값 적용
-for (let i = 0; i < 4; i++) {
-  const data = DummyData.items[i];
-  // 암모니아
-  document.querySelectorAll(`#ammoniaGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.avg1, 3.0);
-    const opts = {
-      angle: 0.12,
-      lineWidth: 0.44,
-      radiusScale: 1,
-      pointer: {
-        length: 0.62,
-        strokeWidth: 0.08,
-        color: '#000000',
-      },
-      limitMax: false,
-      limitMin: false,
-      strokeColor: '#E0E0E0',
-      generateGradient: true,
-      highDpiSupport: true,
-      colorStart: startColor,
-      colorStop: stopColor,
-    };
-    const gauge = new Gauge(canvas).setOptions(opts);
-    gauge.maxValue = 3.0;
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 128;
-    gauge.set(data.avg1);
-  });
+if (typeof DummyData !== 'undefined' && DummyData.items) {
+  for (let i = 0; i < 4; i++) {
+    const data = DummyData.items[i];
+    // 암모니아
+    document.querySelectorAll(`#ammoniaGauge_${i}`).forEach((canvas) => {
+      const [startColor, stopColor] = getGradientByValue(data.avg1, 3.0);
+      const opts = {
+        angle: 0.12,
+        lineWidth: 0.44,
+        radiusScale: 1,
+        pointer: {
+          length: 0.62,
+          strokeWidth: 0.08,
+          color: '#000000',
+        },
+        limitMax: false,
+        limitMin: false,
+        strokeColor: '#E0E0E0',
+        generateGradient: true,
+        highDpiSupport: true,
+        colorStart: startColor,
+        colorStop: stopColor,
+      };
+      const gauge = new Gauge(canvas).setOptions(opts);
+      gauge.maxValue = 3.0;
+      gauge.setMinValue(0);
+      gauge.animationSpeed = 128;
+      gauge.set(data.avg1);
+    });
 
-  // 황화수소
-  document.querySelectorAll(`#hydrogenSulfideGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.avg2, 3.0);
-    const opts = {
-      angle: 0.12,
-      lineWidth: 0.44,
-      radiusScale: 1,
-      pointer: {
-        length: 0.62,
-        strokeWidth: 0.08,
-        color: '#000000',
-      },
-      limitMax: false,
-      limitMin: false,
-      strokeColor: '#E0E0E0',
-      generateGradient: true,
-      highDpiSupport: true,
-      colorStart: startColor,
-      colorStop: stopColor,
-    };
-    const gauge = new Gauge(canvas).setOptions(opts);
-    gauge.maxValue = 3.0;
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 128;
-    gauge.set(data.avg2);
-  });
+    // 황화수소
+    document
+      .querySelectorAll(`#hydrogenSulfideGauge_${i}`)
+      .forEach((canvas) => {
+        const [startColor, stopColor] = getGradientByValue(data.avg2, 3.0);
+        const opts = {
+          angle: 0.12,
+          lineWidth: 0.44,
+          radiusScale: 1,
+          pointer: {
+            length: 0.62,
+            strokeWidth: 0.08,
+            color: '#000000',
+          },
+          limitMax: false,
+          limitMin: false,
+          strokeColor: '#E0E0E0',
+          generateGradient: true,
+          highDpiSupport: true,
+          colorStart: startColor,
+          colorStop: stopColor,
+        };
+        const gauge = new Gauge(canvas).setOptions(opts);
+        gauge.maxValue = 3.0;
+        gauge.setMinValue(0);
+        gauge.animationSpeed = 128;
+        gauge.set(data.avg2);
+      });
 
-  // 메탄
-  document.querySelectorAll(`#methaneGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.avg3, 3.0);
-    const opts = {
-      angle: 0.12,
-      lineWidth: 0.44,
-      radiusScale: 1,
-      pointer: {
-        length: 0.62,
-        strokeWidth: 0.08,
-        color: '#000000',
-      },
-      limitMax: false,
-      limitMin: false,
-      strokeColor: '#E0E0E0',
-      generateGradient: true,
-      highDpiSupport: true,
-      colorStart: startColor,
-      colorStop: stopColor,
-    };
-    const gauge = new Gauge(canvas).setOptions(opts);
-    gauge.maxValue = 3.0;
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 128;
-    gauge.set(data.avg3);
-  });
+    // 메탄
+    document.querySelectorAll(`#methaneGauge_${i}`).forEach((canvas) => {
+      const [startColor, stopColor] = getGradientByValue(data.avg3, 3.0);
+      const opts = {
+        angle: 0.12,
+        lineWidth: 0.44,
+        radiusScale: 1,
+        pointer: {
+          length: 0.62,
+          strokeWidth: 0.08,
+          color: '#000000',
+        },
+        limitMax: false,
+        limitMin: false,
+        strokeColor: '#E0E0E0',
+        generateGradient: true,
+        highDpiSupport: true,
+        colorStart: startColor,
+        colorStop: stopColor,
+      };
+      const gauge = new Gauge(canvas).setOptions(opts);
+      gauge.maxValue = 3.0;
+      gauge.setMinValue(0);
+      gauge.animationSpeed = 128;
+      gauge.set(data.avg3);
+    });
 
-  // 이산화탄소
-  document.querySelectorAll(`#carbonDioxideGauge_${i}`).forEach((canvas) => {
-    const [startColor, stopColor] = getGradientByValue(data.avg4, 3.0);
-    const opts = {
-      angle: 0.12,
-      lineWidth: 0.44,
-      radiusScale: 1,
-      pointer: {
-        length: 0.62,
-        strokeWidth: 0.08,
-        color: '#000000',
-      },
-      limitMax: false,
-      limitMin: false,
-      strokeColor: '#E0E0E0',
-      generateGradient: true,
-      highDpiSupport: true,
-      colorStart: startColor,
-      colorStop: stopColor,
-    };
-    const gauge = new Gauge(canvas).setOptions(opts);
-    gauge.maxValue = 3.0;
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 128;
-    gauge.set(data.avg4);
-  });
+    // 이산화탄소
+    document.querySelectorAll(`#carbonDioxideGauge_${i}`).forEach((canvas) => {
+      const [startColor, stopColor] = getGradientByValue(data.avg4, 3.0);
+      const opts = {
+        angle: 0.12,
+        lineWidth: 0.44,
+        radiusScale: 1,
+        pointer: {
+          length: 0.62,
+          strokeWidth: 0.08,
+          color: '#000000',
+        },
+        limitMax: false,
+        limitMin: false,
+        strokeColor: '#E0E0E0',
+        generateGradient: true,
+        highDpiSupport: true,
+        colorStart: startColor,
+        colorStop: stopColor,
+      };
+      const gauge = new Gauge(canvas).setOptions(opts);
+      gauge.maxValue = 3.0;
+      gauge.setMinValue(0);
+      gauge.animationSpeed = 128;
+      gauge.set(data.avg4);
+    });
+  }
 }
 
 if (window.SelectedPoint && location.pathname.includes('devicePointIndex')) {

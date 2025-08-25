@@ -48,6 +48,16 @@ body {
   .right_section {
     width: 48.5%;
   }
+
+  .lineGraphBox {
+    width: 100%;
+    height: 400px;
+  }
+
+  .temperatureHumidityGraph {
+    width: 100%;
+    height: 400px;
+  }
 }
 
 @media screen and (orientation: portrait) {
@@ -58,5 +68,15 @@ body {
   .left_section,
   .right_section {
     width: 100%;
+  }
+
+  .lineGraphBox {
+    width: 100%;
+    height: 400px;
+  }
+
+  .temperatureHumidityGraph {
+    width: 100%;
+    height: 400px;
   }
 }
