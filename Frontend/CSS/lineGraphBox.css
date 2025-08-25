@@ -1,13 +1,13 @@
 .lineGraphBox {
   margin-bottom: 20px;
-  overflow: visible;
   width: 100%;
+  height: 400px;
+  overflow: hidden;
 }
 
-.lineGraphBox canvas {
+.lineGraphBox #gasLineChart {
   width: 100% !important;
   height: 100% !important;
-  overflow: visible;
 }
 
 /* temp */

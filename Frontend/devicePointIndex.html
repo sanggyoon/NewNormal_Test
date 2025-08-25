@@ -57,8 +57,12 @@
     <!-- 게이지 그래프 라이브러리 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
 
-    <!-- Chart.js 라이브러리 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- JSCharting 라이브러리 CDN -->
+    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
+    <script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
+    
+    <!-- ECharts 라이브러리 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
 
     <!-- jQuery, Moment.js, Daterangepicker 라이브러리 -->
     <script
@@ -219,15 +223,25 @@
       });
 
       loadComponent('Components/radarGraph.html', 'radarGraphBox', () => {
-        if (window.Chart) {
+        if (window.JSC) {
           const script = document.createElement('script');
           script.src = './JS/radarGraph.js';
           document.body.appendChild(script);
+        } else {
+          // JSCharting이 로드될 때까지 대기
+          const checkJSC = setInterval(() => {
+            if (window.JSC) {
+              clearInterval(checkJSC);
+              const script = document.createElement('script');
+              script.src = './JS/radarGraph.js';
+              document.body.appendChild(script);
+            }
+          }, 100);
         }
       });
 
       loadComponent('Components/lineGraphBox.html', 'lineGraphBox', () => {
-        if (window.Chart) {
+        if (window.echarts) {
           const script = document.createElement('script');
           script.src = './JS/lineGraph.js';
           document.body.appendChild(script);
@@ -238,7 +252,7 @@
         'Components/temperatureHumidityGraph.html',
         'temperatureHumidityGraph',
         () => {
-          if (window.Chart) {
+          if (window.echarts) {
             const script = document.createElement('script');
             script.src = './JS/temperatureHumidityGraph.js';
             document.body.appendChild(script);

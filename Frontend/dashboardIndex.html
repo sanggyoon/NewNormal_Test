@@ -143,11 +143,7 @@
 
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
-        script.onload = () => {
-          if (window.startGasAnimation) {
-            window.startGasAnimation();
-          }
-        };
+        script.onload = () => {};
         document.body.appendChild(script);
       });
     </script>
