@@ -22,13 +22,13 @@
         <div class="device-type-select">
           <label for="deviceType"><b>장치 타입 선택:</b></label>
           <select id="deviceType">
-            <option value="악취측정기+온습도계">악취측정기+온습도계(원)</option>
+            <option value="악취측정기">악취측정기(원)</option>
             <option value="음수투약기">음수투약기(사각형)</option>
             <option value="풍향풍속계">풍향풍속계(삼각형)</option>
             <option value="게이트웨이">게이트웨이(마름모)</option>
           </select>
           <div id="markerCountInfo" style="margin-top: 8px; font-size: 12px; color: #666;">
-            전체: 0/40 | 악취측정기+온습도계: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
+            전체: 0/40 | 악취측정기: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
           </div>
         </div>
         <div id="map"></div>
@@ -56,7 +56,7 @@
           // 마커 개수 제한 설정
           this.maxMarkers = 40; // 전체 최대 마커 개수
           this.maxMarkersPerType = {
-            '악취측정기+온습도계': 15,
+            '악취측정기': 15,
             '음수투약기': 8,
             '풍향풍속계': 10,
             '게이트웨이': 7
@@ -192,7 +192,7 @@
           // 센서별 측정 데이터 정보 생성
           const getSensorDataInfo = (type) => {
             switch(type) {
-              case '악취측정기+온습도계':
+              case '악취측정기':
                 return `
                   <b>측정 데이터:</b><br>
                   • Gas 1~4 [ppm]: 암모니아, 황화수소, 이산화탄소, 메탄<br>
@@ -325,14 +325,14 @@
           if (!countInfo) return;
           
           const totalCount = this.markers.length;
-          const odorCount = this.markers.filter(m => m.type === '악취측정기+온습도계').length;
+          const odorCount = this.markers.filter(m => m.type === '악취측정기').length;
           const waterCount = this.markers.filter(m => m.type === '음수투약기').length;
           const windCount = this.markers.filter(m => m.type === '풍향풍속계').length;
           const gatewayCount = this.markers.filter(m => m.type === '게이트웨이').length;
           
           countInfo.innerHTML = `
             전체: ${totalCount}/${this.maxMarkers} | 
-            악취측정기+온습도계: ${odorCount}/${this.maxMarkersPerType['악취측정기+온습도계']} | 
+            악취측정기: ${odorCount}/${this.maxMarkersPerType['악취측정기']} | 
             음수투약기: ${waterCount}/${this.maxMarkersPerType['음수투약기']} | 
             풍향풍속계: ${windCount}/${this.maxMarkersPerType['풍향풍속계']} | 
             게이트웨이: ${gatewayCount}/${this.maxMarkersPerType['게이트웨이']}
@@ -401,7 +401,7 @@
           } else if (type === '풍향풍속계') {
             fill = '#9c27b0';
             stroke = '#7b1fa2';
-          } else if (type === '악취측정기+온습도계') {
+          } else if (type === '악취측정기') {
             fill = '#2196f3';
             stroke = '#1976d2';
           }
@@ -409,7 +409,7 @@
           ctx.strokeStyle = stroke;
           ctx.fillStyle = fill;
           
-          if (type === '악취측정기+온습도계') {
+          if (type === '악취측정기') {
             // 원형 아이콘 (기존 악취측정기와 동일)
             ctx.beginPath();
             ctx.arc(size / 2, size / 2, size / 2 - 3, 0, 2 * Math.PI);
@@ -455,7 +455,7 @@
         updateOdorOverlay() {
           if (!this.odorOverlay) return;
           const sensors = this.markers
-            .filter(m => m.type === '악취측정기+온습도계')
+            .filter(m => m.type === '악취측정기')
             .map(m => {
               const pos = m.marker.getPosition();
               return { lat: pos.lat(), lng: pos.lng() };
@@ -488,7 +488,7 @@
         const legendList = document.getElementById('legendList');
         if (!legendList || !mapDeviceManager) return;
         const items = [
-          { type: '악취측정기+온습도계', label: '악취측정기+온습도계' },
+          { type: '악취측정기', label: '악취측정기' },
           { type: '음수투약기', label: '음수투약기' },
           { type: '풍향풍속계', label: '풍향풍속계' },
           { type: '게이트웨이', label: '게이트웨이' }
