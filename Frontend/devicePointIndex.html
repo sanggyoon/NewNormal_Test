@@ -59,8 +59,11 @@
 
     <!-- JSCharting 라이브러리 CDN -->
     <script src="https://code.jscharting.com/latest/jscharting.js"></script>
-    <script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
-    
+    <script
+      type="text/javascript"
+      src="https://code.jscharting.com/latest/modules/types.js"
+    ></script>
+
     <!-- ECharts 라이브러리 CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
 
@@ -206,10 +209,10 @@
           }
 
           // 가스별 반영
-          applyGas('.ammoniaBox', data.gases.NH3.avg);
-          applyGas('.hydrogenSulfideBox', data.gases.H2S.avg);
-          applyGas('.methaneBox', data.gases.CH4.avg);
-          applyGas('.carbonDioxideBox', data.gases.CO2.avg);
+          applyGas('.ammoniaBox', data.gases.NH3.value);
+          applyGas('.hydrogenSulfideBox', data.gases.H2S.value);
+          applyGas('.methaneBox', data.gases.CH4.value);
+          applyGas('.carbonDioxideBox', data.gases.CO2.value);
         }
 
         const script = document.createElement('script');

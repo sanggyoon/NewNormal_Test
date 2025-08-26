@@ -277,6 +277,7 @@ function attachDetailButtonHandlers() {
     btn.addEventListener('click', () => {
       const idx = Number(btn.getAttribute('data-index'));
       const raw = DummyData.items[idx];
+      const container = document.getElementById(`atmosphereInfoBox_id_${idx}`);
       const payload = {
         id: raw.id,
         farmname: raw.farmname,
@@ -286,28 +287,24 @@ function attachDetailButtonHandlers() {
         humid: { avg: raw.avgHumid, series: raw.humid },
         gases: {
           NH3: {
-            avg: raw.avg1,
-            max: raw.max1,
+            value: container.querySelector('.ammoniaBox .gaseousValue')
+              .textContent, // [ADD]
             series: raw.gas1,
-            last: raw.gas1.at(-1),
           },
           H2S: {
-            avg: raw.avg2,
-            max: raw.max2,
+            value: container.querySelector('.hydrogenSulfideBox .gaseousValue')
+              .textContent,
             series: raw.gas2,
-            last: raw.gas2.at(-1),
           },
           CH4: {
-            avg: raw.avg3,
-            max: raw.max3,
+            value: container.querySelector('.methaneBox .gaseousValue')
+              .textContent,
             series: raw.gas3,
-            last: raw.gas3.at(-1),
           },
           CO2: {
-            avg: raw.avg4,
-            max: raw.max4,
+            value: container.querySelector('.carbonDioxideBox .gaseousValue')
+              .textContent,
             series: raw.gas4,
-            last: raw.gas4.at(-1),
           },
         },
       };
