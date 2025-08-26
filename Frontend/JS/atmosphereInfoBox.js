@@ -239,6 +239,10 @@ function updateGasValues(index, gasIdx) {
     box.style.backgroundColor = state.background_color;
     box.style.borderColor = state.border_color;
   });
+
+  if (window.updateGaugesByGasIndex) {
+    window.updateGaugesByGasIndex(index, gasIdx);
+  }
 }
 
 // 버튼 클릭시 가스 값 업데이트
