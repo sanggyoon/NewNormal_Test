@@ -15,10 +15,10 @@ function renderGaugesFromSelectedPoint() {
   const data = window.SelectedPoint;
 
   const gases = {
-    NH3: data.gases.NH3.gas1,
-    H2S: data.gases.H2S.gas2,
-    CH4: data.gases.CH4.gas3,
-    CO2: data.gases.CO2.gas4,
+    NH3: data.gases.NH3.avg,
+    H2S: data.gases.H2S.avg,
+    CH4: data.gases.CH4.avg,
+    CO2: data.gases.CO2.avg,
   };
 
   const idMap = {
