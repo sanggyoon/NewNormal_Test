@@ -20,6 +20,12 @@ body {
   font-size: 20px;
 }
 
+#pointInfo {
+  background-color: white;
+  padding: 16px;
+  border-radius: 8px;
+}
+
 @media screen and (orientation: landscape) {
   .dashboardContainer {
     margin-left: 15%;
