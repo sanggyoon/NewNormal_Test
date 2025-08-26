@@ -21,7 +21,7 @@
     <style>
       .map-layout {
         position: relative;
-        height: 100vh;
+        height: 100%;
         width: 100%;
       }
       
@@ -93,7 +93,7 @@
       
       .map-panel {
         width: 100%;
-        height: 100vh;
+        height: 100%;
         display: flex;
         flex-direction: column;
       }
@@ -103,7 +103,7 @@
       #map {
         width: 100%;
         height: 100%;
-        min-height: 100vh;
+        flex: 1;
       }
       
       .marker-name-label {
@@ -185,6 +185,16 @@
         border-radius: 4px;
         border: 1px solid #e9ecef;
       }
+      
+      /* mapContainer 높이 조정 */
+      .mapContainer {
+        height: 80vh;
+        max-height: 700px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* 스크롤 방지 */
+      }
     </style>
   </head>
 
@@ -196,13 +206,18 @@
       <div class="mapContainer">
         <div class="map-layout">
           <section class="map-panel">
-            <!-- 마커 개수 정보 및 초기화 버튼 -->
+            <!-- 마커 개수 정보 및 버튼들 -->
             <div style="padding: 15px 20px; background: white; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
-              <button id="resetAllMarkers" style="padding: 8px 16px; background: #e53935; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#c62828'" onmouseout="this.style.background='#e53935'">
-                모든 마커 삭제
-              </button>
+              <div style="display: flex; gap: 10px;">
+                <button id="resetAllMarkers" style="padding: 8px 16px; background: #e53935; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#c62828'" onmouseout="this.style.background='#e53935'">
+                  모든 마커 삭제
+                </button>
+                <button id="reloadMarkers" style="padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#1565c0'" onmouseout="this.style.background='#1976d2'">
+                  JSON 데이터 로드
+                </button>
+              </div>
               <div id="markerCountInfo" style="font-size: 12px; color: #666; text-align: right;">
-                전체: 0/40 | 악취측정기+온습도계: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
+                전체: 0/40 | 악취측정기: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
               </div>
             </div>
             <div id="map"></div>
@@ -277,6 +292,7 @@
       let mapDeviceManager = null;
       const DEFAULT_ODOR_RADIUS_M = 120; // 악취 확산 반경(미터)
       let odorOverlay = null; // 지도 로드 후 생성
+      let currentDeleteLabel = null;
 
       // 클래스 정의
       class MapDeviceManager {
@@ -290,7 +306,7 @@
           // 마커 개수 제한 설정
           this.maxMarkers = 40; // 전체 최대 마커 개수
           this.maxMarkersPerType = {
-            '악취측정기+온습도계': 15,
+            '악취측정기': 15,
             '음수투약기': 8,
             '풍향풍속계': 10,
             '게이트웨이': 7
@@ -346,6 +362,13 @@
             pixelOffset: new naver.maps.Point(0, -50)
           });
           deleteLabel.open(this.map, marker);
+
+          currentDeleteLabel = deleteLabel;
+          
+          // // 최초 로딩 시 삭제 버튼 자동으로 닫기 (3초 후)
+          // setTimeout(() => {
+          //   currentDeleteLabel.close();
+          // }, 500);
 
           // 마커 아래 라벨 (장치 종류) - 항상 표시 (OverlayView 사용)
           class TypeLabelOverlay extends naver.maps.OverlayView {
@@ -420,13 +443,13 @@
           
           const typeLabel = new TypeLabelOverlay(
             new naver.maps.LatLng(device.lat, device.lng),
-            device.type
+            device.name || device.type
           );
 
           // 센서별 측정 데이터 정보 생성
           const getSensorDataInfo = (type) => {
             switch(type) {
-              case '악취측정기+온습도계':
+              case '악취측정기':
                 return `
                   <b>측정 데이터:</b><br>
                   • Gas 1~4 [ppm]: 암모니아, 황화수소, 이산화탄소, 메탄<br>
@@ -459,7 +482,7 @@
           const detailInfo = new naver.maps.InfoWindow({
             content: `
               <div class="device-detail-info">
-                <b>${device.type}</b><br>
+                <b>${device.name || device.type}</b><br>
                 위도: <span style="color:#1976d2;">${device.lat.toFixed(6)}</span><br>
                 경도: <span style="color:#1976d2;">${device.lng.toFixed(6)}</span><br>
                 ${getSensorDataInfo(device.type)}
@@ -513,7 +536,7 @@
             // InfoWindow 내용 업데이트
             detailInfo.setContent(`
               <div class="device-detail-info">
-                <b>${device.type}</b><br>
+                <b>${device.name || device.type}</b><br>
                 위도: <span style="color:#1976d2;">${device.lat.toFixed(6)}</span><br>
                 경도: <span style="color:#1976d2;">${device.lng.toFixed(6)}</span><br>
                 ${getSensorDataInfo(device.type)}
@@ -523,7 +546,6 @@
             
             // 연결선과 악취 확산 업데이트
             this.updateConnections();
-            this.updateOdorOverlay();
           });
 
           // 전역 삭제 함수 등록
@@ -536,7 +558,6 @@
               targetMarker.detailInfo.close();
               this.markers = this.markers.filter(m => m.id !== id);
               this.updateConnections();
-              this.updateOdorOverlay();
               this.updateMarkerCountInfo();
             }
           };
@@ -549,7 +570,6 @@
             detailInfo 
           });
           this.updateConnections();
-          this.updateOdorOverlay();
           this.updateMarkerCountInfo();
         }
 
@@ -559,14 +579,14 @@
           if (!countInfo) return;
           
           const totalCount = this.markers.length;
-          const odorCount = this.markers.filter(m => m.type === '악취측정기+온습도계').length;
+          const odorCount = this.markers.filter(m => m.type === '악취측정기').length;
           const waterCount = this.markers.filter(m => m.type === '음수투약기').length;
           const windCount = this.markers.filter(m => m.type === '풍향풍속계').length;
           const gatewayCount = this.markers.filter(m => m.type === '게이트웨이').length;
           
           countInfo.innerHTML = `
             전체: ${totalCount}/${this.maxMarkers} | 
-            악취측정기+온습도계: ${odorCount}/${this.maxMarkersPerType['악취측정기+온습도계']} | 
+            악취측정기: ${odorCount}/${this.maxMarkersPerType['악취측정기']} | 
             음수투약기: ${waterCount}/${this.maxMarkersPerType['음수투약기']} | 
             풍향풍속계: ${windCount}/${this.maxMarkersPerType['풍향풍속계']} | 
             게이트웨이: ${gatewayCount}/${this.maxMarkersPerType['게이트웨이']}
@@ -635,7 +655,7 @@
           } else if (type === '풍향풍속계') {
             fill = '#9c27b0';
             stroke = '#7b1fa2';
-          } else if (type === '악취측정기+온습도계') {
+          } else if (type === '악취측정기') {
             fill = '#2196f3';
             stroke = '#1976d2';
           }
@@ -643,7 +663,7 @@
           ctx.strokeStyle = stroke;
           ctx.fillStyle = fill;
           
-          if (type === '악취측정기+온습도계') {
+          if (type === '악취측정기') {
             // 원형 아이콘 (기존 악취측정기와 동일)
             ctx.beginPath();
             ctx.arc(size / 2, size / 2, size / 2 - 3, 0, 2 * Math.PI);
@@ -682,20 +702,14 @@
         }
 
         setOdorOverlay(overlay) {
-          this.odorOverlay = overlay;
-          this.updateOdorOverlay();
+          // heat 관련 기능 비활성화
+          this.odorOverlay = null;
+          console.log('악취 확산 오버레이 기능이 비활성화되었습니다.');
         }
 
         updateOdorOverlay() {
-          if (!this.odorOverlay) return;
-          const sensors = this.markers
-            .filter(m => m.type === '악취측정기+온습도계')
-            .map(m => {
-              const pos = m.marker.getPosition();
-              return { lat: pos.lat(), lng: pos.lng() };
-            });
-          console.log('악취 확산 업데이트:', sensors.length, '개 센서');
-          this.odorOverlay.setSensors(sensors);
+          // heat 관련 기능 비활성화
+          console.log('악취 확산 업데이트 기능이 비활성화되었습니다.');
         }
       }
 
@@ -727,8 +741,7 @@
         if (!map || !mapDeviceManager) return;
         map.addListener('click', function(e) {
           if (!activeMarkerType) {
-            // 활성화된 마커 타입이 없으면 알림
-            alert('마커를 추가하려면 먼저 마커 종류를 선택해주세요.');
+            // 활성화된 마커 타입이 없으면 아무것도 하지 않음
             return;
           }
           
@@ -752,7 +765,7 @@
           mapDeviceManager.markers.forEach(marker => {
             marker.marker.setMap(null);
             marker.deleteLabel.close();
-            marker.typeLabel.setMap(null);
+            marker.typeLabel.close();
             marker.detailInfo.close();
           });
           
@@ -760,9 +773,11 @@
           mapDeviceManager.markers = [];
           mapDeviceManager.markerIdSeq = 1;
           
-          // 연결선과 악취 확산 업데이트
-          mapDeviceManager.updateConnections();
-          mapDeviceManager.updateOdorOverlay();
+          // 연결선 제거 (heat 관련 기능 비활성화)
+          mapDeviceManager.connectionLines.forEach(line => line.setMap(null));
+          mapDeviceManager.connectionLines = [];
+          
+          // 마커 개수 정보 업데이트
           mapDeviceManager.updateMarkerCountInfo();
           
           // 활성화된 마커 타입 초기화
@@ -775,12 +790,150 @@
         }
       }
       
+      // JSON 데이터에서 마커 다시 로드
+      function reloadMarkersFromJson() {
+        if (confirm('devices.json에서 마커를 다시 로드하시겠습니까?')) {
+          loadDevicesFromJson();
+        }
+      }
+      
+      // devices.json에서 마커 데이터 로드
+      async function loadDevicesFromJson() {
+        try {
+          const response = await fetch('../naver_map/devices.json');
+          const devices = await response.json();
+          
+          if (!mapDeviceManager) return;
+          
+          // 기존 마커 ID 시퀀스 업데이트
+          const maxId = Math.max(...devices.map(d => d.id), 0);
+          mapDeviceManager.markerIdSeq = maxId + 1;
+          
+          // 각 장치를 마커로 추가
+          devices.forEach(device => {
+            // devices.json의 타입을 현재 시스템 타입으로 매핑
+            let mappedType = device.type;
+            if (device.type === '악취측정기') {
+              mappedType = '악취측정기';
+            }
+            
+            // name이 없으면 type + id로 생성
+            const deviceName = device.name || `${mappedType}${device.id}`;
+            
+            mapDeviceManager.addDeviceMarker({
+              id: device.id,
+              type: mappedType,
+              name: deviceName,
+              lat: device.lat,
+              lng: device.lng
+            });
+          });
+          
+          console.log(`${devices.length}개의 장치 마커가 로드되었습니다.`);
+          currentDeleteLabel.close();
+        } catch (error) {
+          console.error('devices.json 로드 중 오류 발생:', error);
+        }
+      }
+      
+      // 확산도 PNG 파일을 레이어로 추가 (GroundImageOverlay 참조)
+      function addOdorDispersionLayer() {
+        if (!map) return;
+        
+        try {
+          // GroundImageOverlay 클래스 정의
+          class GroundImageOverlay extends naver.maps.OverlayView {
+            constructor(map, imageUrl, bounds, opacity = 0.6) {
+              super();
+              this.map = map;
+              this.imageUrl = imageUrl;
+              this.bounds = bounds;
+              this.opacity = opacity;
+              this.img = null;
+              this.setMap(map);
+            }
+            
+            onAdd() {
+              const img = document.createElement('img');
+              img.src = this.imageUrl;
+              img.style.position = 'absolute';
+              img.style.pointerEvents = 'none';
+              img.style.opacity = String(this.opacity);
+              img.style.transformOrigin = 'top left';
+              this.img = img;
+              this.getPanes().overlayLayer.appendChild(img);
+            }
+            
+            onRemove() {
+              if (this.img && this.img.parentNode) {
+                this.img.parentNode.removeChild(this.img);
+              }
+              this.img = null;
+            }
+            
+            setOpacity(opacity) {
+              this.opacity = opacity;
+              if (this.img) this.img.style.opacity = String(opacity);
+            }
+            
+            setUrl(url) {
+              this.imageUrl = url;
+              if (this.img) this.img.src = url;
+            }
+            
+            setBounds(bounds) {
+              this.bounds = bounds;
+              this.draw();
+            }
+            
+            draw() {
+              if (!this.img || !this.bounds) return;
+              const proj = this.getProjection();
+              const sw = proj.fromCoordToOffset(this.bounds.getSW());
+              const ne = proj.fromCoordToOffset(this.bounds.getNE());
+              const left = sw.x;
+              const top = ne.y;
+              const width = ne.x - sw.x;
+              const height = sw.y - ne.y;
+              if (width <= 0 || height <= 0) return;
+              const scale = 25; // naver_map.html의 25에서 15로 축소
+              const scaledWidth = width * scale;
+              const scaledHeight = height * scale;
+              const scaledLeft = left - (scaledWidth - width) / 2;
+              const scaledTop = top - (scaledHeight - height) / 2;
+              this.img.style.transform = `translate(${scaledLeft}px, ${scaledTop}px)`;
+              this.img.style.width = `${scaledWidth}px`;
+              this.img.style.height = `${scaledHeight}px`;
+            }
+          }
+          
+          // 확산도 이미지 경계 설정 (naver_map.html 참고하여 축소)
+          const imageBounds = new naver.maps.LatLngBounds(
+            new naver.maps.LatLng(36.600850, 127.296000), // 남서쪽 좌표 (더 작은 범위)
+            new naver.maps.LatLng(36.601350, 127.296550)  // 북동쪽 좌표 (더 작은 범위)
+          );
+          
+          // GroundImageOverlay 인스턴스 생성
+          const odorDispersionOverlay = new GroundImageOverlay(
+            map,
+            '../naver_map/odor_dispersion.png',
+            imageBounds,
+            0.6 // 투명도
+          );
+          
+          console.log('확산도 레이어가 GroundImageOverlay로 추가되었습니다.');
+          
+        } catch (error) {
+          console.error('확산도 레이어 추가 중 오류 발생:', error);
+        }
+      }
+      
       // 좌측 범례 생성
       function renderLegend() {
         const legendList = document.getElementById('legendList');
         if (!legendList || !mapDeviceManager) return;
         const items = [
-          { type: '악취측정기+온습도계', label: '악취측정기+온습도계' },
+          { type: '악취측정기', label: '악취측정기' },
           { type: '음수투약기', label: '음수투약기' },
           { type: '풍향풍속계', label: '풍향풍속계' },
           { type: '게이트웨이', label: '게이트웨이' }
@@ -810,136 +963,30 @@
       document.head.appendChild(script);
 
       script.onload = () => {
-        // OdorHeatmapOverlay 정의 (SDK 로드 이후 안전하게 정의)
-        class OdorHeatmapOverlay extends naver.maps.OverlayView {
-          constructor(map, radiusMeters = DEFAULT_ODOR_RADIUS_M) {
-            super();
-            this.map = map;
-            this.radiusMeters = radiusMeters;
-            this.sensors = [];
-            this.canvas = null;
-            this.pixelRatio = Math.max(1, window.devicePixelRatio || 1);
-            this.setMap(map);
-          }
-          onAdd() {
-            const canvas = document.createElement('canvas');
-            canvas.style.position = 'absolute';
-            canvas.style.left = '0px';
-            canvas.style.top = '0px';
-            canvas.style.pointerEvents = 'none';
-            this.canvas = canvas;
-            this.getPanes().overlayLayer.appendChild(canvas);
-          }
-          onRemove() {
-            if (this.canvas && this.canvas.parentNode) {
-              this.canvas.parentNode.removeChild(this.canvas);
-            }
-            this.canvas = null;
-          }
-          setSensors(sensors) {
-            this.sensors = sensors || [];
-            this.draw();
-          }
-          setRadiusMeters(radiusMeters) {
-            this.radiusMeters = radiusMeters;
-            this.draw();
-          }
-          metersToPixels(meters, latitudeDegrees) {
-            const radians = Math.PI / 180;
-            const metersPerDegreeLng = 111320 * Math.cos(latitudeDegrees * radians);
-            const deltaLng = meters / metersPerDegreeLng;
-            const proj = this.getProjection();
-            const p1 = proj.fromCoordToOffset(new naver.maps.LatLng(latitudeDegrees, 0));
-            const p2 = proj.fromCoordToOffset(new naver.maps.LatLng(latitudeDegrees, deltaLng));
-            return Math.abs((p2.x - p1.x));
-          }
-          colorRamp(t) {
-            const stops = [
-              { c: [33,150,243] },
-              { c: [67,160,71] },
-              { c: [253,216,53] },
-              { c: [251,140,0] },
-              { c: [229,57,53] }
-            ];
-            const n = stops.length - 1;
-            const scaled = Math.min(n, Math.max(0, t * n));
-            const i = Math.floor(scaled);
-            const f = scaled - i;
-            const c0 = stops[i].c, c1 = stops[Math.min(n, i + 1)].c;
-            const r = Math.round(c0[0] + (c1[0] - c0[0]) * f);
-            const g = Math.round(c0[1] + (c1[1] - c0[1]) * f);
-            const b = Math.round(c0[2] + (c1[2] - c0[2]) * f);
-            const a = Math.min(0.6, 0.15 + 0.45 * t);
-            return [r, g, b, Math.round(a * 255)];
-          }
-          draw() {
-            if (!this.canvas) return;
-            const mapSize = this.getMap().getSize();
-            const width = mapSize.width;
-            const height = mapSize.height;
-            const ratio = this.pixelRatio;
-            if (this.canvas.width !== width * ratio || this.canvas.height !== height * ratio) {
-              this.canvas.width = width * ratio;
-              this.canvas.height = height * ratio;
-              this.canvas.style.width = width + 'px';
-              this.canvas.style.height = height + 'px';
-            }
-            const ctx = this.canvas.getContext('2d');
-            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            if (!this.sensors || this.sensors.length === 0) return;
-            const intensityCanvas = document.createElement('canvas');
-            intensityCanvas.width = this.canvas.width;
-            intensityCanvas.height = this.canvas.height;
-            const ictx = intensityCanvas.getContext('2d');
-            ictx.clearRect(0, 0, intensityCanvas.width, intensityCanvas.height);
-            // 알파 누적 방식으로 겹침 강도 표현
-            ictx.globalCompositeOperation = 'source-over';
-            const proj = this.getProjection();
-            for (const s of this.sensors) {
-              const coord = new naver.maps.LatLng(s.lat, s.lng);
-              const p = proj.fromCoordToOffset(coord);
-              const cx = p.x * ratio;
-              const cy = p.y * ratio;
-              const radiusPx = this.metersToPixels(DEFAULT_ODOR_RADIUS_M, s.lat) * ratio;
-              const grad = ictx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
-              // 단일 원은 낮은 강도(파랑으로 매핑). 겹칠수록 누적되어 단계 상승
-              grad.addColorStop(0, 'rgba(0,0,0,0.22)');
-              grad.addColorStop(1, 'rgba(0,0,0,0)');
-              ictx.fillStyle = grad;
-              ictx.beginPath();
-              ictx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
-              ictx.fill();
-            }
-            const img = ictx.getImageData(0, 0, intensityCanvas.width, intensityCanvas.height);
-            const data = img.data;
-            for (let i = 0; i < data.length; i += 4) {
-              const aVal = data[i + 3];
-              if (aVal < 6) { data[i + 3] = 0; continue; }
-              const t = aVal / 255;
-              const [r, g, b, a] = this.colorRamp(t);
-              data[i] = r; data[i + 1] = g; data[i + 2] = b; data[i + 3] = a;
-            }
-            ctx.putImageData(img, 0, 0);
-          }
-        }
-        
+        // heat 관련 기능 비활성화 - OdorHeatmapOverlay 클래스 정의 제거
         var mapOptions = {
-          center: new naver.maps.LatLng(36.601110505, 127.296293603),
+          center: new naver.maps.LatLng(36.600699, 127.296352),
           zoom: 18,
         };
         map = new naver.maps.Map('map', mapOptions);
         mapDeviceManager = new MapDeviceManager(map);
-        // 악취 확산 오버레이 생성 후 매니저에 주입
-        const overlay = new OdorHeatmapOverlay(map, DEFAULT_ODOR_RADIUS_M);
-        mapDeviceManager.setOdorOverlay(overlay);
+        // heat 관련 기능 비활성화 - 오버레이 생성하지 않음
+        mapDeviceManager.setOdorOverlay(null);
         window.mapDeviceManager = mapDeviceManager;
         setupMapEvents();
         renderLegend();
         setupLegendClickEvents();
         mapDeviceManager.updateMarkerCountInfo();
         
-        // 초기화 버튼 이벤트 리스너 연결
+        // 버튼 이벤트 리스너 연결
         document.getElementById('resetAllMarkers').addEventListener('click', resetAllMarkers);
+        document.getElementById('reloadMarkers').addEventListener('click', reloadMarkersFromJson);
+        
+        // devices.json에서 마커 데이터 로드
+        loadDevicesFromJson();
+        
+        // 확산도 PNG 레이어 추가
+        addOdorDispersionLayer();
 
         // 지도 크기 변경 감지
         map.addListener('resize', () => {
