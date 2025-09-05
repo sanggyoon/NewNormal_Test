@@ -53,6 +53,9 @@
       href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
     />
 
+    <!-- rawDataBox 전용 스크립트 -->
+    <script src="./JS/rawDataBox.js"></script>
+
     <!-- 로딩 컴포넌트 로직 -->
     <script>
       async function loadComponent(componentPath, targetId, callback) {
@@ -80,7 +83,9 @@
         runNoticeBarAnimation
       );
 
-      loadComponent('Components/rawDataBox.html', 'rawDataBox');
+      loadComponent('Components/rawDataBox.html', 'rawDataBox', function () {
+        initRawDataTable();
+      });
     </script>
   </body>
 </html>
