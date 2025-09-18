@@ -3,8 +3,11 @@
 
 // ====== API 엔드포인트 & 파라미터 ======
 const RAW_API = {
-  base: 'https://lssatdk2.cafe24.com',
-  main: '/test/main_api.php',
+  // CORS 우회를 위한 PHP 프록시 사용 (절대 경로)
+  proxy: 'http://localhost:8000/api_proxy.php', // 로컬 PHP 프록시
+  // 원본 API (참고용)
+  // base: 'https://lssatdk2.cafe24.com',
+  // main: '/test/main_api.php',
 };
 
 // TODO: 실제 운영 값으로 교체
@@ -34,14 +37,13 @@ function setStatus(message, type = 'info') {
 
 // ====== API 호출 ======
 async function fetchMainData() {
-  const url = RAW_API.base + RAW_API.main;
+  const url = RAW_API.proxy; // PHP 프록시 사용
 
   const body = new URLSearchParams();
   Object.entries(RAW_PARAMS).forEach(([k, v]) => body.append(k, v));
 
   const res = await fetch(url, {
     method: 'POST',
-    mode: 'cors', // 서버가 ACAO를 달아줘야 함
     headers: {
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -49,7 +51,7 @@ async function fetchMainData() {
     body,
   }).catch((e) => {
     console.error('[fetch error]', e);
-    throw new Error('fetch blocked (CORS or network): ' + e.message);
+    throw new Error('프록시 연결 실패: ' + e.message);
   });
 
   if (!res.ok) {
@@ -79,7 +81,7 @@ function renderTable(items = []) {
 
   if (!Array.isArray(items) || items.length === 0) {
     setStatus(
-      'API 연결 성공, 그러나 표시할 데이터가 없습니다. (items: 0)',
+      'PHP 프록시를 통한 API 연결 성공, 그러나 표시할 데이터가 없습니다. (items: 0)',
       'warn'
     );
     const tr = document.createElement('tr');
@@ -117,7 +119,7 @@ function renderTable(items = []) {
 
   tbody.appendChild(fragment);
   setStatus(
-    `API 연결 성공, ${items.length}건의 데이터가 로드되었습니다.`,
+    `PHP 프록시를 통한 API 연결 성공, ${items.length}건의 데이터가 로드되었습니다.`,
     'ok'
   );
 }
@@ -130,8 +132,17 @@ async function initRawDataTable() {
 
     // 매뉴얼 구조: { success, message, items: [...] }
     // (API 스펙은 /test/ 문서 참고)
+    // PHP 프록시 응답도 처리
     if (data && data.success && Array.isArray(data.items)) {
       renderTable(data.items);
+    } else if (data && data.success && data.proxy_status) {
+      // 프록시를 통한 연결은 성공했지만 데이터가 없는 경우
+      setStatus(
+        `PHP 프록시 연결 성공 (${data.proxy_status}) - ` + 
+        (data.message || '데이터가 없거나 형식이 다릅니다.'),
+        data.raw_response ? 'ok' : 'warn'
+      );
+      renderTable([]);
     } else {
       setStatus(
         'API 응답은 받았지만 형식이 예상과 다릅니다. (success=false 또는 items 미존재)',
@@ -142,9 +153,9 @@ async function initRawDataTable() {
   } catch (err) {
     console.error(err);
     setStatus(
-      'API 연결 실패: ' +
+      'PHP 프록시 연결 실패: ' +
         (err?.message || 'unknown error') +
-        ' — 다른 도메인에서 호출 중이면 CORS 정책이 원인일 수 있습니다.',
+        ' — PHP 서버가 실행 중인지 확인해주세요.',
       'err'
     );
 
