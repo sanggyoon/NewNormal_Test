@@ -1,9 +1,11 @@
 (function () {
-  // JSCharting이 로드될 때까지 대기
+  let tooltipModal = null;
+  let isModalVisible = false;
+  let radarChart = null;
+
   function waitForJSCharting() {
     if (typeof JSC !== 'undefined') {
       console.log('JSCharting 라이브러리 로드됨:', JSC);
-      console.log('JSCharting 버전:', JSC.version);
       initRadarChart();
     } else {
       console.log('JSCharting 로딩 대기 중...');
@@ -11,135 +13,349 @@
     }
   }
 
+  function createTooltipModal() {
+    if (tooltipModal) {
+      tooltipModal.remove();
+    }
+    
+    tooltipModal = document.createElement('div');
+    tooltipModal.className = 'radar-tooltip-modal';
+    tooltipModal.innerHTML = `
+      <div class="tooltip-header"></div>
+      <div class="tooltip-content"></div>
+    `;
+    document.body.appendChild(tooltipModal);
+    return tooltipModal;
+  }
+
+  function showTooltipModal(timeLabel, clientX, clientY) {
+    console.log('모달 표시:', timeLabel, 'at', clientX, clientY);
+    
+    const modal = createTooltipModal();
+    const header = modal.querySelector('.tooltip-header');
+    const content = modal.querySelector('.tooltip-content');
+    
+    header.textContent = `시간: ${timeLabel}`;
+    
+    const gasInfo = getGasInfoByTime(timeLabel);
+    content.innerHTML = '';
+    
+    if (gasInfo) {
+      gasInfo.forEach(gas => {
+        const item = document.createElement('div');
+        item.className = 'tooltip-item';
+        item.innerHTML = `
+          <div class="tooltip-label">
+            <div class="tooltip-color-dot" style="background-color: ${gas.color}"></div>
+            ${gas.name}
+          </div>
+          <div class="tooltip-value">${gas.value.toFixed(2)}<span class="tooltip-unit">ppm</span></div>
+        `;
+        content.appendChild(item);
+      });
+    }
+    
+    // 모달 위치 계산 개선
+    const modalWidth = 200;
+    const modalHeight = 150;
+    let x = clientX + 15;
+    let y = clientY - modalHeight - 10;
+    
+    // 화면 경계 체크
+    if (x + modalWidth > window.innerWidth) {
+      x = clientX - modalWidth - 15;
+    }
+    if (y < 0) {
+      y = clientY + 15;
+    }
+    
+    modal.style.left = x + 'px';
+    modal.style.top = y + 'px';
+    modal.classList.add('visible');
+    isModalVisible = true;
+  }
+
+  function hideTooltipModal() {
+    if (tooltipModal && isModalVisible) {
+      tooltipModal.classList.remove('visible');
+      isModalVisible = false;
+    }
+  }
+
+  function getGasInfoByTime(timeLabel) {
+    const sp = window.SelectedPoint;
+    const hasValidData = sp?.gases?.NH3?.series?.length > 0;
+
+    if (hasValidData) {
+      const dataLength = sp.gases.NH3.series.length;
+      const timeLabels = Array.from({ length: dataLength }, (_, i) => {
+        const d = new Date();
+        d.setHours(d.getHours() - (dataLength - 1 - i));
+        return `${String(d.getHours()).padStart(2, '0')}:00`;
+      });
+      
+      const index = timeLabels.indexOf(timeLabel);
+      if (index !== -1) {
+        return [
+          { name: '암모니아(NH3)', value: sp.gases.NH3.series[index] || 0, color: '#5470c6' },
+          { name: '황화수소(H2S)', value: sp.gases.H2S?.series?.[index] || 0, color: '#92cc75' },
+          { name: '메탄(CH4)', value: sp.gases.CH4?.series?.[index] || 0, color: '#fdcb32' },
+          { name: '이산화탄소(CO2)', value: sp.gases.CO2?.series?.[index] || 0, color: '#fc4032' }
+        ];
+      }
+    }
+    
+    // 더미 데이터
+    const hours = parseInt(timeLabel.split(':')[0]) || new Date().getHours();
+    const dummyValues = {
+      'NH3': [2.1, 2.2, 2.0, 2.3, 2.4, 2.1, 2.0, 2.2, 2.3, 2.1, 2.2, 2.0],
+      'H2S': [0.8, 0.9, 0.7, 0.8, 0.9, 0.8, 0.7, 0.8, 0.9, 0.8, 0.7, 0.8],
+      'CH4': [0.3, 0.4, 0.2, 0.3, 0.4, 0.3, 0.2, 0.3, 0.4, 0.3, 0.2, 0.3],
+      'CO2': [0.7, 0.8, 0.6, 0.7, 0.8, 0.7, 0.6, 0.7, 0.8, 0.7, 0.6, 0.7]
+    };
+    const index = hours % 12;
+    
+    return [
+      { name: '암모니아(NH3)', value: dummyValues.NH3[index], color: '#5470c6' },
+      { name: '황화수소(H2S)', value: dummyValues.H2S[index], color: '#92cc75' },
+      { name: '메탄(CH4)', value: dummyValues.CH4[index], color: '#fdcb32' },
+      { name: '이산화탄소(CO2)', value: dummyValues.CO2[index], color: '#fc4032' }
+    ];
+  }
+
+  // 각도와 거리를 이용해 시간대 계산 (JSCharting 레이더 차트 기준으로 수정)
+  function getTimeFromPosition(mouseX, mouseY, chartRect) {
+    const centerX = chartRect.left + chartRect.width / 2;
+    const centerY = chartRect.top + chartRect.height / 2;
+    
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+    
+    // JSCharting 레이더 차트는 12시 방향부터 시계방향으로 포인트를 배치
+    // 각도 계산 (12시 방향을 0도로, 시계방향으로 증가)
+    let angle = Math.atan2(dx, -dy); // 12시 방향이 0도가 되도록 dx, -dy 사용
+    if (angle < 0) angle += 2 * Math.PI; // 0 ~ 2π 범위로 정규화
+    
+    // 현재 시간 기준으로 12개 시간대 생성 (과거 -> 현재 순서)
+    const currentHour = new Date().getHours();
+    const timeLabels = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date();
+      d.setHours(currentHour - (11 - i)); // 11시간 전부터 현재까지
+      return `${String(d.getHours()).padStart(2, '0')}:00`;
+    });
+    
+    // 각도를 12개 구간으로 나누어 시간대 결정
+    const segmentAngle = (2 * Math.PI) / 12;
+    let timeIndex = Math.round(angle / segmentAngle) % 12;
+    
+    // 디버깅을 위한 로그
+    console.log(`마우스 위치: (${mouseX}, ${mouseY}), 각도: ${(angle * 180 / Math.PI).toFixed(1)}도, 시간 인덱스: ${timeIndex}, 시간: ${timeLabels[timeIndex]}`);
+    
+    return timeLabels[timeIndex];
+  }
+
+  // DOM 변화를 감지하여 동적으로 이벤트 리스너 추가
+  function setupDynamicEventListeners() {
+    console.log('동적 이벤트 리스너 설정 시작');
+    
+    const chartContainer = document.getElementById('radarGraph');
+    if (!chartContainer) {
+      console.log('차트 컨테이너를 찾을 수 없습니다');
+      return;
+    }
+
+    let hoverTimeout = null;
+
+    // MutationObserver로 DOM 변화 감지
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          // 새로운 SVG 요소들이 추가되면 이벤트 리스너 추가
+          setupSVGEventListeners();
+        }
+      });
+    });
+
+    observer.observe(chartContainer, {
+      childList: true,
+      subtree: true
+    });
+
+    // SVG 요소들에 직접 이벤트 리스너 추가
+    function setupSVGEventListeners() {
+      setTimeout(() => {
+        // JSCharting이 생성하는 모든 가능한 요소들 찾기
+        const svgElements = chartContainer.querySelectorAll('circle, ellipse, path[stroke], g[class*="marker"], g[class*="point"]');
+        
+        console.log('발견된 SVG 요소들:', svgElements.length);
+        
+        svgElements.forEach((element, index) => {
+          // 기존 이벤트 리스너 제거 (중복 방지)
+          element.removeEventListener('mouseenter', handleMouseEnter);
+          element.removeEventListener('mouseleave', handleMouseLeave);
+          
+          // 새 이벤트 리스너 추가
+          element.addEventListener('mouseenter', handleMouseEnter);
+          element.addEventListener('mouseleave', handleMouseLeave);
+          
+          console.log(`이벤트 리스너 추가: ${element.tagName}[${index}]`);
+        });
+      }, 100);
+    }
+
+    function handleMouseEnter(e) {
+      console.log('SVG 요소 마우스 진입:', e.target.tagName, e.target.className);
+      
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      
+      hoverTimeout = setTimeout(() => {
+        const chartRect = chartContainer.getBoundingClientRect();
+        const timeLabel = getTimeFromPosition(e.clientX, e.clientY, chartRect);
+        showTooltipModal(timeLabel, e.clientX, e.clientY);
+      }, 50);
+    }
+
+    function handleMouseLeave(e) {
+      console.log('SVG 요소 마우스 나감');
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      hideTooltipModal();
+    }
+
+    // 초기 설정
+    setupSVGEventListeners();
+
+    // 차트 영역 전체에도 백업 이벤트 설정
+    chartContainer.addEventListener('mouseleave', () => {
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      hideTooltipModal();
+    });
+
+    console.log('동적 이벤트 리스너 설정 완료');
+  }
+
+  // 전체 차트 영역 기반 호버 감지 (최후의 수단)
+  function setupFallbackEventListener() {
+    console.log('백업 이벤트 리스너 설정');
+    
+    const chartContainer = document.getElementById('radarGraph');
+    if (!chartContainer) return;
+
+    let hoverTimeout = null;
+    let lastTimeLabel = null;
+
+    chartContainer.addEventListener('mousemove', (e) => {
+      const chartRect = chartContainer.getBoundingClientRect();
+      const centerX = chartRect.left + chartRect.width / 2;
+      const centerY = chartRect.top + chartRect.height / 2;
+      
+      const dx = e.clientX - centerX;
+      const dy = e.clientY - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // 차트 포인트 영역 근처에 있는지 확인
+      const chartRadius = Math.min(chartRect.width, chartRect.height) / 2 * 0.7;
+      const minRadius = chartRadius * 0.6;
+      const maxRadius = chartRadius * 1.1;
+      
+      if (distance >= minRadius && distance <= maxRadius) {
+        const timeLabel = getTimeFromPosition(e.clientX, e.clientY, chartRect);
+        
+        if (timeLabel !== lastTimeLabel) {
+          lastTimeLabel = timeLabel;
+          
+          if (hoverTimeout) clearTimeout(hoverTimeout);
+          
+          hoverTimeout = setTimeout(() => {
+            showTooltipModal(timeLabel, e.clientX, e.clientY);
+            console.log('백업 이벤트로 호버 감지:', timeLabel);
+          }, 200);
+        }
+      } else {
+        if (lastTimeLabel) {
+          lastTimeLabel = null;
+          if (hoverTimeout) clearTimeout(hoverTimeout);
+          hideTooltipModal();
+        }
+      }
+    });
+
+    chartContainer.addEventListener('mouseleave', () => {
+      lastTimeLabel = null;
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      hideTooltipModal();
+    });
+  }
+
   function initRadarChart() {
     const chartDom = document.getElementById('radarGraph');
     if (!chartDom) return;
 
     const sp = window.SelectedPoint;
-    
-    // 디버깅을 위한 데이터 로그
-    console.log('SelectedPoint 데이터:', sp);
-    console.log('가스 데이터 구조:', sp?.gases);
-    
-    // 데이터 검증 및 기본값 설정
     let radarData = [];
     let timeLabels = [];
 
-    // 데이터 유효성 검사 - SelectedPoint의 gases 구조 확인
-    const hasValidData = sp && 
-                        sp.gases && 
-                        sp.gases.NH3 && 
-                        sp.gases.NH3.series && 
-                        Array.isArray(sp.gases.NH3.series) && 
-                        sp.gases.NH3.series.length > 0;
-
-    console.log('데이터 유효성:', hasValidData);
+    const hasValidData = sp?.gases?.NH3?.series?.length > 0;
 
     if (hasValidData) {
-      // 실제 데이터가 있는 경우
       const dataLength = sp.gases.NH3.series.length;
-      console.log('데이터 길이:', dataLength);
-      
       timeLabels = Array.from({ length: dataLength }, (_, i) => {
         const d = new Date();
         d.setHours(d.getHours() - (dataLength - 1 - i));
         return `${String(d.getHours()).padStart(2, '0')}:00`;
       });
 
-      // 각 가스 데이터의 유효성 검사 및 안전한 기본값 제공
       const getSafeSeries = (gasData, defaultValue = 1) => {
-        if (gasData && gasData.series && Array.isArray(gasData.series) && gasData.series.length > 0) {
-          return gasData.series;
-        }
-        return Array.from({ length: dataLength }, () => defaultValue);
+        return gasData?.series?.length > 0 ? gasData.series : Array(dataLength).fill(defaultValue);
       };
 
       radarData = [
-        {
-          name: '암모니아(NH3)',
-          points: getSafeSeries(sp.gases.NH3, 1).map((value, index) => [timeLabels[index], value]),
-          color: '#5470c6'
-        },
-        {
-          name: '황화수소(H2S)',
-          points: getSafeSeries(sp.gases.H2S, 1).map((value, index) => [timeLabels[index], value]),
-          color: '#92cc75'
-        },
-        {
-          name: '메탄(CH4)',
-          points: getSafeSeries(sp.gases.CH4, 1).map((value, index) => [timeLabels[index], value]),
-          color: '#fdcb32'
-        },
-        {
-          name: '이산화탄소(CO2)',
-          points: getSafeSeries(sp.gases.CO2, 1).map((value, index) => [timeLabels[index], value]),
-          color: '#fc4032'
-        }
+        { name: '암모니아(NH3)', points: getSafeSeries(sp.gases.NH3, 1).map((value, index) => [timeLabels[index], value]), color: '#5470c6' },
+        { name: '황화수소(H2S)', points: getSafeSeries(sp.gases.H2S, 1).map((value, index) => [timeLabels[index], value]), color: '#92cc75' },
+        { name: '메탄(CH4)', points: getSafeSeries(sp.gases.CH4, 1).map((value, index) => [timeLabels[index], value]), color: '#fdcb32' },
+        { name: '이산화탄소(CO2)', points: getSafeSeries(sp.gases.CO2, 1).map((value, index) => [timeLabels[index], value]), color: '#fc4032' }
       ];
     } else {
-      // 더미 데이터 (기본값) - dummyData.js 구조에 맞게
-      console.log('더미 데이터 사용');
       timeLabels = Array.from({ length: 12 }, (_, i) => {
         const d = new Date();
         d.setHours(d.getHours() - (11 - i));
         return `${String(d.getHours()).padStart(2, '0')}:00`;
       });
 
-      // dummyData.js와 동일한 구조의 더미 데이터 생성
-      const dummyGas1 = [2.1, 2.2, 2.0, 2.3, 2.4, 2.1, 2.0, 2.2, 2.3, 2.1, 2.2, 2.0];
-      const dummyGas2 = [0.8, 0.9, 0.7, 0.8, 0.9, 0.8, 0.7, 0.8, 0.9, 0.8, 0.7, 0.8];
-      const dummyGas3 = [0.3, 0.4, 0.2, 0.3, 0.4, 0.3, 0.2, 0.3, 0.4, 0.3, 0.2, 0.3];
-      const dummyGas4 = [0.7, 0.8, 0.6, 0.7, 0.8, 0.7, 0.6, 0.7, 0.8, 0.7, 0.6, 0.7];
-
-      radarData = [
-        {
-          name: '암모니아(NH3)',
-          points: timeLabels.map((label, index) => [label, dummyGas1[index]]),
-          color: '#5470c6'
-        },
-        {
-          name: '황화수소(H2S)',
-          points: timeLabels.map((label, index) => [label, dummyGas2[index]]),
-          color: '#92cc75'
-        },
-        {
-          name: '메탄(CH4)',
-          points: timeLabels.map((label, index) => [label, dummyGas3[index]]),
-          color: '#fdcb32'
-        },
-        {
-          name: '이산화탄소(CO2)',
-          points: timeLabels.map((label, index) => [label, dummyGas4[index]]),
-          color: '#fc4032'
-        }
+      const dummyData = [
+        [2.1, 2.2, 2.0, 2.3, 2.4, 2.1, 2.0, 2.2, 2.3, 2.1, 2.2, 2.0],
+        [0.8, 0.9, 0.7, 0.8, 0.9, 0.8, 0.7, 0.8, 0.9, 0.8, 0.7, 0.8],
+        [0.3, 0.4, 0.2, 0.3, 0.4, 0.3, 0.2, 0.3, 0.4, 0.3, 0.2, 0.3],
+        [0.7, 0.8, 0.6, 0.7, 0.8, 0.7, 0.6, 0.7, 0.8, 0.7, 0.6, 0.7]
       ];
+
+      const names = ['암모니아(NH3)', '황화수소(H2S)', '메탄(CH4)', '이산화탄소(CO2)'];
+      const colors = ['#5470c6', '#92cc75', '#fdcb32', '#fc4032'];
+
+      radarData = names.map((name, i) => ({
+        name: name,
+        points: timeLabels.map((label, index) => [label, dummyData[i][index]]),
+        color: colors[i]
+      }));
     }
 
-    // 데이터 유효성 최종 검사
-    if (!radarData || radarData.length === 0) {
-      console.error('레이더 차트 데이터가 유효하지 않습니다.');
-      return;
-    }
-
-    console.log('최종 레이더 데이터:', radarData);
-
-    // JSCharting 레이더 차트 생성 - 더 간단한 설정으로 시작
     try {
-      const radarChart = JSC.chart('radarGraph', {
-        debug: true, // 디버그 모드 활성화
-        type: 'radar spider', // 기본 라인 차트로 시작
+      radarChart = JSC.chart('radarGraph', {
+        debug: false,
+        type: 'radar spider',
         defaultCultureName: 'ko-KR',
+        
+        // 기본 툴팁 완전히 비활성화
         defaultPoint: {
-          tooltip: '<b>%icon %xValue</b><br/>%seriesName : %yValue',
+          tooltip: false,
           marker_visible: true
         },
+        
         xAxis: {
           spacingPercentage: 0.05,
           defaultTick: { 
             padding: 5,
             label_style: { fontFamily: 'Noto Sans KR' }
           },
-          // 레이더 차트에 맞는 축 설정
           scale_type: 'auto',
           label_style: { fontFamily: 'Noto Sans KR' }
         },
@@ -150,10 +366,7 @@
         },
         defaultSeries: { 
           opacity: 0.7, 
-          line_width: 3,
-          defaultPoint: {
-            label_style: { fontFamily: 'Noto Sans KR' }
-          }
+          line_width: 3
         },
         series: radarData.map(data => ({
           name: data.name,
@@ -162,103 +375,147 @@
           defaultPoint: {
             marker: {
               visible: true,
-              size: 6,
+              size: 16, // 더 큰 마커로 호버하기 쉽게
               fill: '#fff',
-              outline_width: 2,
+              outline_width: 4,
               outline_color: data.color,
-            },
-            label_style: { fontFamily: 'Noto Sans KR' }
+            }
           },
         })),
-        // 차트 크기 명시적 설정
         width: '100%',
         height: '100%',
-        // 차트 영역 설정 - 외부 타이틀을 고려하여 조정
         chartArea: {
           margin: '10% 15% 15% 15%'
         },
-        // 레이더 차트 특화 설정
-        polar: {
-          enabled: true
-        },
-        // 외부 타이틀 사용으로 내부 타이틀 제거
+        polar: { enabled: true },
         legend: {
           visible: true,
-          position: 'top right', // 우측 상단으로 이동
+          position: 'top right',
           template: '%icon,%name',
           defaultEntry: {
             style: { 
-              fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
+              fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto',
               fontSize: 12
             }
           },
-          // 범례 위치 조정 - 외부 타이틀 우측에 나란히
           margin: '10px 10px 0 0',
-          // 범례 배경 및 테두리
           background: 'rgba(255, 255, 255, 0.9)',
           border: '1px solid #e5e5e6',
           borderRadius: '6px',
           padding: '8px 12px'
-        },
-      });
-
-      // 창 크기 변경 시 차트 리사이즈
-      window.addEventListener('resize', function() {
-        if (radarChart) {
-          try {
-            // radar 타입 차트의 경우 다른 방법으로 크기 조정
-            if (radarChart.resize) {
-              radarChart.resize();
-            } else if (radarChart.reflow) {
-              radarChart.reflow();
-            } else if (radarChart.render) {
-              radarChart.render();
-            }
-          } catch (resizeError) {
-            console.error('차트 리사이즈 에러:', resizeError);
-          }
         }
       });
 
-      // 차트가 제대로 렌더링되었는지 확인
+      console.log('JSCharting 레이더 차트 생성 완료');
+
+      // 여러 방법으로 이벤트 리스너 설정
       setTimeout(() => {
-        if (radarChart) {
-          console.log('차트 객체:', radarChart);
-          console.log('차트 DOM 요소:', document.getElementById('radarGraph'));
-          console.log('사용 가능한 메서드:', Object.getOwnPropertyNames(radarChart));
-          
-          // 차트 크기 강제 설정
-          try {
-            if (radarChart.resize) {
-              radarChart.resize();
-              console.log('차트 리사이즈 완료');
-            } else if (radarChart.reflow) {
-              radarChart.reflow();
-              console.log('차트 리플로우 완료');
-            } else if (radarChart.render) {
-              radarChart.render();
-              console.log('차트 렌더링 완료');
-            }
-          } catch (resizeError) {
-            console.error('차트 크기 조정 에러:', resizeError);
-          }
-        }
-      }, 100);
+        setupDynamicEventListeners();  // 동적 SVG 요소 감지
+      }, 500);
 
-      console.log('JSCharting 라인 차트 초기화 완료', radarData);
+      setTimeout(() => {
+        setupFallbackEventListener();  // 전체 영역 기반 백업
+      }, 1000);
+
     } catch (error) {
-      console.error('JSCharting 차트 생성 중 에러 발생:', error);
-      console.error('에러 상세:', error.message);
-      console.error('스택 트레이스:', error.stack);
-      
-      // 에러 발생 시 간단한 메시지 표시
-      const chartDom = document.getElementById('radarGraph');
-      if (chartDom) {
-        chartDom.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">차트 로딩 중 오류가 발생했습니다.</div>';
-      }
+      console.error('JSCharting 차트 생성 중 에러:', error);
     }
   }
 
-  // JSCharting 로드 대기 시작
+  // 전역 테스트 함수들
+  window.testRadarModalAtMouse = function() {
+    document.addEventListener('mousemove', function handler(e) {
+      showTooltipModal('14:00', e.clientX, e.clientY);
+      document.removeEventListener('mousemove', handler);
+      setTimeout(() => hideTooltipModal(), 3000);
+    }, { once: true });
+    console.log('마우스를 움직여서 모달 위치를 테스트하세요');
+  };
+
+  window.debugChartElements = function() {
+    const chartContainer = document.getElementById('radarGraph');
+    if (!chartContainer) {
+      console.log('차트 컨테이너를 찾을 수 없습니다');
+      return;
+    }
+    
+    console.log('=== 차트 요소 분석 ===');
+    const allElements = chartContainer.querySelectorAll('*');
+    console.log('전체 요소 수:', allElements.length);
+    
+    const svgElements = chartContainer.querySelectorAll('svg');
+    console.log('SVG 요소 수:', svgElements.length);
+    
+    const circles = chartContainer.querySelectorAll('circle');
+    console.log('Circle 요소 수:', circles.length);
+    circles.forEach((circle, i) => {
+      console.log(`Circle ${i}:`, circle.getAttribute('r'), circle.getAttribute('fill'));
+    });
+    
+    const paths = chartContainer.querySelectorAll('path');
+    console.log('Path 요소 수:', paths.length);
+    
+    const groups = chartContainer.querySelectorAll('g');
+    console.log('Group 요소 수:', groups.length);
+    
+    return { allElements, svgElements, circles, paths, groups };
+  };
+
+  // 차트의 실제 시간 레이블과 각도 매핑 디버깅
+  window.debugTimeMapping = function() {
+    console.log('=== 시간 매핑 디버깅 ===');
+    
+    // 현재 차트에서 사용하는 시간 레이블들
+    const currentHour = new Date().getHours();
+    const timeLabels = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date();
+      d.setHours(currentHour - (11 - i));
+      return `${String(d.getHours()).padStart(2, '0')}:00`;
+    });
+    
+    console.log('차트 시간 레이블들:', timeLabels);
+    console.log('12시 방향:', timeLabels[0]);
+    console.log('3시 방향:', timeLabels[3]);
+    console.log('6시 방향:', timeLabels[6]);
+    console.log('9시 방향:', timeLabels[9]);
+    
+    // 각 시간대별 각도 계산
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * 360;
+      console.log(`시간 ${timeLabels[i]}: ${angle}도`);
+    }
+    
+    // 클릭 테스트 가이드
+    console.log('\n=== 클릭 테스트 가이드 ===');
+    console.log('차트의 12시 방향을 클릭해서 올바른 시간이 나오는지 확인하세요');
+    
+    return timeLabels;
+  };
+
+  // 마우스 위치에서 실시간 시간 확인
+  window.enableTimeDebug = function() {
+    const chartContainer = document.getElementById('radarGraph');
+    if (!chartContainer) {
+      console.log('차트 컨테이너를 찾을 수 없습니다');
+      return;
+    }
+    
+    console.log('시간 디버그 모드 활성화 - 마우스를 움직여보세요');
+    
+    const handler = function(e) {
+      const chartRect = chartContainer.getBoundingClientRect();
+      const timeLabel = getTimeFromPosition(e.clientX, e.clientY, chartRect);
+      console.log(`실시간 시간: ${timeLabel}`);
+    };
+    
+    chartContainer.addEventListener('mousemove', handler);
+    
+    // 10초 후 자동 해제
+    setTimeout(() => {
+      chartContainer.removeEventListener('mousemove', handler);
+      console.log('시간 디버그 모드 해제됨');
+    }, 10000);
+  };
+
   waitForJSCharting();
 })();

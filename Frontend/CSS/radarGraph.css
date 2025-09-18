@@ -66,3 +66,80 @@
     justify-content: center;
   }
 }
+
+/* 레이더 차트 호버 모달 스타일 */
+.radar-tooltip-modal {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e5e5e6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
+    Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
+    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  max-width: 200px;
+  min-width: 150px;
+}
+
+.radar-tooltip-modal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.radar-tooltip-modal .tooltip-header {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.radar-tooltip-modal .tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.radar-tooltip-modal .tooltip-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.radar-tooltip-modal .tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  flex: 1;
+}
+
+.radar-tooltip-modal .tooltip-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.radar-tooltip-modal .tooltip-value {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.radar-tooltip-modal .tooltip-unit {
+  font-size: 11px;
+  color: #888;
+  margin-left: 2px;
+}
