@@ -14,17 +14,15 @@
   }
 
   function createTooltipModal() {
-    if (tooltipModal) {
-      tooltipModal.remove();
+    if (!tooltipModal) {
+      tooltipModal = document.createElement('div');
+      tooltipModal.className = 'radar-tooltip-modal';
+      tooltipModal.innerHTML = `
+        <div class="tooltip-header"></div>
+        <div class="tooltip-content"></div>
+      `;
+      document.body.appendChild(tooltipModal);
     }
-
-    tooltipModal = document.createElement('div');
-    tooltipModal.className = 'radar-tooltip-modal';
-    tooltipModal.innerHTML = `
-      <div class="tooltip-header"></div>
-      <div class="tooltip-content"></div>
-    `;
-    document.body.appendChild(tooltipModal);
     return tooltipModal;
   }
 
@@ -35,73 +33,103 @@
     const header = modal.querySelector('.tooltip-header');
     const content = modal.querySelector('.tooltip-content');
 
-    header.textContent = `${timeLabel}`;
+    // 내용이 변경되었을 때만 업데이트
+    if (header.textContent !== timeLabel) {
+      header.textContent = `${timeLabel}`;
 
-    const gasInfo = getGasInfoByTime(timeLabel);
-    content.innerHTML = '';
+      const gasInfo = getGasInfoByTime(timeLabel);
+      content.innerHTML = '';
 
-    if (gasInfo) {
-      gasInfo.forEach((gas) => {
-        const item = document.createElement('div');
-        item.className = 'tooltip-item';
-        item.innerHTML = `
-          <div class="tooltip-label">
-            <div class="tooltip-color-dot" style="background-color: ${
-              gas.color
-            }"></div>
-            ${gas.name}
-          </div>
-          <div class="tooltip-value">${gas.value.toFixed(
-            2
-          )}<span class="tooltip-unit">ppm</span></div>
-        `;
-        content.appendChild(item);
-      });
+      if (gasInfo) {
+        gasInfo.forEach((gas) => {
+          const item = document.createElement('div');
+          item.className = 'tooltip-item';
+          item.innerHTML = `
+            <div class="tooltip-label">
+              <div class="tooltip-color-dot" style="background-color: ${
+                gas.color
+              }"></div>
+              ${gas.name}
+            </div>
+            <div class="tooltip-value">${gas.value.toFixed(
+              2
+            )}<span class="tooltip-unit">ppm</span></div>
+          `;
+          content.appendChild(item);
+        });
+      }
     }
 
-    // 모달을 먼저 표시해서 실제 크기를 측정
-    modal.style.visibility = 'hidden';
-    modal.style.display = 'block';
-    document.body.appendChild(modal);
-    
-    // 실제 모달 크기 측정
-    const modalRect = modal.getBoundingClientRect();
-    const modalWidth = modalRect.width;
-    const modalHeight = modalRect.height;
-    
-    // 모달 위치 계산 - 마우스 커서 바로 옆에 배치
-    const offset = 10; // 커서와 모달 사이의 간격
-    let x = clientX + offset;
-    let y = clientY - modalHeight / 2; // 모달의 세로 중앙이 커서 위치에 오도록
+    // 모달이 처음 표시되는 경우에만 페이드 인
+    if (!isModalVisible) {
+      modal.style.visibility = 'hidden';
+      modal.style.display = 'block';
+      
+      // 실제 모달 크기 측정
+      const modalRect = modal.getBoundingClientRect();
+      const modalWidth = modalRect.width;
+      const modalHeight = modalRect.height;
+      
+      // 위치 계산
+      const offset = 10;
+      let x = clientX + offset;
+      let y = clientY - modalHeight / 2;
 
-    // 화면 오른쪽 경계 체크
-    if (x + modalWidth > window.innerWidth - 10) {
-      x = clientX - modalWidth - offset; // 왼쪽에 배치
-    }
-    
-    // 화면 위쪽 경계 체크
-    if (y < 10) {
-      y = 10;
-    }
-    
-    // 화면 아래쪽 경계 체크
-    if (y + modalHeight > window.innerHeight - 10) {
-      y = window.innerHeight - modalHeight - 10;
-    }
+      // 화면 경계 체크
+      if (x + modalWidth > window.innerWidth - 10) {
+        x = clientX - modalWidth - offset;
+      }
+      if (y < 10) {
+        y = 10;
+      }
+      if (y + modalHeight > window.innerHeight - 10) {
+        y = window.innerHeight - modalHeight - 10;
+      }
 
-    // 최종 위치 설정
-    modal.style.left = x + 'px';
-    modal.style.top = y + 'px';
-    modal.style.visibility = 'visible';
-    modal.classList.add('visible');
-    isModalVisible = true;
+      modal.style.left = x + 'px';
+      modal.style.top = y + 'px';
+      modal.style.visibility = 'visible';
+      modal.classList.add('visible');
+      isModalVisible = true;
+    } else {
+      // 이미 표시된 모달의 위치만 업데이트 (페이드 없이)
+      updateTooltipPosition(clientX, clientY);
+    }
   }
 
   function hideTooltipModal() {
     if (tooltipModal && isModalVisible) {
       tooltipModal.classList.remove('visible');
       isModalVisible = false;
+      // 모달을 제거하지 않고 숨기기만 함
     }
+  }
+
+  function updateTooltipPosition(clientX, clientY) {
+    if (!tooltipModal || !isModalVisible) return;
+
+    const modalRect = tooltipModal.getBoundingClientRect();
+    const modalWidth = modalRect.width;
+    const modalHeight = modalRect.height;
+    
+    const offset = 10;
+    let x = clientX + offset;
+    let y = clientY - modalHeight / 2;
+
+    // 화면 경계 체크
+    if (x + modalWidth > window.innerWidth - 10) {
+      x = clientX - modalWidth - offset;
+    }
+    if (y < 10) {
+      y = 10;
+    }
+    if (y + modalHeight > window.innerHeight - 10) {
+      y = window.innerHeight - modalHeight - 10;
+    }
+
+    // 위치 즉시 업데이트 (transition 없이)
+    tooltipModal.style.left = x + 'px';
+    tooltipModal.style.top = y + 'px';
   }
 
   function getGasInfoByTime(timeLabel) {
@@ -354,7 +382,7 @@
           }, 100);
         } else if (isModalVisible) {
           // 같은 시간대에서 마우스가 움직일 때 모달 위치 업데이트
-          showTooltipModal(timeLabel, e.clientX, e.clientY);
+          updateTooltipPosition(e.clientX, e.clientY);
         }
       } else {
         if (isHovering) {
