@@ -214,9 +214,15 @@
     background-repeat: no-repeat;
     background-size: cover;
     width: 60px;
-    height: 80px;
+    height: 100px;
     z-index: 50;
     cursor: pointer;
+    transition: left 0.3s ease-in-out;
+  }
+
+  /* 메뉴가 열렸을 때 토글 버튼 위치 변경 */
+  #navContainer.menu-open::after {
+    left: 40%;
   }
   .navContainer.open {
     position: fixed;
