@@ -204,6 +204,15 @@
     transition: left 0.3s ease-in-out;
     z-index: 100;
   }
+
+  .navContainer.open {
+    left: 0;
+  }
+
+  .navContainer.close {
+    left: -40%;
+  }
+
   #navContainer::after {
     content: '';
     position: fixed;
@@ -223,15 +232,5 @@
   /* 메뉴가 열렸을 때 토글 버튼 위치 변경 */
   #navContainer.menu-open::after {
     left: 40%;
-  }
-  .navContainer.open {
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
-  .navContainer.close {
-    position: fixed;
-    top: 0;
-    left: -40%;
   }
 }

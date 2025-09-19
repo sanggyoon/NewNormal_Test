@@ -22,6 +22,29 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!navContainer || !navContainerParent) return;
         
+        // 화면 방향 변경 감지 함수
+        function handleOrientationChange() {
+            if (window.innerWidth > window.innerHeight) {
+                // 가로 모드: 모든 세로 모드 클래스 제거
+                navContainer.classList.remove('open', 'close');
+                navContainerParent.classList.remove('menu-open');
+            } else {
+                // 세로 모드: 기본적으로 닫힌 상태
+                if (!navContainer.classList.contains('open') && !navContainer.classList.contains('close')) {
+                    navContainer.classList.add('close');
+                }
+            }
+        }
+        
+        // 초기 상태 설정
+        handleOrientationChange();
+        
+        // 화면 크기 변경 이벤트 리스너
+        window.addEventListener('resize', handleOrientationChange);
+        window.addEventListener('orientationchange', function() {
+            setTimeout(handleOrientationChange, 100);
+        });
+        
         // navContainerParent 클릭 이벤트 (::after 요소 클릭 감지)
         navContainerParent.addEventListener('click', function(event) {
             // 세로 방향에서만 동작
