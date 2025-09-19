@@ -63,7 +63,7 @@
   .radarGraphBox {
     display: flex;
     height: 500px;
-    min-height: 500px;
+    min-height: 700px;
     align-items: center;
     justify-content: center;
   }
