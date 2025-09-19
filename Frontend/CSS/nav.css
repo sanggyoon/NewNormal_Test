@@ -195,9 +195,18 @@
 
 /* 세로 방향 (portrait) */
 @media screen and (orientation: portrait) {
+  .navContainer {
+    width: 40%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: -40%;
+    transition: left 0.3s ease-in-out;
+    z-index: 100;
+  }
   #navContainer::after {
     content: '';
-    position: absolute;
+    position: fixed;
     bottom: 10vh;
     left: 0;
     background-image: url(../Public/Icons/MenuToggle.png);
@@ -206,6 +215,8 @@
     background-size: cover;
     width: 60px;
     height: 80px;
+    z-index: 50;
+    cursor: pointer;
   }
   .navContainer.open {
     position: fixed;
