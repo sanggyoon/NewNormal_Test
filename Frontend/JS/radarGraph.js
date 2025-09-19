@@ -59,22 +59,40 @@
       });
     }
 
-    // 모달 위치 계산 개선
-    const modalWidth = 200;
-    const modalHeight = 150;
-    let x = clientX + 15;
-    let y = clientY - modalHeight - 10;
+    // 모달을 먼저 표시해서 실제 크기를 측정
+    modal.style.visibility = 'hidden';
+    modal.style.display = 'block';
+    document.body.appendChild(modal);
+    
+    // 실제 모달 크기 측정
+    const modalRect = modal.getBoundingClientRect();
+    const modalWidth = modalRect.width;
+    const modalHeight = modalRect.height;
+    
+    // 모달 위치 계산 - 마우스 커서 바로 옆에 배치
+    const offset = 10; // 커서와 모달 사이의 간격
+    let x = clientX + offset;
+    let y = clientY - modalHeight / 2; // 모달의 세로 중앙이 커서 위치에 오도록
 
-    // 화면 경계 체크
-    if (x + modalWidth > window.innerWidth) {
-      x = clientX - modalWidth - 15;
+    // 화면 오른쪽 경계 체크
+    if (x + modalWidth > window.innerWidth - 10) {
+      x = clientX - modalWidth - offset; // 왼쪽에 배치
     }
-    if (y < 0) {
-      y = clientY + 15;
+    
+    // 화면 위쪽 경계 체크
+    if (y < 10) {
+      y = 10;
+    }
+    
+    // 화면 아래쪽 경계 체크
+    if (y + modalHeight > window.innerHeight - 10) {
+      y = window.innerHeight - modalHeight - 10;
     }
 
+    // 최종 위치 설정
     modal.style.left = x + 'px';
     modal.style.top = y + 'px';
+    modal.style.visibility = 'visible';
     modal.classList.add('visible');
     isModalVisible = true;
   }
@@ -258,6 +276,23 @@
         const timeLabel = getTimeFromPosition(e.clientX, e.clientY, chartRect);
         showTooltipModal(timeLabel, e.clientX, e.clientY);
       }, 50);
+
+      // 마우스 움직임에 따라 모달 위치 업데이트
+      const mouseMoveHandler = (moveEvent) => {
+        if (isModalVisible) {
+          const chartRect = chartContainer.getBoundingClientRect();
+          const timeLabel = getTimeFromPosition(moveEvent.clientX, moveEvent.clientY, chartRect);
+          showTooltipModal(timeLabel, moveEvent.clientX, moveEvent.clientY);
+        }
+      };
+
+      element.addEventListener('mousemove', mouseMoveHandler);
+      
+      // 마우스가 벗어날 때 이벤트 리스너 제거
+      element.addEventListener('mouseleave', function cleanup() {
+        element.removeEventListener('mousemove', mouseMoveHandler);
+        element.removeEventListener('mouseleave', cleanup);
+      }, { once: true });
     }
 
     function handleMouseLeave(e) {
@@ -287,6 +322,7 @@
 
     let hoverTimeout = null;
     let lastTimeLabel = null;
+    let isHovering = false;
 
     chartContainer.addEventListener('mousemove', (e) => {
       const chartRect = chartContainer.getBoundingClientRect();
@@ -304,6 +340,7 @@
       const maxRadius = chartRadius * 1.1;
 
       if (distance >= minRadius && distance <= maxRadius) {
+        isHovering = true;
         const timeLabel = getTimeFromPosition(e.clientX, e.clientY, chartRect);
 
         if (timeLabel !== lastTimeLabel) {
@@ -314,10 +351,14 @@
           hoverTimeout = setTimeout(() => {
             showTooltipModal(timeLabel, e.clientX, e.clientY);
             console.log('백업 이벤트로 호버 감지:', timeLabel);
-          }, 200);
+          }, 100);
+        } else if (isModalVisible) {
+          // 같은 시간대에서 마우스가 움직일 때 모달 위치 업데이트
+          showTooltipModal(timeLabel, e.clientX, e.clientY);
         }
       } else {
-        if (lastTimeLabel) {
+        if (isHovering) {
+          isHovering = false;
           lastTimeLabel = null;
           if (hoverTimeout) clearTimeout(hoverTimeout);
           hideTooltipModal();
@@ -326,6 +367,7 @@
     });
 
     chartContainer.addEventListener('mouseleave', () => {
+      isHovering = false;
       lastTimeLabel = null;
       if (hoverTimeout) clearTimeout(hoverTimeout);
       hideTooltipModal();
@@ -505,16 +547,20 @@
 
   // 전역 테스트 함수들
   window.testRadarModalAtMouse = function () {
-    document.addEventListener(
-      'mousemove',
-      function handler(e) {
-        showTooltipModal('14:00', e.clientX, e.clientY);
-        document.removeEventListener('mousemove', handler);
-        setTimeout(() => hideTooltipModal(), 3000);
-      },
-      { once: true }
-    );
-    console.log('마우스를 움직여서 모달 위치를 테스트하세요');
+    console.log('마우스를 움직여서 모달이 커서를 따라다니는지 테스트하세요');
+    
+    const testHandler = function(e) {
+      showTooltipModal('14:00', e.clientX, e.clientY);
+    };
+    
+    document.addEventListener('mousemove', testHandler);
+    
+    // 5초 후 테스트 종료
+    setTimeout(() => {
+      document.removeEventListener('mousemove', testHandler);
+      hideTooltipModal();
+      console.log('마우스 추적 테스트가 종료되었습니다');
+    }, 5000);
   };
 
   window.debugChartElements = function () {

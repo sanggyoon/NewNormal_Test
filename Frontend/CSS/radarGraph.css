@@ -71,7 +71,7 @@
 
 /* 레이더 차트 호버 모달 스타일 */
 .radar-tooltip-modal {
-  position: absolute;
+  position: fixed; /* absolute에서 fixed로 변경하여 스크롤 영향 제거 */
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid #e5e5e6;
   border-radius: 8px;
@@ -83,9 +83,10 @@
   pointer-events: none;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.2s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease; /* position은 transition에서 제외 */
   max-width: 200px;
   min-width: 150px;
+  backdrop-filter: blur(2px); /* 배경 흐림 효과 추가 */
 }
 
 .radar-tooltip-modal.visible {
