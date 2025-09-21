@@ -1,0 +1,83 @@
+# deploy/docker-compose.yml
+version: '3.9'
+
+services:
+  nginx_proxy_manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx_proxy_manager
+    ports:
+      - '80:80' # 외부 80 → NPM
+      - '443:443' # 외부 443 → NPM
+      - '81:81' # NPM 관리자 페이지 (내부에서만 접속 권장)
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy_net
+    restart: unless-stopped
+
+  n8n: # [ADD] 서비스명
+    image: n8nio/n8n:latest
+    container_name: n8n
+    environment:
+      - TZ=Asia/Seoul
+      # 외부 공개 URL 설정(도메인에 맞게 바꿔줘)
+      - N8N_HOST=n8n.sanggyoon.com # [EDIT] 예: n8n.sanggyoon.com
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://n8n.sanggyoon.com/ # [EDIT] 예: https://n8n.sanggyoon.com/
+      # 기본 인증(초기 보안용: 운영 정착 후 SSO 등으로 대체 가능)
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=sanggyoon # [EDIT] 원하는 아이디
+      - N8N_BASIC_AUTH_PASSWORD=sang1590 # [EDIT] 강한 비밀번호
+      # 크리덴셜 암호화 키(반드시 길고 랜덤! 나중에 절대 변경 X)
+      - N8N_ENCRYPTION_KEY=lSNhSMjr0muJ8gKx/ej5/F57dx8m89mjNafwMe7WkxJCQJfNyjHrSnlm+9cDG2fO # [EDIT] 아래 2.1 참고
+      # (선택) 텔레메트리 비활성
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      # (권장) 프록시 신뢰
+      - N8N_TRUSTED_PROXIES=0.0.0.0/0
+    volumes:
+      - ./n8n_data:/home/node/.n8n # [ADD] 영속 저장소
+    expose:
+      - '5678' # [ADD] 내부 포트 노출(프록시만 통과)
+    networks:
+      - proxy_net
+    restart: unless-stopped
+
+  my_nginx_web: # [ADD] 서비스명 (기존 컨테이너명과 동일 권장)
+    image: nginx:alpine # [ADD] 이미지(빌드 불필요)
+    container_name: my_nginx_web # [ADD] 컨테이너 이름 (NPM이 이 이름으로 업스트림 접근)
+    # ports:
+    #   - '8888:80' # [KEEP] 필요하면 유지. 운영에선 제거 가능 (아래 참고)
+    networks:
+      - proxy_net # [KEEP] NPM과 같은 네트워크
+    volumes: # 로컬 파일 주소 핫리로드
+      - /Users/sanggyoon-kim/deploy/sites/test/public:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+  # ===[ADD] Ollama (로컬 LLM 서버) ===
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    # 초기 테스트 시 외부에서 curl 확인하려면 아래 ports 유지,
+    # 운영 전환 시 ports 제거하고 expose만 두는 것을 권장
+    ports:
+      - '11434:11434'
+    # 운영 전환 시:
+    # expose:
+    #   - "11434"
+    volumes:
+      - ollama_data:/root/.ollama # 모델/캐시 영속화
+    networks:
+      - proxy_net # n8n과 같은 네트워크(내부 DNS: http://ollama:11434)
+    restart: unless-stopped
+
+networks:
+  proxy_net:
+    external: true
+    name: proxy_net
+
+# ollama 데이터 볼륨
+volumes:
+  ollama_data:
