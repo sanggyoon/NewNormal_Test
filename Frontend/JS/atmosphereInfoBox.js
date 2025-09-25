@@ -173,13 +173,26 @@ function updateGasValues(index, gasIdx) {
     const value = data[gas.key][gasIdx] ?? 0;
     const state = getGasState(value);
     const box = container.querySelector(`.${gas.box}`);
-    box.querySelector('.gaseousState').textContent = state.text;
-    box.querySelector('.gaseousState').style.backgroundColor = state.btn_color;
-    box.querySelector('.gaseousState').style.color = state.text_color;
-    box.querySelector('.gaseousValue').textContent = value;
-    box.querySelector('.gaseousValue').style.color = state.text_color;
-    box.style.backgroundColor = state.background_color;
-    box.style.borderColor = state.border_color;
+    if (box) {
+      box.querySelector('.gaseousState').textContent = state.text;
+      box.querySelector('.gaseousState').style.backgroundColor = state.btn_color;
+      box.querySelector('.gaseousState').style.color = state.text_color;
+      box.querySelector('.gaseousValue').textContent = value;
+      box.querySelector('.gaseousValue').style.color = state.text_color;
+      box.style.backgroundColor = state.background_color;
+      box.style.borderColor = state.border_color;
+      
+      // 게이지도 업데이트
+      const canvas = box.querySelector('canvas');
+      if (canvas && canvas._gauge) {
+        const [startColor, stopColor] = getGradientByValue(value, 3.0);
+        canvas._gauge.setOptions({
+          colorStart: startColor,
+          colorStop: stopColor,
+        });
+        canvas._gauge.set(parseFloat(value) || 0);
+      }
+    }
   });
 
   if (window.updateGaugesByGasIndex) {
@@ -344,6 +357,9 @@ function applyDataToCurrentPageElements(index, startIndex, endIndex) {
       
       // 상태 업데이트
       updateElementWithGasData(element, gasState, gasValue);
+      
+      // 게이지 생성
+      createGaugeForElement(element, gasValue);
     } else {
       // 추가 가스 데이터 적용
       const additionalIndex = absoluteIndex - 4;
@@ -353,6 +369,9 @@ function applyDataToCurrentPageElements(index, startIndex, endIndex) {
         const gasState = getGasState(gasValue);
         
         updateElementWithGasData(element, gasState, gasValue);
+        
+        // 게이지 생성
+        createGaugeForElement(element, gasValue);
       }
     }
   });
@@ -367,6 +386,94 @@ function updateElementWithGasData(element, gasState, gasValue) {
   element.querySelector('.gaseousValue').style.color = gasState.text_color;
   element.style.backgroundColor = gasState.background_color;
   element.style.borderColor = gasState.border_color;
+}
+
+// 게이지 색상 결정 함수 (gauge.js와 동일)
+function getGradientByValue(value, maxValue) {
+  if (value <= 1) {
+    return ['#007BFE', '#007BFE']; // 파란색
+  } else if (value > 1 && value <= 2) {
+    return ['#FFD600', '#FFD600']; // 노란색
+  } else {
+    return ['#EE5253', '#EE5253']; // 빨간색
+  }
+}
+
+// 요소에 게이지 생성
+function createGaugeForElement(element, gasValue) {
+  const canvas = element.querySelector('canvas');
+  if (!canvas || typeof Gauge === 'undefined') return;
+  
+  // 기존 게이지가 있으면 제거
+  if (canvas._gauge) {
+    canvas._gauge = null;
+  }
+  
+  const [startColor, stopColor] = getGradientByValue(gasValue, 3.0);
+  const opts = {
+    angle: 0.12,
+    lineWidth: 0.44,
+    radiusScale: 1,
+    pointer: {
+      length: 0.62,
+      strokeWidth: 0.08,
+      color: '#000000',
+    },
+    limitMax: false,
+    limitMin: false,
+    strokeColor: '#E0E0E0',
+    generateGradient: true,
+    highDpiSupport: true,
+    colorStart: startColor,
+    colorStop: stopColor,
+  };
+  
+  try {
+    const gauge = new Gauge(canvas).setOptions(opts);
+    gauge.maxValue = 3.0;
+    gauge.setMinValue(0);
+    gauge.animationSpeed = 128;
+    gauge.set(parseFloat(gasValue) || 0);
+    
+    // 나중에 업데이트할 수 있도록 저장
+    canvas._gauge = gauge;
+  } catch (error) {
+    console.warn('게이지 생성 실패:', error);
+  }
+}
+
+// 모든 현재 페이지의 게이지 재생성
+function recreateAllGaugesForCurrentPage(index) {
+  const container = document.getElementById(`atmosphereInfoBox_id_${index}`);
+  if (!container) return;
+  
+  const currentElements = container.querySelectorAll('.dataBox_measurmentData .measurementData');
+  const state = atmospherePageState[index];
+  const data = DummyData.items[index];
+  const startIndex = state.currentPage * state.itemsPerPage;
+  
+  currentElements.forEach((element, relativeIndex) => {
+    const absoluteIndex = startIndex + relativeIndex;
+    let gasValue = 0;
+    
+    if (absoluteIndex < 4) {
+      // 기본 4개 가스 데이터
+      const gasKeys = ['avg1', 'avg2', 'avg3', 'avg4'];
+      gasValue = data[gasKeys[absoluteIndex]] || 0;
+    } else {
+      // 추가 가스 데이터
+      const additionalIndex = absoluteIndex - 4;
+      if (additionalIndex < ADDITIONAL_GAS_TYPES.length) {
+        const gasType = ADDITIONAL_GAS_TYPES[additionalIndex];
+        gasValue = parseFloat(data[gasType.avgKey] || 0);
+      }
+    }
+    
+    // 약간의 지연 후 게이지 생성 (DOM 렌더링 완료 대기)
+    setTimeout(() => {
+      createGaugeForElement(element, gasValue);
+    }, 100);
+  });
 }
 
 // measurementData 렌더링
@@ -395,6 +502,11 @@ function renderCurrentPage(index) {
   
   // 데이터 적용 (현재 페이지의 요소들에 대해)
   applyDataToCurrentPageElements(index, startIndex, endIndex);
+  
+  // 게이지 재생성 (DOM 렌더링 완료 후)
+  setTimeout(() => {
+    recreateAllGaugesForCurrentPage(index);
+  }, 50);
 }
 
 // 페이징 도트 렌더링
@@ -539,11 +651,14 @@ function createMeasurementDataElement(index, gasType) {
   const gasValue = parseFloat(data[gasType.avgKey] || 0);
   const gasState = getGasState(gasValue);
   
+  // 고유한 canvas ID 생성
+  const canvasId = `${gasType.key}Gauge_${index}_${Date.now()}`;
+  
   div.innerHTML = `
     <div class="gaseousState" style="background-color: ${gasState.btn_color}; color: ${gasState.text_color};">${gasState.text}</div>
     <div class="voidBox"></div>
     <div class="gaugeGraph">
-      <canvas id="${gasType.key}Gauge_${index}"></canvas>
+      <canvas id="${canvasId}"></canvas>
     </div>
     <div class="voidBox"></div>
     <div class="gaseousValue" style="color: ${gasState.text_color};">${gasValue}</div>
