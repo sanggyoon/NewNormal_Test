@@ -267,7 +267,22 @@ window.applyAllAtmosphereDummyData = function () {
   
   // 새로운 기능 초기화
   initializePaginationFeatures();
+  
+  // 모달 외부 클릭 이벤트 추가
+  setupModalEvents();
 };
+
+// 모달 이벤트 설정
+function setupModalEvents() {
+  const modal = document.getElementById('addDataModal');
+  if (modal) {
+    modal.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        closeAddDataModal();
+      }
+    });
+  }
+}
 
 // === 새로운 페이징 및 관리 기능 ===
 
@@ -361,17 +376,28 @@ function applyDataToCurrentPageElements(index, startIndex, endIndex) {
       // 게이지 생성
       createGaugeForElement(element, gasValue);
     } else {
-      // 추가 가스 데이터 적용
-      const additionalIndex = absoluteIndex - 4;
-      if (additionalIndex < ADDITIONAL_GAS_TYPES.length) {
-        const gasType = ADDITIONAL_GAS_TYPES[additionalIndex];
-        const gasValue = parseFloat(data[gasType.avgKey] || 0);
+      // 커스텀 가스 데이터 적용 (5번째 이후)
+      const customGasIndex = absoluteIndex + 1; // gas5, gas6, gas7...
+      const gasKey = `gas${customGasIndex}`;
+      const avgKey = `avg${customGasIndex}`;
+      
+      if (data[avgKey] !== undefined) {
+        const gasValue = parseFloat(data[avgKey]);
         const gasState = getGasState(gasValue);
         
         updateElementWithGasData(element, gasState, gasValue);
-        
-        // 게이지 생성
         createGaugeForElement(element, gasValue);
+      } else {
+        // 기본 추가 가스 타입 데이터 적용
+        const additionalIndex = absoluteIndex - 4;
+        if (additionalIndex < ADDITIONAL_GAS_TYPES.length) {
+          const gasType = ADDITIONAL_GAS_TYPES[additionalIndex];
+          const gasValue = parseFloat(data[gasType.avgKey] || 0);
+          const gasState = getGasState(gasValue);
+          
+          updateElementWithGasData(element, gasState, gasValue);
+          createGaugeForElement(element, gasValue);
+        }
       }
     }
   });
@@ -593,29 +619,8 @@ function addMeasurementData(index) {
     return;
   }
   
-  const additionalGasIndex = state.totalItems - 4; // 기본 4개 제외
-  if (additionalGasIndex >= ADDITIONAL_GAS_TYPES.length) {
-    alert('더 이상 추가할 수 있는 가스 타입이 없습니다.');
-    return;
-  }
-  
-  const gasType = ADDITIONAL_GAS_TYPES[additionalGasIndex];
-  
-  // 더미 데이터에 새 가스 추가
-  const data = DummyData.items[index];
-  if (!data[gasType.key]) {
-    data[gasType.key] = Array(12).fill().map(() => (Math.random() * 3).toFixed(1));
-    data[gasType.avgKey] = (Math.random() * 3).toFixed(1);
-  }
-  
-  // 새 measurementData 요소 생성
-  const newElement = createMeasurementDataElement(index, gasType);
-  state.allMeasurementData.push(newElement);
-  state.totalItems++;
-  
-  // 페이징 및 렌더링 업데이트
-  updatePaginationVisibility(index);
-  renderCurrentPage(index);
+  // 모달 열기
+  openAddDataModal(index);
 }
 
 // measurementData 삭제 기능
@@ -676,3 +681,178 @@ function createMeasurementDataElement(index, gasType) {
 window.changePage = changePage;
 window.addMeasurementData = addMeasurementData;
 window.deleteMeasurementData = deleteMeasurementData;
+
+// === 모달 관련 함수들 ===
+
+// 현재 추가하려는 컨테이너 인덱스 저장
+let currentAddingIndex = null;
+
+// 모달 열기
+function openAddDataModal(index) {
+  currentAddingIndex = index;
+  const modal = document.getElementById('addDataModal');
+  if (modal) {
+    // 입력값 초기화
+    document.getElementById('gasName').value = '';
+    document.getElementById('gasValue').value = '';
+    document.getElementById('deviceCode').value = '';
+    
+    modal.style.display = 'flex';
+    
+    // 첫 번째 입력 필드에 포커스
+    setTimeout(() => {
+      document.getElementById('gasName').focus();
+    }, 100);
+    
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', handleModalKeydown);
+  }
+}
+
+// 모달 닫기
+function closeAddDataModal() {
+  const modal = document.getElementById('addDataModal');
+  if (modal) {
+    modal.style.display = 'none';
+    currentAddingIndex = null;
+    
+    // ESC 키 이벤트 제거
+    document.removeEventListener('keydown', handleModalKeydown);
+  }
+}
+
+// 키보드 이벤트 처리
+function handleModalKeydown(event) {
+  if (event.key === 'Escape') {
+    closeAddDataModal();
+  } else if (event.key === 'Enter' && event.ctrlKey) {
+    confirmAddData();
+  }
+}
+
+// 입력값 검증
+function validateInputs() {
+  const gasName = document.getElementById('gasName').value.trim();
+  const gasValue = document.getElementById('gasValue').value.trim();
+  const deviceCode = document.getElementById('deviceCode').value.trim();
+  
+  const errors = [];
+  
+  if (!gasName) {
+    errors.push('측정 가스 이름을 입력해주세요.');
+  } else if (gasName.length > 20) {
+    errors.push('가스 이름은 20자 이하로 입력해주세요.');
+  }
+  
+  if (!gasValue) {
+    errors.push('측정 값을 입력해주세요.');
+  } else {
+    const numValue = parseFloat(gasValue);
+    if (isNaN(numValue)) {
+      errors.push('측정 값은 숫자여야 합니다.');
+    } else if (numValue < 0 || numValue > 10) {
+      errors.push('측정 값은 0~10 범위로 입력해주세요.');
+    }
+  }
+  
+  if (!deviceCode) {
+    errors.push('측정 기계 코드를 입력해주세요.');
+  } else if (deviceCode.length > 15) {
+    errors.push('기계 코드는 15자 이하로 입력해주세요.');
+  }
+  
+  return errors;
+}
+
+// 데이터 추가 확인
+function confirmAddData() {
+  const errors = validateInputs();
+  
+  if (errors.length > 0) {
+    alert('입력 오류:\n' + errors.join('\n'));
+    return;
+  }
+  
+  const gasName = document.getElementById('gasName').value.trim();
+  const gasValue = parseFloat(document.getElementById('gasValue').value.trim());
+  const deviceCode = document.getElementById('deviceCode').value.trim();
+  
+  // 실제 데이터 추가 처리
+  processAddData(currentAddingIndex, gasName, gasValue, deviceCode);
+  
+  // 모달 닫기
+  closeAddDataModal();
+}
+
+// 실제 데이터 추가 처리
+function processAddData(index, gasName, gasValue, deviceCode) {
+  const state = atmospherePageState[index];
+  const data = DummyData.items[index];
+  
+  // 새로운 가스 키 생성
+  const newGasIndex = state.totalItems + 1;
+  const gasKey = `gas${newGasIndex}`;
+  const avgKey = `avg${newGasIndex}`;
+  
+  // 더미 데이터에 새 가스 추가
+  data[gasKey] = Array(12).fill().map(() => gasValue.toFixed(1));
+  data[avgKey] = gasValue;
+  data[`${gasKey}_name`] = gasName; // 가스 이름 저장
+  data[`${gasKey}_device`] = deviceCode; // 기계 코드 저장
+  
+  // 새로운 가스 타입 객체 생성
+  const customGasType = {
+    key: gasKey,
+    name: gasName,
+    className: `customGas${newGasIndex}Box`,
+    avgKey: avgKey,
+    deviceCode: deviceCode
+  };
+  
+  // 새 measurementData 요소 생성
+  const newElement = createCustomMeasurementDataElement(index, customGasType, gasValue);
+  state.allMeasurementData.push(newElement);
+  state.totalItems++;
+  
+  // 페이징 및 렌더링 업데이트
+  updatePaginationVisibility(index);
+  renderCurrentPage(index);
+  
+  console.log(`새로운 측정 데이터 추가: ${gasName} (${gasValue}) - ${deviceCode}`);
+}
+
+// 커스텀 measurementData 요소 생성
+function createCustomMeasurementDataElement(index, gasType, gasValue) {
+  const div = document.createElement('div');
+  div.className = `measurementData ${gasType.className}`;
+  
+  const gasState = getGasState(gasValue);
+  
+  // 고유한 canvas ID 생성
+  const canvasId = `${gasType.key}Gauge_${index}_${Date.now()}`;
+  
+  div.innerHTML = `
+    <div class="gaseousState" style="background-color: ${gasState.btn_color}; color: ${gasState.text_color};">${gasState.text}</div>
+    <div class="voidBox"></div>
+    <div class="gaugeGraph">
+      <canvas id="${canvasId}"></canvas>
+    </div>
+    <div class="voidBox"></div>
+    <div class="gaseousValue" style="color: ${gasState.text_color};">${gasValue}</div>
+    <div class="gaseousName">${gasType.name}</div>
+  `;
+  
+  // 기계 코드를 데이터 속성으로 저장
+  div.setAttribute('data-device-code', gasType.deviceCode);
+  
+  // 스타일 적용
+  div.style.backgroundColor = gasState.background_color;
+  div.style.borderColor = gasState.border_color;
+  
+  return div;
+}
+
+// 전역 함수로 등록
+window.openAddDataModal = openAddDataModal;
+window.closeAddDataModal = closeAddDataModal;
+window.confirmAddData = confirmAddData;

@@ -102,3 +102,31 @@
     </div>
   </div>
 </div>
+
+<!-- 측정 데이터 추가 모달 -->
+<div id="addDataModal" class="data_modal" style="display: none;">
+  <div class="modal_content">
+    <div class="modal_header">
+      <h3>측정 데이터 추가</h3>
+      <span class="modal_close" onclick="closeAddDataModal()">&times;</span>
+    </div>
+    <div class="modal_body">
+      <div class="input_group">
+        <label for="gasName">측정 가스 이름:</label>
+        <input type="text" id="gasName" placeholder="예: 일산화탄소" maxlength="20">
+      </div>
+      <div class="input_group">
+        <label for="gasValue">측정 값:</label>
+        <input type="number" id="gasValue" placeholder="0.0" min="0" max="10" step="0.1">
+      </div>
+      <div class="input_group">
+        <label for="deviceCode">측정 기계 코드:</label>
+        <input type="text" id="deviceCode" placeholder="예: GAS-001" maxlength="15">
+      </div>
+    </div>
+    <div class="modal_footer">
+      <button class="modal_button cancel" onclick="closeAddDataModal()">취소</button>
+      <button class="modal_button confirm" onclick="confirmAddData()">추가</button>
+    </div>
+  </div>
+</div>
