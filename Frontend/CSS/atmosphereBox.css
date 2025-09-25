@@ -88,7 +88,8 @@
 .dataBox_measurmentData {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 2%;
 }
 
 .measurementData {
@@ -100,6 +101,7 @@
   border: 1px solid #f7f7f8;
   border-radius: 8px;
   padding: 20px;
+  margin-bottom: 10px;
 }
 
 .gaseousState {
@@ -128,4 +130,106 @@
 .gaseousName {
   color: #7d7f82;
   font-size: 0.9rem;
+}
+
+/* measurementData 관리 컨트롤 */
+.measurementData_controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  justify-content: flex-start;
+}
+
+.control_button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+.add_button {
+  background-color: #e0f2fe;
+  color: #0277bd;
+  border: 1px solid #b3e5fc;
+}
+
+.add_button:hover {
+  background-color: #b3e5fc;
+}
+
+.delete_button {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.delete_button:hover {
+  background-color: #ffcdd2;
+}
+
+/* 페이징 네비게이션 */
+.pagination_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e5e5e6;
+}
+
+.pagination_nav {
+  background: none;
+  border: 1px solid #e5e5e6;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #7d7f82;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.pagination_nav:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.pagination_nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination_dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #e5e5e6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination_dot.active {
+  background-color: #007bfe;
+  transform: scale(1.2);
+}
+
+.pagination_dot.visible {
+  background-color: #7d7f82;
+}
+
+.pagination_dot:hover {
+  background-color: #007bfe;
 }

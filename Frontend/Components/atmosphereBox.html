@@ -35,6 +35,17 @@
 
     <div class="dataBox_separateLine"></div>
 
+    <!-- measurementData 관리 컨트롤 (기본적으로 숨김) -->
+    <div class="measurementData_controls" style="display: none;">
+      <button class="control_button add_button" onclick="addMeasurementData({{index}})">
+        측정 데이터 추가
+      </button>
+      <button class="control_button delete_button" onclick="deleteMeasurementData({{index}})">
+        측정 데이터 삭제
+      </button>
+    </div>
+
+    <!-- 기존 measurementData 구조 유지 -->
     <div class="dataBox_measurmentData">
       <div class="measurementData ammoniaBox">
         <div class="gaseousState">단절</div>
@@ -79,6 +90,15 @@
         <div class="gaseousValue">0.0</div>
         <div class="gaseousName">이산화탄소</div>
       </div>
+    </div>
+
+    <!-- 페이징 네비게이션 (기본적으로 숨김) -->
+    <div class="pagination_container" style="display: none;">
+      <button class="pagination_nav prev" onclick="changePage({{index}}, -1)">‹</button>
+      <div class="pagination_dots" data-container-index="{{index}}">
+        <!-- 동적으로 생성될 페이징 도트들 -->
+      </div>
+      <button class="pagination_nav next" onclick="changePage({{index}}, 1)">›</button>
     </div>
   </div>
 </div>
