@@ -1041,6 +1041,7 @@
         var mapOptions = {
           center: new naver.maps.LatLng(36.600699, 127.296352),
           zoom: 18,
+          mapTypeId: naver.maps.MapTypeId.HYBRID, // 위성 지도 타입
         };
         map = new naver.maps.Map('map', mapOptions);
         mapDeviceManager = new MapDeviceManager(map);
