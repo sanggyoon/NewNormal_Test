@@ -288,6 +288,7 @@
 
     <!-- 네이버 지도 관련 스크립트 -->
     <script type="module">
+      import CONFIG from './JS/config.js';
       let map = null;
       let mapDeviceManager = null;
       const DEFAULT_ODOR_RADIUS_M = 120; // 악취 확산 반경(미터)
@@ -959,7 +960,7 @@
       // 네이버 지도 API 로드 후 map 생성
       const script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = 'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=jz78vv4dg0';
+      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${CONFIG.NAVER_MAP_CLIENT_ID2}`;
       document.head.appendChild(script);
 
       script.onload = () => {
