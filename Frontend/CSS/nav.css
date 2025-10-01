@@ -18,346 +18,219 @@
   color: inherit;
 }
 
-@media screen and (orientation: landscape) {
-  .navContainer {
-    background-color: var(--nav-background-color);
-    color: white;
-    width: 15%;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    font-size: 22px;
-  }
+.navContainer {
+  background-color: var(--nav-background-color);
+  color: white;
+  width: 15%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 22px;
+  z-index: 100;
+}
 
-  .houseInfoBox {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    padding: 40px 10%;
-  }
-  .houseInfoBox:hover {
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  .houseInfoBox_Logo {
-    width: var(--logo-height) !important;
-    height: var(--logo-height) !important;
-    border-radius: 50%;
-    border: 1px solid white;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    margin-right: 10px;
-    background-color: black; /* temp */
-  }
-  .houseInfoBox_Text {
-    position: relative;
-    height: var(--logo-height);
-    width: 100%;
-  }
-  .houseInfoBox_Title {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    font-size: 1.3rem;
-  }
-  .houseInfoBox_Tag {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.85rem;
-  }
+.houseInfoBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  padding: 40px 10%;
+}
+.houseInfoBox:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.houseInfoBox_Logo {
+  width: var(--logo-height) !important;
+  height: var(--logo-height) !important;
+  border-radius: 50%;
+  border: 1px solid white;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin-right: 10px;
+  background-color: black; /* temp */
+}
+.houseInfoBox_Text {
+  position: relative;
+  height: var(--logo-height);
+  width: 100%;
+}
+.houseInfoBox_Title {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  font-size: 1.3rem;
+}
+.houseInfoBox_Tag {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
 
-  .navList ul li {
-    padding: 20px 10%;
-  }
-  .navList ul li:hover,
-  .navList ul li.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    color: white;
-  }
+.navList ul li {
+  padding: 20px 10%;
+}
+.navList ul li:hover,
+.navList ul li.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  color: white;
+}
 
-  .icon_dashboard {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/DashboardInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_dashboard,
-  .navList ul li.active .icon_dashboard {
-    background-image: url('../Public/Icons/DashboardActive.png');
-  }
-  .icon_devicePoint {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/PointInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_devicePoint,
-  .navList ul li.active .icon_devicePoint {
-    background-image: url('../Public/Icons/PointActive.png');
-  }
-  .icon_odorDispersion {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/OdorDispersionInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_odorDispersion,
-  .navList ul li.active .icon_odorDispersion {
-    background-image: url('../Public/Icons/OdorDispersionActive.png');
-  }
-  .icon_data {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/DataInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_data,
-  .navList ul li.active .icon_data {
-    background-image: url('../Public/Icons/DataActive.png');
-  }
+.icon_dashboard {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('../Public/Icons/DashboardInactive.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.navList ul li:hover .icon_dashboard,
+.navList ul li.active .icon_dashboard {
+  background-image: url('../Public/Icons/DashboardActive.png');
+}
+.icon_devicePoint {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('../Public/Icons/PointInactive.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.navList ul li:hover .icon_devicePoint,
+.navList ul li.active .icon_devicePoint {
+  background-image: url('../Public/Icons/PointActive.png');
+}
+.icon_odorDispersion {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('../Public/Icons/OdorDispersionInactive.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.navList ul li:hover .icon_odorDispersion,
+.navList ul li.active .icon_odorDispersion {
+  background-image: url('../Public/Icons/OdorDispersionActive.png');
+}
+.icon_data {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('../Public/Icons/DataInactive.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.navList ul li:hover .icon_data,
+.navList ul li.active .icon_data {
+  background-image: url('../Public/Icons/DataActive.png');
+}
 
-  .nav_separateLine {
-    height: 1px;
-    width: 90%;
-    background-color: rgba(255, 255, 255, 0.1);
-    margin: 10px auto;
-  }
+.nav_separateLine {
+  height: 1px;
+  width: 90%;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 10px auto;
+}
 
-  .navFooter {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 20px;
-  }
-  .navFooter_Alert,
-  .navFooter_Logout {
-    padding: 15px 10%;
-    font-size: 1.1rem;
-  }
-  .navFooter ul {
-    list-style: none;
-  }
-  .navFooter ul li:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  .navFooter ul li:hover span {
-    color: white;
-  }
-  .navFooter_Text {
-    width: 100%;
-    color: #7d7f82;
-  }
-  .navFooter_Text:hover {
-    color: white;
-  }
+.navFooter {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 20px;
+}
+.navFooter_Alert,
+.navFooter_Logout {
+  padding: 15px 10%;
+  font-size: 1.1rem;
+}
+.navFooter ul {
+  list-style: none;
+}
+.navFooter ul li:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.navFooter ul li:hover span {
+  color: white;
+}
+.navFooter_Text {
+  width: 100%;
+  color: #7d7f82;
+}
+.navFooter_Text:hover {
+  color: white;
+}
 
-  .icon_alert {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/Alert.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .icon_logout {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/Logout.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
+.icon_alert {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('../Public/Icons/Alert.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.icon_logout {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('../Public/Icons/Logout.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 10px;
 }
 
 /* 세로 방향 (portrait) */
 @media screen and (orientation: portrait) {
   .navContainer {
-    background-color: var(--nav-background-color);
-    color: white;
-    width: 15%;
-    min-width: 240px;
+    width: 40%;
     height: 100vh;
     position: fixed;
     top: 0;
-    left: -100%;
-    font-size: 22px;
+    left: -40%;
+    transition: left 0.3s ease-in-out;
+    z-index: 100;
   }
 
-  .houseInfoBox {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    padding: 40px 10%;
-  }
-  .houseInfoBox_Logo {
-    width: var(--logo-height) !important;
-    height: var(--logo-height) !important;
-    border-radius: 50%;
-    border: 1px solid white;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    margin-right: 10px;
-    background-color: black; /* temp */
-  }
-  .houseInfoBox_Text {
-    position: relative;
-    height: var(--logo-height);
-    width: 100%;
-  }
-  .houseInfoBox_Title {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    font-size: 1.3rem;
-  }
-  .houseInfoBox_Tag {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.85rem;
+  .navContainer.open {
+    left: 0;
   }
 
-  .navList ul li {
-    padding: 20px 10%;
+  .navContainer.close {
+    left: -40%;
   }
-  .navList ul li:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+
+  #navContainer::after {
+    content: '';
+    position: fixed;
+    bottom: 10vh;
+    left: 0;
+    background-image: url(../Public/Icons/MenuToggle.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 60px;
+    height: 100px;
+    z-index: 50;
     cursor: pointer;
-    color: white;
+    transition: left 0.3s ease-in-out;
   }
 
-  .icon_dashboard {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/DashboardInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_dashboard {
-    background-image: url('../Public/Icons/DashboardActive.png');
-  }
-  .icon_devicePoint {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/PointInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_devicePoint {
-    background-image: url('../Public/Icons/PointActive.png');
-  }
-  .icon_odorDispersion {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/OdorDispersionInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_odorDispersion {
-    background-image: url('../Public/Icons/OdorDispersionActive.png');
-  }
-  .icon_data {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/DataInactive.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .navList ul li:hover .icon_data {
-    background-image: url('../Public/Icons/DataActive.png');
-  }
-
-  .nav_separateLine {
-    height: 1px;
-    width: 90%;
-    background-color: rgba(255, 255, 255, 0.1);
-    margin: 10px auto;
-  }
-
-  .navFooter {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 20px;
-  }
-  .navFooter ul {
-    list-style: none;
-  }
-  .navFooter ul li:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-  }
-  .navFooter_Alert {
-    margin: 20px 10%;
-    font-size: 1.1rem;
-  }
-
-  .navFooter_Logout {
-    display: block;
-    margin: 20px auto;
-  }
-  .navFooter_Text {
-    width: 100%;
-    color: #7d7f82;
-  }
-
-  .icon_alert {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/Alert.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  .icon_logout {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url('../Public/Icons/Logout.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    margin-right: 10px;
+  /* 메뉴가 열렸을 때 토글 버튼 위치 변경 */
+  #navContainer.menu-open::after {
+    left: 40%;
   }
 }

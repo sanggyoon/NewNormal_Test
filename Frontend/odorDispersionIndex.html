@@ -16,7 +16,7 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
     />
     <title>에이티디코리아 악취확산도</title>
-    
+
     <!-- 네이버 지도 스타일 -->
     <style>
       .map-layout {
@@ -24,7 +24,7 @@
         height: 100%;
         width: 100%;
       }
-      
+
       .legend {
         position: absolute;
         top: 120px;
@@ -35,11 +35,11 @@
         border-radius: 8px;
         padding: 15px;
         overflow-y: auto;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 2;
         backdrop-filter: blur(5px);
       }
-      
+
       .legend-title {
         font-size: 14px;
         font-weight: bold;
@@ -47,13 +47,13 @@
         color: #333;
         text-align: center;
       }
-      
+
       .legend-list {
         list-style: none;
         padding: 0;
         margin: 0;
       }
-      
+
       .legend-item {
         display: flex;
         align-items: center;
@@ -65,56 +65,54 @@
         cursor: pointer;
         border: 2px solid transparent;
       }
-      
+
       .legend-item:hover {
         background: rgba(233, 236, 239, 0.9);
         border-color: #1976d2;
         transform: translateX(2px);
       }
-      
+
       .legend-item.active {
         background: rgba(25, 118, 210, 0.1);
         border-color: #1976d2;
         box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
       }
-      
+
       .legend-icon {
         width: 20px;
         height: 20px;
         margin-right: 8px;
         flex-shrink: 0;
       }
-      
+
       .legend-label {
         font-size: 12px;
         color: #555;
         font-weight: 500;
       }
-      
+
       .map-panel {
         width: 100%;
         height: 100%;
         display: flex;
         flex-direction: column;
       }
-      
 
-      
       #map {
         width: 100%;
         height: 100%;
         flex: 1;
       }
-      
+
       .marker-name-label {
         background: white;
         border: 1px solid #ddd;
         border-radius: 4px;
         padding: 4px 8px;
         font-size: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
-      
+
       .delete-btn {
         background: #e53935;
         color: white;
@@ -125,11 +123,11 @@
         cursor: pointer;
         transition: background 0.2s;
       }
-      
+
       .delete-btn:hover {
         background: #c62828;
       }
-      
+
       .marker-type-label {
         background: rgba(0, 0, 0, 0.7);
         color: white;
@@ -139,9 +137,9 @@
         font-weight: 500;
         white-space: nowrap;
         pointer-events: none;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
-      
+
       .device-detail-info {
         background: white;
         border: 1px solid #ddd;
@@ -149,17 +147,17 @@
         padding: 15px;
         font-size: 13px;
         line-height: 1.4;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         max-width: 250px;
       }
-      
+
       .device-detail-info b {
         color: #1976d2;
         font-size: 14px;
         margin-bottom: 8px;
         display: block;
       }
-      
+
       .detail-delete-btn {
         background: #e53935;
         color: white;
@@ -171,11 +169,11 @@
         margin-top: 10px;
         transition: background 0.2s;
       }
-      
+
       .detail-delete-btn:hover {
         background: #c62828;
       }
-      
+
       #markerCountInfo {
         margin-top: 8px;
         font-size: 12px;
@@ -185,7 +183,7 @@
         border-radius: 4px;
         border: 1px solid #e9ecef;
       }
-      
+
       /* mapContainer 높이 조정 */
       .mapContainer {
         height: 80vh;
@@ -207,22 +205,63 @@
         <div class="map-layout">
           <section class="map-panel">
             <!-- 마커 개수 정보 및 버튼들 -->
-            <div style="padding: 15px 20px; background: white; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; gap: 10px;">
-                <button id="resetAllMarkers" style="padding: 8px 16px; background: #e53935; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#c62828'" onmouseout="this.style.background='#e53935'">
+            <div
+              style="
+                padding: 15px 20px;
+                background: white;
+                border-bottom: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div style="display: flex; gap: 10px">
+                <button
+                  id="resetAllMarkers"
+                  style="
+                    padding: 8px 16px;
+                    background: #e53935;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    transition: background 0.2s;
+                  "
+                  onmouseover="this.style.background='#c62828'"
+                  onmouseout="this.style.background='#e53935'"
+                >
                   모든 마커 삭제
                 </button>
-                <button id="reloadMarkers" style="padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#1565c0'" onmouseout="this.style.background='#1976d2'">
+                <button
+                  id="reloadMarkers"
+                  style="
+                    padding: 8px 16px;
+                    background: #1976d2;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    transition: background 0.2s;
+                  "
+                  onmouseover="this.style.background='#1565c0'"
+                  onmouseout="this.style.background='#1976d2'"
+                >
                   JSON 데이터 로드
                 </button>
               </div>
-              <div id="markerCountInfo" style="font-size: 12px; color: #666; text-align: right;">
-                전체: 0/40 | 악취측정기: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
+              <div
+                id="markerCountInfo"
+                style="font-size: 12px; color: #666; text-align: right"
+              >
+                전체: 0/40 | 악취측정기: 0/15 | 음수투약기: 0/8 | 풍향풍속계:
+                0/10 | 게이트웨이: 0/7
               </div>
             </div>
             <div id="map"></div>
           </section>
-          
+
           <!-- 범례를 지도 위에 겹치게 배치 -->
           <aside class="legend">
             <div class="legend-title"><b>마커 종류</b></div>
@@ -303,14 +342,14 @@
           this.markerIdSeq = 1;
           this.connectionLines = [];
           this.odorOverlay = null; // 악취 확산 오버레이 (로드 후 주입)
-          
+
           // 마커 개수 제한 설정
           this.maxMarkers = 40; // 전체 최대 마커 개수
           this.maxMarkersPerType = {
-            '악취측정기': 15,
-            '음수투약기': 8,
-            '풍향풍속계': 10,
-            '게이트웨이': 7
+            악취측정기: 15,
+            음수투약기: 8,
+            풍향풍속계: 10,
+            게이트웨이: 7,
           };
         }
 
@@ -321,16 +360,18 @@
             alert(`최대 ${this.maxMarkers}개의 마커만 추가할 수 있습니다.`);
             return false;
           }
-          
+
           // 타입별 마커 개수 확인
-          const currentTypeCount = this.markers.filter(m => m.type === type).length;
+          const currentTypeCount = this.markers.filter(
+            (m) => m.type === type
+          ).length;
           const maxTypeCount = this.maxMarkersPerType[type];
-          
+
           if (currentTypeCount >= maxTypeCount) {
             alert(`${type}은(는) 최대 ${maxTypeCount}개만 추가할 수 있습니다.`);
             return false;
           }
-          
+
           return true;
         }
 
@@ -339,14 +380,14 @@
           if (!this.canAddMarker(device.type)) {
             return;
           }
-          
+
           const icon = this.createDeviceIcon(device.type);
           const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(device.lat, device.lng),
             map: this.map,
             icon: icon,
             draggable: true,
-            zIndex: 10
+            zIndex: 10,
           });
 
           // 마커 위 삭제 버튼
@@ -360,12 +401,12 @@
             backgroundColor: 'transparent',
             anchorSize: new naver.maps.Size(0, 0),
             anchorColor: 'transparent',
-            pixelOffset: new naver.maps.Point(0, -50)
+            pixelOffset: new naver.maps.Point(0, -50),
           });
           deleteLabel.open(this.map, marker);
 
           currentDeleteLabel = deleteLabel;
-          
+
           // // 최초 로딩 시 삭제 버튼 자동으로 닫기 (3초 후)
           // setTimeout(() => {
           //   currentDeleteLabel.close();
@@ -379,7 +420,7 @@
               this.content = content;
               this.setMap(map);
             }
-            
+
             onAdd() {
               const div = document.createElement('div');
               div.className = 'marker-type-label';
@@ -391,57 +432,63 @@
               this.getPanes().overlayLayer.appendChild(div);
               this.draw();
             }
-            
+
             onRemove() {
               if (this.div && this.div.parentNode) {
                 this.div.parentNode.removeChild(this.div);
               }
               this.div = null;
             }
-            
+
             draw() {
               if (!this.div) return;
-              
+
               const projection = this.getProjection();
               const point = projection.fromCoordToOffset(this.position);
-              
+
               // 현재 지도 상태 정보
               const currentMapState = {
                 lat: this.position.lat(),
                 lng: this.position.lng(),
                 zoom: this.getMap().getZoom(),
-                size: this.getMap().getSize().toString() // 지도 크기 변화 감지
+                size: this.getMap().getSize().toString(), // 지도 크기 변화 감지
               };
-              
+
               // 지도 상태가 변경되었는지 확인 (위도/경도 + 줌 + 크기)
-              if (this.cachedMapState && 
-                  this.cachedMapState.lat === currentMapState.lat &&
-                  this.cachedMapState.lng === currentMapState.lng &&
-                  this.cachedMapState.zoom === currentMapState.zoom &&
-                  this.cachedMapState.size === currentMapState.size) {
+              if (
+                this.cachedMapState &&
+                this.cachedMapState.lat === currentMapState.lat &&
+                this.cachedMapState.lng === currentMapState.lng &&
+                this.cachedMapState.zoom === currentMapState.zoom &&
+                this.cachedMapState.size === currentMapState.size
+              ) {
                 return; // 모든 상태가 같으면 업데이트 생략
               }
-              
+
               // 캐시 업데이트
               this.cachedMapState = currentMapState;
-              
+
               // transform을 사용하여 더 빠른 위치 업데이트
-              this.div.style.transform = `translate(${point.x - this.div.offsetWidth / 2}px, ${point.y + 20}px)`;
+              this.div.style.transform = `translate(${
+                point.x - this.div.offsetWidth / 2
+              }px, ${point.y + 20}px)`;
             }
-            
+
             setPosition(position) {
               // 위치가 실제로 변경되었는지 확인
-              if (this.position && 
-                  this.position.lat() === position.lat() && 
-                  this.position.lng() === position.lng()) {
+              if (
+                this.position &&
+                this.position.lat() === position.lat() &&
+                this.position.lng() === position.lng()
+              ) {
                 return; // 위치가 같으면 업데이트 안함
               }
-              
+
               this.position = position;
               this.draw();
             }
           }
-          
+
           const typeLabel = new TypeLabelOverlay(
             new naver.maps.LatLng(device.lat, device.lng),
             device.name || device.type
@@ -449,7 +496,7 @@
 
           // 센서별 측정 데이터 정보 생성
           const getSensorDataInfo = (type) => {
-            switch(type) {
+            switch (type) {
               case '악취측정기':
                 return `
                   <b>측정 데이터:</b><br>
@@ -484,17 +531,23 @@
             content: `
               <div class="device-detail-info">
                 <b>${device.name || device.type}</b><br>
-                위도: <span style="color:#1976d2;">${device.lat.toFixed(6)}</span><br>
-                경도: <span style="color:#1976d2;">${device.lng.toFixed(6)}</span><br>
+                위도: <span style="color:#1976d2;">${device.lat.toFixed(
+                  6
+                )}</span><br>
+                경도: <span style="color:#1976d2;">${device.lng.toFixed(
+                  6
+                )}</span><br>
                 ${getSensorDataInfo(device.type)}
-                <button class="detail-delete-btn" onclick="window.deleteMarker(${device.id})">삭제</button>
+                <button class="detail-delete-btn" onclick="window.deleteMarker(${
+                  device.id
+                })">삭제</button>
               </div>
             `,
             borderWidth: 0,
             backgroundColor: 'transparent',
             anchorSize: new naver.maps.Size(0, 0),
             anchorColor: 'transparent',
-            pixelOffset: new naver.maps.Point(0, -80)
+            pixelOffset: new naver.maps.Point(0, -80),
           });
 
           // 마커 클릭 시 상세 정보 토글
@@ -514,21 +567,25 @@
           marker.addListener('drag', (e) => {
             requestAnimationFrame(() => {
               const newPosition = marker.getPosition();
-              
+
               // 위치가 실제로 변경되었는지 확인
-              if (lastDragPosition && 
-                  lastDragPosition.lat() === newPosition.lat() && 
-                  lastDragPosition.lng() === newPosition.lng()) {
+              if (
+                lastDragPosition &&
+                lastDragPosition.lat() === newPosition.lat() &&
+                lastDragPosition.lng() === newPosition.lng()
+              ) {
                 return; // 위치가 같으면 업데이트 안함
               }
-              
+
               lastDragPosition = newPosition;
               device.lat = newPosition.lat();
               device.lng = newPosition.lng();
-              
+
               // 라벨 위치 업데이트 (즉시)
               deleteLabel.setPosition(newPosition);
-              typeLabel.setPosition(new naver.maps.LatLng(device.lat, device.lng));
+              typeLabel.setPosition(
+                new naver.maps.LatLng(device.lat, device.lng)
+              );
             });
           });
 
@@ -538,37 +595,43 @@
             detailInfo.setContent(`
               <div class="device-detail-info">
                 <b>${device.name || device.type}</b><br>
-                위도: <span style="color:#1976d2;">${device.lat.toFixed(6)}</span><br>
-                경도: <span style="color:#1976d2;">${device.lng.toFixed(6)}</span><br>
+                위도: <span style="color:#1976d2;">${device.lat.toFixed(
+                  6
+                )}</span><br>
+                경도: <span style="color:#1976d2;">${device.lng.toFixed(
+                  6
+                )}</span><br>
                 ${getSensorDataInfo(device.type)}
-                <button class="detail-delete-btn" onclick="window.deleteMarker(${device.id})">삭제</button>
+                <button class="detail-delete-btn" onclick="window.deleteMarker(${
+                  device.id
+                })">삭제</button>
               </div>
             `);
-            
+
             // 연결선과 악취 확산 업데이트
             this.updateConnections();
           });
 
           // 전역 삭제 함수 등록
           window.deleteMarker = (id) => {
-            const targetMarker = this.markers.find(m => m.id === id);
+            const targetMarker = this.markers.find((m) => m.id === id);
             if (targetMarker) {
               targetMarker.marker.setMap(null);
               targetMarker.deleteLabel.close();
               targetMarker.typeLabel.setMap(null);
               targetMarker.detailInfo.close();
-              this.markers = this.markers.filter(m => m.id !== id);
+              this.markers = this.markers.filter((m) => m.id !== id);
               this.updateConnections();
               this.updateMarkerCountInfo();
             }
           };
 
-          this.markers.push({ 
-            ...device, 
-            marker, 
-            deleteLabel, 
-            typeLabel, 
-            detailInfo 
+          this.markers.push({
+            ...device,
+            marker,
+            deleteLabel,
+            typeLabel,
+            detailInfo,
           });
           this.updateConnections();
           this.updateMarkerCountInfo();
@@ -578,13 +641,21 @@
         updateMarkerCountInfo() {
           const countInfo = document.getElementById('markerCountInfo');
           if (!countInfo) return;
-          
+
           const totalCount = this.markers.length;
-          const odorCount = this.markers.filter(m => m.type === '악취측정기').length;
-          const waterCount = this.markers.filter(m => m.type === '음수투약기').length;
-          const windCount = this.markers.filter(m => m.type === '풍향풍속계').length;
-          const gatewayCount = this.markers.filter(m => m.type === '게이트웨이').length;
-          
+          const odorCount = this.markers.filter(
+            (m) => m.type === '악취측정기'
+          ).length;
+          const waterCount = this.markers.filter(
+            (m) => m.type === '음수투약기'
+          ).length;
+          const windCount = this.markers.filter(
+            (m) => m.type === '풍향풍속계'
+          ).length;
+          const gatewayCount = this.markers.filter(
+            (m) => m.type === '게이트웨이'
+          ).length;
+
           countInfo.innerHTML = `
             전체: ${totalCount}/${this.maxMarkers} | 
             악취측정기: ${odorCount}/${this.maxMarkersPerType['악취측정기']} | 
@@ -592,7 +663,7 @@
             풍향풍속계: ${windCount}/${this.maxMarkersPerType['풍향풍속계']} | 
             게이트웨이: ${gatewayCount}/${this.maxMarkersPerType['게이트웨이']}
           `;
-          
+
           // 제한에 가까워지면 색상 변경
           if (totalCount >= this.maxMarkers * 0.8) {
             countInfo.style.color = '#e53935';
@@ -605,30 +676,33 @@
 
         updateConnections() {
           // 기존 연결선 제거
-          this.connectionLines.forEach(line => line.setMap(null));
+          this.connectionLines.forEach((line) => line.setMap(null));
           this.connectionLines = [];
           // 게이트웨이와 다른 노드 연결
-          const gateways = this.markers.filter(m => m.type === '게이트웨이');
-          const others = this.markers.filter(m => m.type !== '게이트웨이');
-          
-          console.log('연결선 업데이트:', { gateways: gateways.length, others: others.length });
-          
-          gateways.forEach(gateway => {
-            others.forEach(other => {
+          const gateways = this.markers.filter((m) => m.type === '게이트웨이');
+          const others = this.markers.filter((m) => m.type !== '게이트웨이');
+
+          console.log('연결선 업데이트:', {
+            gateways: gateways.length,
+            others: others.length,
+          });
+
+          gateways.forEach((gateway) => {
+            others.forEach((other) => {
               // 마커의 현재 위치를 가져와서 연결선 생성
               const gatewayPos = gateway.marker.getPosition();
               const otherPos = other.marker.getPosition();
               const line = new naver.maps.Polyline({
                 path: [
                   new naver.maps.LatLng(gatewayPos.lat(), gatewayPos.lng()),
-                  new naver.maps.LatLng(otherPos.lat(), otherPos.lng())
+                  new naver.maps.LatLng(otherPos.lat(), otherPos.lng()),
                 ],
                 strokeColor: '#e53935',
                 strokeWeight: 3,
                 strokeOpacity: 0.8,
                 strokeStyle: 'dashed',
                 map: this.map,
-                zIndex: 5
+                zIndex: 5,
               });
               this.connectionLines.push(line);
               console.log('연결선 생성:', gateway.type, '->', other.type);
@@ -645,7 +719,7 @@
           ctx.lineWidth = 2;
           let fill = '#1976d2';
           let stroke = '#1565c0';
-          
+
           // 타입별 색상 설정
           if (type === '게이트웨이') {
             fill = '#43a047';
@@ -660,10 +734,10 @@
             fill = '#2196f3';
             stroke = '#1976d2';
           }
-          
+
           ctx.strokeStyle = stroke;
           ctx.fillStyle = fill;
-          
+
           if (type === '악취측정기') {
             // 원형 아이콘 (기존 악취측정기와 동일)
             ctx.beginPath();
@@ -698,7 +772,7 @@
             url: canvas.toDataURL(),
             size: new naver.maps.Size(size, size),
             origin: new naver.maps.Point(0, 0),
-            anchor: new naver.maps.Point(size / 2, size / 2)
+            anchor: new naver.maps.Point(size / 2, size / 2),
           };
         }
 
@@ -716,43 +790,43 @@
 
       // 마커 타입 범례 활성화/비활성화 관리
       let activeMarkerType = null;
-      
+
       function setupLegendClickEvents() {
         const legendItems = document.querySelectorAll('.legend-item');
-        legendItems.forEach(item => {
-          item.addEventListener('click', function() {
+        legendItems.forEach((item) => {
+          item.addEventListener('click', function () {
             const type = this.querySelector('.legend-label').textContent;
-            
+
             if (activeMarkerType === type) {
               // 같은 타입을 다시 클릭하면 비활성화
               activeMarkerType = null;
-              legendItems.forEach(li => li.classList.remove('active'));
+              legendItems.forEach((li) => li.classList.remove('active'));
             } else {
               // 다른 타입을 클릭하면 기존 활성화 해제하고 새로 활성화
-              legendItems.forEach(li => li.classList.remove('active'));
+              legendItems.forEach((li) => li.classList.remove('active'));
               activeMarkerType = type;
               this.classList.add('active');
             }
           });
         });
       }
-      
+
       // 지도 클릭 이벤트 등록 함수
       function setupMapEvents() {
         if (!map || !mapDeviceManager) return;
-        map.addListener('click', function(e) {
+        map.addListener('click', function (e) {
           if (!activeMarkerType) {
             // 활성화된 마커 타입이 없으면 아무것도 하지 않음
             return;
           }
-          
+
           const name = activeMarkerType + ' ' + mapDeviceManager.markerIdSeq;
           mapDeviceManager.addDeviceMarker({
             id: mapDeviceManager.markerIdSeq++,
             type: activeMarkerType,
             name,
             lat: e.coord.lat(),
-            lng: e.coord.lng()
+            lng: e.coord.lng(),
           });
         });
       }
@@ -760,87 +834,87 @@
       // 모든 마커 삭제 함수
       function resetAllMarkers() {
         if (!mapDeviceManager) return;
-        
+
         if (confirm('정말로 모든 마커를 삭제하시겠습니까?')) {
           // 모든 마커 제거
-          mapDeviceManager.markers.forEach(marker => {
+          mapDeviceManager.markers.forEach((marker) => {
             marker.marker.setMap(null);
             marker.deleteLabel.close();
             marker.typeLabel.close();
             marker.detailInfo.close();
           });
-          
+
           // 마커 배열 초기화
           mapDeviceManager.markers = [];
           mapDeviceManager.markerIdSeq = 1;
-          
+
           // 연결선 제거 (heat 관련 기능 비활성화)
-          mapDeviceManager.connectionLines.forEach(line => line.setMap(null));
+          mapDeviceManager.connectionLines.forEach((line) => line.setMap(null));
           mapDeviceManager.connectionLines = [];
-          
+
           // 마커 개수 정보 업데이트
           mapDeviceManager.updateMarkerCountInfo();
-          
+
           // 활성화된 마커 타입 초기화
           activeMarkerType = null;
-          document.querySelectorAll('.legend-item').forEach(item => {
+          document.querySelectorAll('.legend-item').forEach((item) => {
             item.classList.remove('active');
           });
-          
+
           alert('모든 마커가 삭제되었습니다.');
         }
       }
-      
+
       // JSON 데이터에서 마커 다시 로드
       function reloadMarkersFromJson() {
         if (confirm('devices.json에서 마커를 다시 로드하시겠습니까?')) {
           loadDevicesFromJson();
         }
       }
-      
+
       // devices.json에서 마커 데이터 로드
       async function loadDevicesFromJson() {
         try {
           const response = await fetch('../naver_map/devices.json');
           const devices = await response.json();
-          
+
           if (!mapDeviceManager) return;
-          
+
           // 기존 마커 ID 시퀀스 업데이트
-          const maxId = Math.max(...devices.map(d => d.id), 0);
+          const maxId = Math.max(...devices.map((d) => d.id), 0);
           mapDeviceManager.markerIdSeq = maxId + 1;
-          
+
           // 각 장치를 마커로 추가
-          devices.forEach(device => {
+          devices.forEach((device) => {
             // devices.json의 타입을 현재 시스템 타입으로 매핑
             let mappedType = device.type;
             if (device.type === '악취측정기') {
               mappedType = '악취측정기';
             }
-            
+
             // name이 없으면 type + id로 생성
             const deviceName = device.name || `${mappedType}${device.id}`;
-            
+
             mapDeviceManager.addDeviceMarker({
               id: device.id,
               type: mappedType,
               name: deviceName,
               lat: device.lat,
-              lng: device.lng
+              lng: device.lng,
             });
           });
-          
+
           console.log(`${devices.length}개의 장치 마커가 로드되었습니다.`);
           currentDeleteLabel.close();
         } catch (error) {
           console.error('devices.json 로드 중 오류 발생:', error);
         }
       }
-      
+
       // 확산도 PNG 파일을 레이어로 추가 (GroundImageOverlay 참조)
       function addOdorDispersionLayer() {
         if (!map) return;
-        
+
         try {
           // GroundImageOverlay 클래스 정의
           class GroundImageOverlay extends naver.maps.OverlayView {
@@ -853,7 +927,7 @@
               this.img = null;
               this.setMap(map);
             }
-            
+
             onAdd() {
               const img = document.createElement('img');
               img.src = this.imageUrl;
@@ -864,29 +938,29 @@
               this.img = img;
               this.getPanes().overlayLayer.appendChild(img);
             }
-            
+
             onRemove() {
               if (this.img && this.img.parentNode) {
                 this.img.parentNode.removeChild(this.img);
               }
               this.img = null;
             }
-            
+
             setOpacity(opacity) {
               this.opacity = opacity;
               if (this.img) this.img.style.opacity = String(opacity);
             }
-            
+
             setUrl(url) {
               this.imageUrl = url;
               if (this.img) this.img.src = url;
             }
-            
+
             setBounds(bounds) {
               this.bounds = bounds;
               this.draw();
             }
-            
+
             draw() {
               if (!this.img || !this.bounds) return;
               const proj = this.getProjection();
@@ -907,13 +981,13 @@
               this.img.style.height = `${scaledHeight}px`;
             }
           }
-          
+
           // 확산도 이미지 경계 설정 (naver_map.html 참고하여 축소)
           const imageBounds = new naver.maps.LatLngBounds(
-            new naver.maps.LatLng(36.600850, 127.296000), // 남서쪽 좌표 (더 작은 범위)
-            new naver.maps.LatLng(36.601350, 127.296550)  // 북동쪽 좌표 (더 작은 범위)
+            new naver.maps.LatLng(36.60085, 127.296), // 남서쪽 좌표 (더 작은 범위)
+            new naver.maps.LatLng(36.60135, 127.29655) // 북동쪽 좌표 (더 작은 범위)
           );
-          
+
           // GroundImageOverlay 인스턴스 생성
           const odorDispersionOverlay = new GroundImageOverlay(
             map,
@@ -921,14 +995,13 @@
             imageBounds,
             0.6 // 투명도
           );
-          
+
           console.log('확산도 레이어가 GroundImageOverlay로 추가되었습니다.');
-          
         } catch (error) {
           console.error('확산도 레이어 추가 중 오류 발생:', error);
         }
       }
-      
+
       // 좌측 범례 생성
       function renderLegend() {
         const legendList = document.getElementById('legendList');
@@ -937,7 +1010,7 @@
           { type: '악취측정기', label: '악취측정기' },
           { type: '음수투약기', label: '음수투약기' },
           { type: '풍향풍속계', label: '풍향풍속계' },
-          { type: '게이트웨이', label: '게이트웨이' }
+          { type: '게이트웨이', label: '게이트웨이' },
         ];
         legendList.innerHTML = '';
         items.forEach((item) => {
@@ -979,21 +1052,25 @@
         renderLegend();
         setupLegendClickEvents();
         mapDeviceManager.updateMarkerCountInfo();
-        
+
         // 버튼 이벤트 리스너 연결
-        document.getElementById('resetAllMarkers').addEventListener('click', resetAllMarkers);
-        document.getElementById('reloadMarkers').addEventListener('click', reloadMarkersFromJson);
-        
+        document
+          .getElementById('resetAllMarkers')
+          .addEventListener('click', resetAllMarkers);
+        document
+          .getElementById('reloadMarkers')
+          .addEventListener('click', reloadMarkersFromJson);
+
         // devices.json에서 마커 데이터 로드
         loadDevicesFromJson();
-        
+
         // 확산도 PNG 레이어 추가
         addOdorDispersionLayer();
 
         // 지도 크기 변경 감지
         map.addListener('resize', () => {
           // 모든 라벨 강제 업데이트
-          mapDeviceManager.markers.forEach(marker => {
+          mapDeviceManager.markers.forEach((marker) => {
             if (marker.typeLabel) {
               marker.typeLabel.draw();
             }
@@ -1001,5 +1078,8 @@
         });
       };
     </script>
+
+    <!-- 네비게이션 토글 기능 -->
+    <script src="./JS/navToggle.js"></script>
   </body>
 </html>

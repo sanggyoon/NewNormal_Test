@@ -1,134 +1,30 @@
+<!-- API 연동용으로 컬럼/상태 영역 정리 -->
 <div class="rawDataHeader">
   <span>악취 확산 데이터</span>
-  <!-- <div class="rawDataHeader_choiceDate">날짜 선택</div> -->
 </div>
+
+<!-- API 상태 텍스트: 로딩/성공/빈 데이터/오류 -->
+<div id="rawDataStatus" style="margin: 8px 0; font-size: 0.9rem; opacity: 0.85">
+  데이터 로딩을 시작합니다...
+</div>
+
 <div class="rawDataTable">
   <table>
     <thead>
       <tr>
-        <th>시간</th>
-        <th>암모니아</th>
-        <th>황화수소</th>
-        <th>메탄</th>
-        <th>이산화탄소</th>
-        <th>온도</th>
-        <th>습도</th>
-        <!-- temp -->
-        <th>기압</th>
-        <th>미세먼지</th>
-        <th>초미세먼지</th>
+        <th>농장코드</th>
+        <th>농장이름</th>
+        <th>설치위치</th>
+        <th>암모니아(gas1)</th>
+        <th>황화수소(gas2)</th>
+        <th>메탄(gas3)</th>
+        <th>이산화탄소(gas4)</th>
+        <th>온도(℃)</th>
+        <th>습도(%)</th>
       </tr>
     </thead>
-
-    <tbody>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
-      <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>Data 7</td>
-        <td>Data 8</td>
-        <td>Data 9</td>
-        <td>Data 10</td>
-      </tr>
+    <tbody id="rawDataTbody">
+      <!-- 자바스크립트에서 동적으로 행을 채웁니다 -->
     </tbody>
   </table>
 </div>

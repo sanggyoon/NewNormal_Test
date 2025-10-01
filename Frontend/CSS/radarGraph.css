@@ -2,7 +2,7 @@
   margin-bottom: 20px;
   overflow: visible;
   width: 100%;
-  height: 320px;
+  height: 450px;
   position: relative;
 }
 
@@ -38,15 +38,14 @@
 
 /* JSCharting 차트 컨테이너 스타일 */
 .radarGraphBox .jschart {
-  width: 100% !important;
-  height: 100% !important;
+  width: 100%;
+  height: 100%;
 }
 
 /* 차트 컨테이너 직접 스타일링 */
 #radarGraph {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 250px;
+  width: 100%;
+  height: 100%;
   flex: 1;
 }
 
@@ -56,13 +55,91 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 30px;
   }
 }
 
 @media screen and (orientation: portrait) {
   .radarGraphBox {
     display: flex;
+    height: 500px;
+    min-height: 700px;
     align-items: center;
     justify-content: center;
   }
+}
+
+/* 레이더 차트 호버 모달 스타일 */
+.radar-tooltip-modal {
+  position: fixed; /* absolute에서 fixed로 변경하여 스크롤 영향 제거 */
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e5e5e6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  line-height: 1.4;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.15s ease, transform 0.15s ease; /* position은 transition에서 제외 */
+  max-width: 200px;
+  min-width: 150px;
+  backdrop-filter: blur(2px); /* 배경 흐림 효과 추가 */
+  will-change: transform, opacity; /* GPU 가속을 위한 최적화 */
+}
+
+.radar-tooltip-modal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.radar-tooltip-modal .tooltip-header {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.radar-tooltip-modal .tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.radar-tooltip-modal .tooltip-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.radar-tooltip-modal .tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  flex: 1;
+}
+
+.radar-tooltip-modal .tooltip-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.radar-tooltip-modal .tooltip-value {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.radar-tooltip-modal .tooltip-unit {
+  font-size: 11px;
+  color: #888;
+  margin-left: 2px;
 }
