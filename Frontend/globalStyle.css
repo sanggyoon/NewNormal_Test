@@ -13,6 +13,32 @@ body {
   background-color: #f2f2f3;
 }
 
+/* 컴포넌트 로딩 중 레이아웃 쉬프트 방지 */
+#navContainer:empty {
+  background-color: #2e2e2e;
+  width: 15%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+#statusBar:empty {
+  min-height: 60px;
+}
+
+#noticeBar:empty {
+  min-height: 100px; /* 50px height + 25px margin top/bottom */
+}
+
+@media screen and (orientation: portrait) {
+  #navContainer:empty {
+    width: 40%;
+    left: -40%;
+  }
+}
+
 .dashboardContainer {
   padding: clamp(35px, 3%, 55px);
   padding-top: min(40px, 3%);

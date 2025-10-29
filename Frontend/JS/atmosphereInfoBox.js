@@ -370,11 +370,8 @@ function applyDataToCurrentPageElements(index, startIndex, endIndex) {
       const gasValue = data[gasKeys[absoluteIndex]] || 0;
       const gasState = getGasState(gasValue);
       
-      // 상태 업데이트
+      // 상태 업데이트 (게이지 생성은 별도로)
       updateElementWithGasData(element, gasState, gasValue);
-      
-      // 게이지 생성
-      createGaugeForElement(element, gasValue);
     } else {
       // 커스텀 가스 데이터 적용 (5번째 이후)
       const customGasIndex = absoluteIndex + 1; // gas5, gas6, gas7...
@@ -386,7 +383,6 @@ function applyDataToCurrentPageElements(index, startIndex, endIndex) {
         const gasState = getGasState(gasValue);
         
         updateElementWithGasData(element, gasState, gasValue);
-        createGaugeForElement(element, gasValue);
       } else {
         // 기본 추가 가스 타입 데이터 적용
         const additionalIndex = absoluteIndex - 4;
@@ -396,7 +392,6 @@ function applyDataToCurrentPageElements(index, startIndex, endIndex) {
           const gasState = getGasState(gasValue);
           
           updateElementWithGasData(element, gasState, gasValue);
-          createGaugeForElement(element, gasValue);
         }
       }
     }
@@ -430,9 +425,13 @@ function createGaugeForElement(element, gasValue) {
   const canvas = element.querySelector('canvas');
   if (!canvas || typeof Gauge === 'undefined') return;
   
-  // 기존 게이지가 있으면 제거
+  // 기존 게이지가 있으면 제거 후 재생성
   if (canvas._gauge) {
-    canvas._gauge = null;
+    try {
+      canvas._gauge = null;
+    } catch (e) {
+      console.warn('게이지 제거 실패:', e);
+    }
   }
   
   const [startColor, stopColor] = getGradientByValue(gasValue, 3.0);
@@ -495,10 +494,8 @@ function recreateAllGaugesForCurrentPage(index) {
       }
     }
     
-    // 약간의 지연 후 게이지 생성 (DOM 렌더링 완료 대기)
-    setTimeout(() => {
-      createGaugeForElement(element, gasValue);
-    }, 100);
+    // 게이지 즉시 생성 (지연 제거)
+    createGaugeForElement(element, gasValue);
   });
 }
 
@@ -529,10 +526,10 @@ function renderCurrentPage(index) {
   // 데이터 적용 (현재 페이지의 요소들에 대해)
   applyDataToCurrentPageElements(index, startIndex, endIndex);
   
-  // 게이지 재생성 (DOM 렌더링 완료 후)
-  setTimeout(() => {
+  // 게이지 재생성 (DOM 렌더링 완료 후 - 한 번만)
+  requestAnimationFrame(() => {
     recreateAllGaugesForCurrentPage(index);
-  }, 50);
+  });
 }
 
 // 페이징 도트 렌더링

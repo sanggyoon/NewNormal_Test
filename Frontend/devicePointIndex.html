@@ -21,6 +21,16 @@
     />
 
     <title>에이티디코리아 설치 포인트 별</title>
+    <style>
+      /* 컴포넌트 로딩 중 깜빡임 방지 */
+      .dashboardContainer {
+        opacity: 0;
+        transition: opacity 0.15s ease-in;
+      }
+      .dashboardContainer.ready {
+        opacity: 1;
+      }
+    </style>
   </head>
   <body>
     <div id="navContainer"></div>
@@ -218,9 +228,10 @@
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
         script.onload = () => {
-          if (window.renderGaugesFromSelectedPoint) {
-            window.renderGaugesFromSelectedPoint();
-          }
+          // 모든 컴포넌트 로드 완료 후 표시
+          requestAnimationFrame(() => {
+            document.querySelector('.dashboardContainer').classList.add('ready');
+          });
         };
         document.body.appendChild(script);
       });

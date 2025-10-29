@@ -19,18 +19,10 @@ document.querySelectorAll('.navList ul li').forEach((li) => {
   if (window.location.pathname.includes(li.getAttribute('data-href'))) {
     li.classList.add('active');
   }
-  // 클릭 시 페이지 이동 및 active 처리
+  // 클릭 시 페이지 이동 (active 처리는 다음 페이지에서)
   li.addEventListener('click', function () {
-    document
-      .querySelectorAll('.navList ul li')
-      .forEach((el) => el.classList.remove('active'));
-    li.classList.add('active');
     window.location.href = li.getAttribute('data-href');
   });
-});
-$('.navList ul li').on('click', function () {
-  $('.navList ul li').removeClass('active');
-  $(this).addClass('active');
 });
 
 // 로그아웃 버튼
