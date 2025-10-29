@@ -1,60 +1,97 @@
 <!DOCTYPE html>
+<!-- HTML 문서의 루트 요소를 시작합니다. 모든 콘텐츠는 이 안에 들어갑니다. -->
 <html>
+  <!-- 문서 정보를 담는 머리글(head) 영역입니다. 화면에 직접 보이지 않는 설정들을 넣습니다. -->
   <head>
+    <!-- 문서에서 한글 등 다양한 문자를 올바르게 표시하도록 문자 인코딩을 UTF-8로 지정합니다. -->
     <meta charset="UTF-8" />
+    <!-- 인터넷 익스플로러 호환 모드 설정입니다. 최신 렌더링 엔진을 사용하도록 지시합니다. -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- 반응형 웹을 위한 뷰포트 설정입니다. 모바일/태블릿에서 화면 크기에 맞게 보이도록 합니다. -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
     />
+    <!-- 외부 CSS 파일을 연결합니다. 페이지의 스타일(색, 배치 등)을 정의합니다. -->
     <link rel="stylesheet" href="./naver_map_style.css" />
+    <!-- 브라우저 탭에 표시될 문서의 제목(title)입니다. -->
     <title>네이버 지도 표시하기</title>
   </head>
+  <!-- 실제 화면에 보이는 본문(body) 영역입니다. 우리가 볼 내용들이 여기에 들어갑니다. -->
   <body>
+    <!-- 지도를 포함한 전체 레이아웃을 감싸는 컨테이너입니다. CSS로 배치를 제어합니다. -->
     <div class="map-layout">
+      <!-- 왼쪽에 표시되는 범례 영역(legend)입니다. 표시되는 마커 종류를 안내합니다. -->
       <aside class="legend">
+        <!-- 범례 제목입니다. 굵게(b 볼더체)로 강조했습니다. -->
         <div class="legend-title"><b>마커 종류</b></div>
+        <!-- 범례 항목을 담을 목록입니다. 자바스크립트로 동적으로 채워집니다. -->
         <ul id="legendList" class="legend-list"></ul>
       </aside>
 
+      <!-- 지도와 상단 제어 UI를 담는 오른쪽 패널입니다. -->
       <section class="map-panel">
-        <!-- 마커 타입 선택 UI -->
+        <!-- 마커 타입 선택 UI: 사용자가 어떤 장치(마커)를 추가할지 선택합니다. -->
         <div class="device-type-select">
+          <!-- label은 입력 요소와 연결되어 의미를 설명합니다. for는 연결할 요소의 id를 가리킵니다. -->
           <label for="deviceType"><b>장치 타입 선택:</b></label>
+          <!-- 드롭다운 목록입니다. 여기서 선택한 값이 지도에 추가될 마커의 종류가 됩니다. -->
           <select id="deviceType">
+            <!-- 각 option은 선택 가능한 하나의 항목입니다. 괄호 안은 마커의 모양 설명입니다. -->
             <option value="악취측정기">악취측정기(원)</option>
             <option value="음수투약기">음수투약기(사각형)</option>
             <option value="풍향풍속계">풍향풍속계(삼각형)</option>
             <option value="게이트웨이">게이트웨이(마름모)</option>
           </select>
+          <!-- 현재 지도에 추가된 마커의 개수를 요약해서 보여주는 영역입니다. -->
           <div id="markerCountInfo" style="margin-top: 8px; font-size: 12px; color: #666;">
             전체: 0/40 | 악취측정기: 0/15 | 음수투약기: 0/8 | 풍향풍속계: 0/10 | 게이트웨이: 0/7
           </div>
         </div>
+        <!-- 실제 네이버 지도가 표시될 영역입니다. 자바스크립트에서 이 id를 사용해 지도를 생성합니다. -->
         <div id="map"></div>
       </section>
     </div>
 
 
+    <!-- 자바스크립트 실행 영역임. type="module"은 모듈 시스템 사용 의미임. -->
+    <!-- 왜 자바스크립트? 브라우저가 기본으로 이해하고 즉시 실행함. 추가 설치/컴파일 필요 없음. -->
+    <!-- 자바랑 다름. 이름만 비슷함. 자바는 보통 컴파일해서 서버/앱에서 돌림. JS는 브라우저가 바로 돌림. -->
+    <!-- 왜 모듈? 파일 나눠 import/export 가능해짐. 전역 변수 충돌 방지됨. 코드 구조 명확해짐. -->
     <script type="module">
+      // 참고: 자바 아님. 자바스크립트임.
+      // 이유: 브라우저가 곧바로 이해하고 실행함. 추가 설치/컴파일 불필요함.
+      // type="module" 이유: import 사용 가능. 파일별 스코프 분리로 안전성↑.
+      // 외부 설정 값을 불러옵니다(예: API 키, 기본 설정 등).
       import CONFIG from './config.js';
 
+      // 네이버 지도 객체를 담을 변수를 준비합니다.
       let map = null;
+      // 마커 추가/삭제, 연결선 관리 등 지도 위 장치들을 통합 관리하는 매니저입니다.
       let mapDeviceManager = null;
+      // 악취가 확산되는 반경(미터). 시각화에 사용됩니다.
       const DEFAULT_ODOR_RADIUS_M = 120; // 악취 확산 반경(미터)
       
 
       // 클래스 정의 (onload 바깥)
+      // 지도 위 장치(마커)들을 생성/관리하는 클래스입니다.
       class MapDeviceManager {
+        // 클래스를 사용할 때 자동으로 호출되는 생성자입니다. 전달받은 지도 객체를 저장합니다.
         constructor(map) {
           this.map = map;
+          // 현재 지도에 올려진 모든 마커 정보를 보관합니다.
           this.markers = [];
+          // 마커에 고유 번호를 붙이기 위한 시퀀스입니다.
           this.markerIdSeq = 1;
+          // 게이트웨이와 다른 장치를 선으로 연결할 때 생성되는 선(Polyline)들을 보관합니다.
           this.connectionLines = [];
+          // 악취 확산을 표현하는 오버레이(시각화 레이어)입니다. 필요시 주입합니다.
           this.odorOverlay = null; // 악취 확산 오버레이 (로드 후 주입)
           
           // 마커 개수 제한 설정
+          // 전체 최대 마커 개수 제한입니다. 너무 많이 추가되는 것을 방지합니다.
           this.maxMarkers = 40; // 전체 최대 마커 개수
+          // 장치 종류별(타입별) 최대 허용 개수입니다.
           this.maxMarkersPerType = {
             '악취측정기': 15,
             '음수투약기': 8,
@@ -63,7 +100,7 @@
           };
         }
 
-        // 마커 추가 가능 여부 확인
+        // 마커를 추가해도 되는지(전체/타입별 개수 제한 확인) 검사합니다.
         canAddMarker(type) {
           // 전체 마커 개수 확인
           if (this.markers.length >= this.maxMarkers) {
@@ -83,13 +120,16 @@
           return true;
         }
 
+        // 지도를 클릭했을 때 선택된 타입으로 실제 마커를 생성하고 부가 요소를 붙입니다.
         addDeviceMarker(device) {
           // 마커 추가 가능 여부 확인
           if (!this.canAddMarker(device.type)) {
             return;
           }
           
+          // 장치 타입에 맞는 아이콘(원/삼각형/사각형/마름모)을 그림으로 생성합니다.
           const icon = this.createDeviceIcon(device.type);
+          // 네이버 지도에 표시되는 실제 마커를 만듭니다.
           const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(device.lat, device.lng),
             map: this.map,
@@ -99,6 +139,7 @@
           });
 
           // 마커 위 삭제 버튼
+          // 마커 위에 떠 있는 삭제 버튼(InfoWindow)을 만듭니다.
           const deleteLabel = new naver.maps.InfoWindow({
             content: `
               <div class="marker-name-label">
@@ -114,6 +155,7 @@
           deleteLabel.open(this.map, marker);
 
           // 마커 아래 라벨 (장치 종류) - 항상 표시 (OverlayView 사용)
+          // 마커 아래에 항상 보이는 텍스트 라벨을 위한 사용자 정의 오버레이입니다.
           class TypeLabelOverlay extends naver.maps.OverlayView {
             constructor(position, content) {
               super();
@@ -184,12 +226,14 @@
             }
           }
           
+          // 생성한 라벨 오버레이를 마커 위치에 붙입니다.
           const typeLabel = new TypeLabelOverlay(
             new naver.maps.LatLng(device.lat, device.lng),
             device.type
           );
 
           // 센서별 측정 데이터 정보 생성
+          // 장치(센서) 종류에 따라 측정/기능 정보를 문자열로 반환합니다.
           const getSensorDataInfo = (type) => {
             switch(type) {
               case '악취측정기':
@@ -222,6 +266,7 @@
           };
 
           // 상세 정보 InfoWindow
+          // 마커를 클릭하면 보이는 상세 정보창입니다.
           const detailInfo = new naver.maps.InfoWindow({
             content: `
               <div class="device-detail-info">
@@ -240,7 +285,9 @@
           });
 
           // 마커 클릭 시 상세 정보 토글
+          // 상세 정보창이 열려있는지 상태를 기억합니다.
           let detailOpen = false;
+          // 마커를 클릭하면 상세 정보를 열고, 다시 클릭하면 닫습니다.
           marker.addListener('click', () => {
             if (!detailOpen) {
               detailInfo.open(this.map, marker);
@@ -252,7 +299,9 @@
           });
 
           // 마커 드래그 시 라벨/연결선 동기화 (최적화 + 캐싱)
+          // 드래그 중 불필요한 연산을 줄이기 위해 마지막 위치를 저장합니다.
           let lastDragPosition = null;
+          // 마커를 드래그하는 동안 라벨과 삭제 버튼의 위치를 따라가게 업데이트합니다.
           marker.addListener('drag', (e) => {
             requestAnimationFrame(() => {
               const newPosition = marker.getPosition();
@@ -275,6 +324,7 @@
           });
 
           // 마커 드래그가 끝난 후 무거운 작업들 처리
+          // 드래그가 끝나면 연결선/악취 오버레이를 다시 계산하고, 상세 정보 내용을 갱신합니다.
           marker.addListener('dragend', () => {
             // InfoWindow 내용 업데이트
             detailInfo.setContent(`
@@ -293,6 +343,7 @@
           });
 
           // 전역 삭제 함수 등록
+          // 전역 함수로 삭제 기능을 노출합니다(버튼에서 호출합니다).
           window.deleteMarker = (id) => {
             const targetMarker = this.markers.find(m => m.id === id);
             if (targetMarker) {
@@ -314,12 +365,14 @@
             typeLabel, 
             detailInfo 
           });
+          // 게이트웨이-장치 간 연결선, 악취 오버레이, 개수 정보를 최신 상태로 만듭니다.
           this.updateConnections();
           this.updateOdorOverlay();
           this.updateMarkerCountInfo();
         }
 
         // 마커 개수 정보 업데이트
+        // 화면 우측 상단 정보 영역에 현재 마커 개수를 반영합니다.
         updateMarkerCountInfo() {
           const countInfo = document.getElementById('markerCountInfo');
           if (!countInfo) return;
@@ -348,6 +401,7 @@
           }
         }
 
+        // 게이트웨이와 다른 모든 장치를 선으로 연결해 보여줍니다.
         updateConnections() {
           // 기존 연결선 제거
           this.connectionLines.forEach(line => line.setMap(null));
@@ -381,6 +435,7 @@
           });
         }
 
+        // 장치 타입에 따라 다른 모양/색상의 마커 아이콘을 그립니다.
         createDeviceIcon(type) {
           const size = 36;
           const canvas = document.createElement('canvas');
@@ -447,11 +502,13 @@
           };
         }
 
+        // 외부에서 악취 확산 오버레이를 주입하는 메서드입니다.
         setOdorOverlay(overlay) {
           this.odorOverlay = overlay;
           this.updateOdorOverlay();
         }
 
+        // 현재 '악취측정기' 마커들의 위치를 기반으로 악취 확산 오버레이를 갱신합니다.
         updateOdorOverlay() {
           if (!this.odorOverlay) return;
           const sensors = this.markers
@@ -468,6 +525,7 @@
       }
 
       // 지도 클릭 이벤트 등록 함수 (onload 바깥)
+      // 지도를 클릭했을 때 선택된 장치 타입의 마커를 추가하는 이벤트를 등록합니다.
       function setupMapEvents() {
         if (!map || !mapDeviceManager) return;
         map.addListener('click', function(e) {
@@ -484,6 +542,7 @@
       }
 
       // 좌측 범례 생성 (지도/매니저 생성 이후 호출)
+      // 좌측 범례(아이콘 + 텍스트)를 동적으로 그리는 함수입니다.
       function renderLegend() {
         const legendList = document.getElementById('legendList');
         if (!legendList || !mapDeviceManager) return;
@@ -512,11 +571,16 @@
       }
 
       // 네이버 지도 API 로드 후 map만 생성, 나머지는 바깥에서 관리
+      // 네이버 지도 SDK 스크립트를 동적으로 생성해 문서에 삽입함.
+      // 이유: SDK 로드가 끝난 '이후'에만 지도를 초기화하려고 onload 사용함.
+      // 선 초기화 시 문제: SDK 미로딩 상태면 naver.maps 없음 → 에러 남.
       const script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=jz78vv4dg0`;
+      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=tygsu6tj2w`;
       document.head.appendChild(script);
 
+      // SDK 로드 완료 시 실행되는 초기화 코드임.
+      // 이유: 로드 완료 후에야 naver.maps 객체 생김. 그때 지도 생성 가능함.
       script.onload = () => {
         
         // OdorHeatmapOverlay 정의 (SDK 로드 이후 안전하게 정의)
@@ -633,6 +697,7 @@
           }
         }*/
         // 확대/축소에 따라 크기가 변하는 이미지 지상 오버레이
+        // 지도 위 특정 영역에 이미지를 깔아(지상 오버레이) 확대/축소에 맞춰 크기를 변화시키는 클래스입니다.
         class GroundImageOverlay extends naver.maps.OverlayView {
           constructor(map, imageUrl, bounds, opacity = 0.5) {
             super();
@@ -691,21 +756,30 @@
             this.img.style.height = `${scaledHeight}px`;
           }
         }
+        // 지도의 시작 위치(center), 확대 레벨(zoom) 등 기본 옵션임.
+        // 이유: 초기 화면 어디를 얼마나 확대해 보여줄지 정해야 사용성 좋아짐.
         var mapOptions = {
           center: new naver.maps.LatLng(36.601110505, 127.296293603),
           zoom: 18,
         };
+        // 위 옵션으로 실제 지도를 생성해 #map 요소에 렌더함.
+        // 이유: JS가 해당 DOM 요소를 찾아 그 안에 지도를 그림. id 필요함.
         map = new naver.maps.Map('map', mapOptions);
+        // 지도 위 장치 관리를 담당하는 매니저를 생성합니다.
         mapDeviceManager = new MapDeviceManager(map);
         // 악취 확산 오버레이 생성 후 매니저에 주입
         // const overlay = new OdorHeatmapOverlay(map, DEFAULT_ODOR_RADIUS_M);
         // mapDeviceManager.setOdorOverlay(overlay);
+        // 개발자 도구에서 접근할 수 있도록 전역(window)에 노출합니다.
         window.mapDeviceManager = mapDeviceManager;
+        // 초기 UI/이벤트/범례를 설정합니다.
         setupMapEvents();
         renderLegend();
         mapDeviceManager.updateMarkerCountInfo();
 
         // 초기 장치 마커 로드 (devices.json)
+        // 초기 장치 위치를 외부 JSON에서 불러옴.
+        // 이유: fetch로 정적 파일 데이터 읽어 초기 마커 구성 가능함. 서버 없이도 됨.
         fetch('./devices.json')
           .then(res => res.json())
           .then(list => {
@@ -728,6 +802,7 @@
           .catch(err => console.error('초기 장치 로드 실패:', err));
 
         // 예시: 이미지 지상 오버레이 인스턴스 생성 (URL/영역은 상황에 맞게 변경)
+        // 아래는 예시로 지도 위 특정 영역에 이미지를 덮는 코드입니다.
         const sw = new naver.maps.LatLng(36.600850, 127.296000);
         const ne = new naver.maps.LatLng(36.601350, 127.296550);
         const groundBounds = new naver.maps.LatLngBounds(sw, ne);
@@ -737,9 +812,11 @@
           groundBounds,
           0.4
         );
+        // 필요시 외부에서 제어할 수 있도록 전역 변수로 저장합니다.
         window.groundImage = groundImage;
 
         // 지도 크기 변경 감지
+        // 브라우저 창 크기 변화 등으로 지도가 리사이즈되면 라벨 위치를 재계산합니다.
         map.addListener('resize', () => {
           // 모든 라벨 강제 업데이트
           mapDeviceManager.markers.forEach(marker => {
@@ -751,4 +828,5 @@
       };
     </script>
   </body>
+  <!-- HTML 문서의 끝입니다. 여기까지가 브라우저가 해석할 전체입니다. -->
 </html>
