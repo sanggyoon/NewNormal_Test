@@ -25,6 +25,7 @@
         width: 100%;
       }
 
+      /* 범례(legend) UI */
       .legend {
         position: absolute;
         top: 120px;
@@ -104,6 +105,7 @@
         flex: 1;
       }
 
+      /* 마커 삭제 버튼 라벨 */
       .marker-name-label {
         background: white;
         border: 1px solid #ddd;
@@ -128,6 +130,7 @@
         background: #c62828;
       }
 
+      /* 마커 타입 라벨 */
       .marker-type-label {
         background: rgba(0, 0, 0, 0.7);
         color: white;
@@ -321,11 +324,14 @@
 
   <body>
     <div id="navContainer"></div>
+    <!-- 대시보드 레이아웃 -->
     <div class="dashboardContainer landscape">
       <div id="statusBar"></div>
       <div id="noticeBar"></div>
+      <!-- 지도 영역 컨테이너 -->
       <div class="mapContainer">
         <div class="map-layout">
+          <!-- 지도 패널(지도 + 상단 컨트롤바) -->
           <section class="map-panel">
             <!-- 마커 개수 정보 및 버튼들 -->
             <div
@@ -382,6 +388,7 @@
                 0/10 | 게이트웨이: 0/7
               </div>
             </div>
+            <!-- 네이버 지도 컨테이너 -->
             <div id="map"></div>
           </section>
 
@@ -458,6 +465,11 @@
       let currentDeleteLabel = null;
 
       // 클래스 정의
+      // 지도 내 장치 마커, 연결선, 오버레이 등 UI 상태를 통합 관리하는 매니저
+      // - 마커 개수 및 타입별 제한 관리
+      // - 마커 생성/삭제/드래그 동기화 및 라벨/팝업 연동
+      // - 게이트웨이와 다른 장치 간 연결선 렌더링/갱신
+      // - 범례/초기 데이터/레이어 등 외부 요소와의 연계
       class MapDeviceManager {
         constructor(map) {
           this.map = map;
@@ -498,6 +510,8 @@
           return true;
         }
 
+        // 주어진 장치 정보로 마커/라벨/상세오버레이를 생성하고
+        // 드래그/클릭 이벤트를 바인딩한 뒤 연결선/개수 정보를 갱신
         addDeviceMarker(device) {
           // 마커 추가 가능 여부 확인
           if (!this.canAddMarker(device.type)) {
@@ -536,6 +550,8 @@
           // }, 500);
 
           // 마커 아래 라벨 (장치 종류) - 항상 표시 (OverlayView 사용)
+          // 마커 하단에 항상 표시되는 타입 라벨 오버레이
+          // 지도 상태(위치/줌/크기) 변화에 맞춰 효율적으로 재배치
           class TypeLabelOverlay extends naver.maps.OverlayView {
             constructor(position, content) {
               super();
@@ -650,6 +666,9 @@
           };
 
           // 커스텀 상세 오버레이 (디자인 반영)
+          // 마커 클릭 시 표시되는 상세 정보 팝업 오버레이
+          // - 좌표/시간 등 핵심 정보 표시, 삭제/닫기 액션 제공
+          // - 줌 레벨에 따라 스케일 조정하여 가독성 유지
           class DeviceDetailOverlay extends naver.maps.OverlayView {
             constructor(position, data, accentColor, onDelete) {
               super();
@@ -897,6 +916,7 @@
           }
         }
 
+        // 게이트웨이와 나머지 장치들 사이에 점선 연결선을 생성/갱신
         updateConnections() {
           // 기존 연결선 제거
           this.connectionLines.forEach((line) => line.setMap(null));
@@ -933,6 +953,7 @@
           });
         }
 
+        // 타입별 채우기/테두리 색상 정의
         getTypeColors(type) {
           let fill = '#1976d2';
           let stroke = '#1565c0';
@@ -954,6 +975,7 @@
           return { fill, stroke };
         }
 
+        // 타입에 따라 캔버스로 벡터 아이콘(원/삼각/사각/마름모)을 동적 생성
         createDeviceIcon(type) {
           const size = 36;
           const canvas = document.createElement('canvas');
@@ -1019,6 +1041,8 @@
       // 마커 타입 범례 활성화/비활성화 관리
       let activeMarkerType = null;
 
+      // 좌측 범례 클릭으로 활성 마커 타입을 토글하여
+      // 지도 클릭 시 해당 타입의 마커를 추가할 수 있도록 제어
       function setupLegendClickEvents() {
         const legendItems = document.querySelectorAll('.legend-item');
         legendItems.forEach((item) => {
@@ -1040,6 +1064,7 @@
       }
 
       // 지도 클릭 이벤트 등록 함수
+      // 지도 클릭 시 활성화된 타입의 마커를 현재 좌표에 추가하는 이벤트 등록
       function setupMapEvents() {
         if (!map || !mapDeviceManager) return;
         map.addListener('click', function (e) {
@@ -1060,6 +1085,7 @@
       }
 
       // 모든 마커 삭제 함수
+      // 모든 마커/연결선/상태(활성 타입 포함)를 초기화하는 유틸리티
       function resetAllMarkers() {
         if (!mapDeviceManager) return;
 
@@ -1094,6 +1120,7 @@
       }
 
       // JSON 데이터에서 마커 다시 로드
+      // devices.json에서 장치 정보를 다시 읽어 마커를 재구성
       function reloadMarkersFromJson() {
         if (confirm('devices.json에서 마커를 다시 로드하시겠습니까?')) {
           loadDevicesFromJson();
@@ -1101,6 +1128,8 @@
       }
 
       // devices.json에서 마커 데이터 로드
+      // naver_map/devices.json에서 장치 목록을 불러와 마커를 생성
+      // ID 시퀀스 갱신 및 타입/이름 매핑을 포함
       async function loadDevicesFromJson() {
         try {
           const response = await fetch('../naver_map/devices.json');
@@ -1140,6 +1169,7 @@
       }
 
       // 확산도 PNG 파일을 레이어로 추가 (GroundImageOverlay 참조)
+      // 확산도 PNG 이미지를 지정 경계에 GroundImageOverlay로 표시하는 레이어 추가
       function addOdorDispersionLayer() {
         if (!map) return;
 
@@ -1231,6 +1261,7 @@
       }
 
       // 좌측 범례 생성
+      // 좌측 범례 UI를 현재 타입별 캔버스 아이콘과 함께 렌더링
       function renderLegend() {
         const legendList = document.getElementById('legendList');
         if (!legendList || !mapDeviceManager) return;
@@ -1264,7 +1295,10 @@
       script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${CONFIG.NAVER_MAP_CLIENT_ID2}`;
       document.head.appendChild(script);
 
+      // 네이버 지도 API 로드 완료 후 초기화 시퀀스
+      // 1) 지도 생성 2) 매니저 생성 3) 이벤트/범례 바인딩 4) 데이터 로드 5) 레이어 추가
       script.onload = () => {
+        // 네이버 지도 API 스크립트 로드 완료 후 초기화
         // heat 관련 기능 비활성화 - OdorHeatmapOverlay 클래스 정의 제거
         var mapOptions = {
           center: new naver.maps.LatLng(36.600699, 127.296352),
