@@ -1,37 +1,145 @@
 .rawDataBox {
   width: 100%;
+  height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+  background-color: #f2f2f3;
 }
 
 .rawDataHeader {
   display: flex;
   justify-content: space-between;
   padding: 20px;
-  background-color: #f7f7f7;
-  border-radius: 13px 13px 0 0;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .rawDataHeader span {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
 }
 
-/* .rawDataHeader_choiceDate {
-  line-height: 5px 20px;
-  background-color: #f7f7f8;
-  font-size: 0.8rem;
-  padding: 10px;
-  border-radius: 4px;
-} */
-
 .rawDataTable {
-  display: block;
+  flex: 1;
   width: 100%;
-  height: 300px;
-  overflow: scroll;
-  padding: 20px;
+  overflow: auto;
+  padding: 0;
+  background-color: #f2f2f3;
+}
+
+.rawDataBox table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background-color: #f2f2f3;
 }
 
 .rawDataBox table th,
 .rawDataBox table td {
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
-  padding: 10px 40px 10px 0;
+  vertical-align: middle;
+  padding: 12px 8px;
+  font-size: 0.9rem;
+}
+
+.rawDataBox table th {
+  font-weight: 600;
+  background-color: #ffffff;
+  line-height: 1.4;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  color: #333;
+}
+
+.rawDataBox thead:nth-child(1) {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+}
+
+.rawDataBox table td {
+  border-bottom: 1px solid #e8e8e8;
+  background-color: #f2f2f3;
+}
+
+/* 컬럼 너비 설정 - 그룹별로 구분 */
+.rawDataBox table th:nth-child(1),
+.rawDataBox table td:nth-child(1) {
+  width: 3%;
+  padding: 12px 4px;
+}
+
+/* 농장 정보 그룹 */
+.rawDataBox table th:nth-child(2),
+.rawDataBox table td:nth-child(2) {
+  width: 8%;
+  border-right: 1px solid #e0e0e0;
+}
+
+.rawDataBox table th:nth-child(3),
+.rawDataBox table td:nth-child(3) {
+  width: 9%;
+}
+
+.rawDataBox table th:nth-child(4),
+.rawDataBox table td:nth-child(4) {
+  width: 7%;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* 가스 측정값 그룹 */
+.rawDataBox table th:nth-child(5),
+.rawDataBox table td:nth-child(5),
+.rawDataBox table th:nth-child(6),
+.rawDataBox table td:nth-child(6),
+.rawDataBox table th:nth-child(7),
+.rawDataBox table td:nth-child(7),
+.rawDataBox table th:nth-child(8),
+.rawDataBox table td:nth-child(8) {
+  width: 5.5%;
+}
+
+.rawDataBox table th:nth-child(8),
+.rawDataBox table td:nth-child(8) {
+  border-right: 1px solid #e0e0e0;
+}
+
+/* 환경 측정값 그룹 */
+.rawDataBox table th:nth-child(9),
+.rawDataBox table td:nth-child(9),
+.rawDataBox table th:nth-child(10),
+.rawDataBox table td:nth-child(10),
+.rawDataBox table th:nth-child(11),
+.rawDataBox table td:nth-child(11),
+.rawDataBox table th:nth-child(12),
+.rawDataBox table td:nth-child(12),
+.rawDataBox table th:nth-child(13),
+.rawDataBox table td:nth-child(13),
+.rawDataBox table th:nth-child(14),
+.rawDataBox table td:nth-child(14) {
+  width: 5%;
+}
+
+.rawDataBox table th:nth-child(14),
+.rawDataBox table td:nth-child(14) {
+  border-right: 2px solid #e0e0e0;
+}
+
+/* 수신시각 */
+.rawDataBox table th:nth-child(15),
+.rawDataBox table td:nth-child(15) {
+  width: 10%;
+}
+
+/* 행 호버 효과 */
+.rawDataBox table tbody tr:hover {
+  background-color: #ebebeb;
+}
+
+/* 상태 메시지 영역 */
+#rawDataStatus {
+  padding: 8px 20px;
 }

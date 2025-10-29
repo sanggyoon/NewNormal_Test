@@ -86,7 +86,7 @@ function renderTable(items = []) {
     );
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 9;
+    td.colSpan = 15; // 컬럼 수 변경
     td.style.textAlign = 'center';
     td.style.opacity = '0.8';
     td.textContent = '데이터가 없습니다.';
@@ -95,25 +95,104 @@ function renderTable(items = []) {
     return;
   }
 
+  // 가스 값에 따른 색상 반환 함수
+  function getGasColor(value) {
+    const numValue = parseFloat(value);
+    if (isNaN(numValue) || numValue < 0) return '#000000'; // 기본 검정색
+    if (numValue <= 1) return '#007BFE'; // 파랑
+    if (numValue <= 2) return '#FF9900'; // 노랑
+    if (numValue <= 3) return '#FF3737'; // 빨강
+    return '#FF3737'; // 3 초과는 기본 검정색
+  }
+
   const fragment = document.createDocumentFragment();
-  items.forEach((it) => {
+  items.forEach((it, index) => {
     const tr = document.createElement('tr');
     const c = (v) => v ?? '-';
-    [
-      c(it.farmcode),
-      c(it.farmname),
-      c(it.farmsub),
-      c(it.gas1),
-      c(it.gas2),
-      c(it.gas3),
-      c(it.gas4),
-      c(it.temp),
-      c(it.humid),
-    ].forEach((text) => {
-      const td = document.createElement('td');
-      td.textContent = text;
-      tr.appendChild(td);
-    });
+
+    // 번호
+    const tdNum = document.createElement('td');
+    tdNum.textContent = index + 1;
+    tr.appendChild(tdNum);
+
+    // 농장코드
+    const tdFarmcode = document.createElement('td');
+    tdFarmcode.textContent = c(it.farmcode);
+    tr.appendChild(tdFarmcode);
+
+    // 농장명
+    const tdFarmname = document.createElement('td');
+    tdFarmname.textContent = c(it.farmname);
+    tr.appendChild(tdFarmname);
+
+    // 설치위치
+    const tdFarmsub = document.createElement('td');
+    tdFarmsub.textContent = c(it.farmsub);
+    tr.appendChild(tdFarmsub);
+
+    // NH3 (gas1) - 색상 적용
+    const tdGas1 = document.createElement('td');
+    tdGas1.textContent = c(it.gas1);
+    tdGas1.style.color = getGasColor(it.gas1);
+    tdGas1.style.fontWeight = '600';
+    tr.appendChild(tdGas1);
+
+    // H2S (gas2) - 색상 적용
+    const tdGas2 = document.createElement('td');
+    tdGas2.textContent = c(it.gas2);
+    tdGas2.style.color = getGasColor(it.gas2);
+    tdGas2.style.fontWeight = '600';
+    tr.appendChild(tdGas2);
+
+    // CO2 (gas3) - 색상 적용
+    const tdGas3 = document.createElement('td');
+    tdGas3.textContent = c(it.gas3);
+    tdGas3.style.color = getGasColor(it.gas3);
+    tdGas3.style.fontWeight = '600';
+    tr.appendChild(tdGas3);
+
+    // CH4 (gas4)
+    const tdGas4 = document.createElement('td');
+    tdGas4.textContent = c(it.gas4);
+    tdGas4.style.color = getGasColor(it.gas4);
+    tdGas4.style.fontWeight = '600';
+    tr.appendChild(tdGas4);
+
+    // 온도
+    const tdTemp = document.createElement('td');
+    tdTemp.textContent = c(it.temp);
+    tr.appendChild(tdTemp);
+
+    // 습도
+    const tdHumid = document.createElement('td');
+    tdHumid.textContent = c(it.humid);
+    tr.appendChild(tdHumid);
+
+    // 풍향 (API에서 제공하는 필드명 확인 필요)
+    const tdWindDir = document.createElement('td');
+    tdWindDir.textContent = c(it.wind_direction || it.winddir || it.wind_dir);
+    tr.appendChild(tdWindDir);
+
+    // 풍속
+    const tdWindSpeed = document.createElement('td');
+    tdWindSpeed.textContent = c(it.wind_speed || it.windspeed || it.wind);
+    tr.appendChild(tdWindSpeed);
+
+    // 미세먼지
+    const tdDust = document.createElement('td');
+    tdDust.textContent = c(it.dust || it.pm25 || it.pm);
+    tr.appendChild(tdDust);
+
+    // 대기압
+    const tdPressure = document.createElement('td');
+    tdPressure.textContent = c(it.pressure || it.press);
+    tr.appendChild(tdPressure);
+
+    // 수신시각
+    const tdTimestamp = document.createElement('td');
+    tdTimestamp.textContent = c(it.timestamp || it.datetime || it.regdate);
+    tr.appendChild(tdTimestamp);
+
     fragment.appendChild(tr);
   });
 
@@ -138,8 +217,8 @@ async function initRawDataTable() {
     } else if (data && data.success && data.proxy_status) {
       // 프록시를 통한 연결은 성공했지만 데이터가 없는 경우
       setStatus(
-        `PHP 프록시 연결 성공 (${data.proxy_status}) - ` + 
-        (data.message || '데이터가 없거나 형식이 다릅니다.'),
+        `PHP 프록시 연결 성공 (${data.proxy_status}) - ` +
+          (data.message || '데이터가 없거나 형식이 다릅니다.'),
         data.raw_response ? 'ok' : 'warn'
       );
       renderTable([]);
@@ -164,7 +243,7 @@ async function initRawDataTable() {
       tbody.innerHTML = '';
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 9;
+      td.colSpan = 15; // 컬럼 수 변경
       td.style.textAlign = 'center';
       td.style.opacity = '0.8';
       td.textContent = 'API 연결에 실패했습니다.';
