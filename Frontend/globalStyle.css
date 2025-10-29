@@ -14,7 +14,8 @@ body {
 }
 
 /* 컴포넌트 로딩 중 레이아웃 쉬프트 방지 */
-#navContainer:empty {
+/* navContainer는 empty 상태와 로드 후 상태 모두에 동일한 스타일 적용 */
+#navContainer {
   background-color: #2e2e2e;
   width: 15%;
   height: 100vh;
@@ -22,6 +23,23 @@ body {
   top: 0;
   left: 0;
   z-index: 100;
+  font-size: 22px;
+  color: white;
+  /* 컴포넌트 로드 및 폰트 로드 완료까지 숨김 */
+  opacity: 0;
+  transition: opacity 0.15s ease-in;
+}
+
+#navContainer.ready {
+  opacity: 1;
+}
+
+@media screen and (orientation: portrait) {
+  #navContainer {
+    width: 40%;
+    left: -40%;
+    transition: left 0.3s ease-in-out;
+  }
 }
 
 #statusBar:empty {
@@ -30,13 +48,6 @@ body {
 
 #noticeBar:empty {
   min-height: 100px; /* 50px height + 25px margin top/bottom */
-}
-
-@media screen and (orientation: portrait) {
-  #navContainer:empty {
-    width: 40%;
-    left: -40%;
-  }
 }
 
 .dashboardContainer {

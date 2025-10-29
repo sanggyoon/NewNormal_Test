@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- 웹폰트 preload로 먼저 로드 -->
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Medium.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <!-- CSS -->
     <link rel="stylesheet" href="globalStyle.css" />
     <link rel="stylesheet" href="CSS/nav.css" />
@@ -75,10 +91,26 @@
         if (callback) callback();
       }
 
-      loadComponent('Components/nav.html', 'navContainer', function () {
+      // 웹폰트 로딩 완료 대기
+      async function waitForFonts() {
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+      }
+
+      // Nav 컴포넌트 로드 후 폰트 로딩 대기 및 표시
+      loadComponent('Components/nav.html', 'navContainer', async function () {
         const script = document.createElement('script');
         script.src = './JS/nav.js';
         document.body.appendChild(script);
+        
+        // 폰트 로딩 완료 대기
+        await waitForFonts();
+        
+        // Nav 표시
+        requestAnimationFrame(() => {
+          document.getElementById('navContainer').classList.add('ready');
+        });
       });
 
       loadComponent('Components/statusBar.html', 'statusBar', function () {

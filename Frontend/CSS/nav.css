@@ -19,15 +19,8 @@
 }
 
 .navContainer {
-  background-color: var(--nav-background-color);
-  color: white;
-  width: 15%;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  font-size: 22px;
-  z-index: 100;
+  /* 기본 스타일은 globalStyle.css의 #navContainer에서 관리 */
+  /* 여기서는 추가적인 스타일만 정의 */
 }
 
 .houseInfoBox {
@@ -195,16 +188,8 @@
 
 /* 세로 방향 (portrait) */
 @media screen and (orientation: portrait) {
-  .navContainer {
-    width: 40%;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: -40%;
-    transition: left 0.3s ease-in-out;
-    z-index: 100;
-  }
-
+  /* 기본 portrait 스타일은 globalStyle.css의 #navContainer에서 관리 */
+  
   .navContainer.open {
     left: 0;
   }
