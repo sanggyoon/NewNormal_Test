@@ -174,12 +174,12 @@
           3
         ),
       ]).then(() => {
-        // 컴포넌트 로드 완료되면 바로 표시 (게이지 애니메이션 보기 위해)
+        // 1. 페이지 먼저 표시 (게이지 애니메이션 보기 위해)
         requestAnimationFrame(() => {
           document.querySelector('.dashboardContainer').classList.add('ready');
         });
 
-        // 표시 후 데이터 적용
+        // 2. 데이터 적용 (게이지 제외)
         if (window.applyAllAtmosphereDummyData)
           window.applyAllAtmosphereDummyData();
 
@@ -189,9 +189,18 @@
         if (window.attachDetailButtonHandlers)
           window.attachDetailButtonHandlers();
 
-        // 마지막으로 게이지 스크립트 로드하여 애니메이션 실행
+        // 3. gauge.js 로드
         const script = document.createElement('script');
         script.src = './JS/gauge.js';
+        script.onload = () => {
+          // 4. 페이지가 보이는 상태에서 게이지 애니메이션 실행
+          if (window.initializeAllGauges) {
+            // 약간의 지연을 주어 페이지가 완전히 표시된 후 애니메이션 시작
+            setTimeout(() => {
+              window.initializeAllGauges();
+            }, 50);
+          }
+        };
         document.body.appendChild(script);
       });
     </script>

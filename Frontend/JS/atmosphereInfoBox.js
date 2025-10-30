@@ -156,8 +156,8 @@ function attachDatePickerApplyEvent() {
 }
 window.attachDatePickerApplyEvent = attachDatePickerApplyEvent;
 
-// 가스 값 업데이트 (기존 유지)
-function updateGasValues(index, gasIdx) {
+// 가스 값 업데이트 (게이지 제외)
+function updateGasValues(index, gasIdx, skipGauge = false) {
   const data = DummyData.items[index];
   const container = document.getElementById(`atmosphereInfoBox_id_${index}`);
   if (!container) return;
@@ -182,20 +182,23 @@ function updateGasValues(index, gasIdx) {
       box.style.backgroundColor = state.background_color;
       box.style.borderColor = state.border_color;
       
-      // 게이지도 업데이트
-      const canvas = box.querySelector('canvas');
-      if (canvas && canvas._gauge) {
-        const [startColor, stopColor] = getGradientByValue(value, 3.0);
-        canvas._gauge.setOptions({
-          colorStart: startColor,
-          colorStop: stopColor,
-        });
-        canvas._gauge.set(parseFloat(value) || 0);
+      // 게이지 업데이트는 skipGauge가 false일 때만
+      if (!skipGauge) {
+        const canvas = box.querySelector('canvas');
+        if (canvas && canvas._gauge) {
+          const [startColor, stopColor] = getGradientByValue(value, 3.0);
+          canvas._gauge.setOptions({
+            colorStart: startColor,
+            colorStop: stopColor,
+          });
+          canvas._gauge.set(parseFloat(value) || 0);
+        }
       }
     }
   });
 
-  if (window.updateGaugesByGasIndex) {
+  // 게이지 업데이트는 skipGauge가 false일 때만
+  if (!skipGauge && window.updateGaugesByGasIndex) {
     window.updateGaugesByGasIndex(index, gasIdx);
   }
 }
@@ -255,12 +258,12 @@ function attachDetailButtonHandlers() {
 }
 window.attachDetailButtonHandlers = attachDetailButtonHandlers;
 
-// 기존 초기화 함수 (기존 유지)
+// 기존 초기화 함수 (게이지 제외)
 window.applyAllAtmosphereDummyData = function () {
   DummyData.items.forEach((_, i) => {
     const targetId = `atmosphereInfoBox_id_${i}`;
     applyDummyDataToAtmosphereBox(i, targetId);
-    updateGasValues(i, 0);
+    updateGasValues(i, 0, true); // 게이지 업데이트 건너뛰기
   });
   attachGasRangeButtonEvents();
   attachDatePickerApplyEvent();
@@ -270,6 +273,15 @@ window.applyAllAtmosphereDummyData = function () {
   
   // 모달 외부 클릭 이벤트 추가
   setupModalEvents();
+};
+
+// 게이지만 초기화하는 함수 (페이지 표시 후 호출)
+window.initializeAllGauges = function () {
+  DummyData.items.forEach((_, i) => {
+    if (window.updateGaugesByGasIndex) {
+      window.updateGaugesByGasIndex(i, 0);
+    }
+  });
 };
 
 // 모달 이벤트 설정
